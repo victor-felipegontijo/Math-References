@@ -1,0 +1,634 @@
+
+\documentclass[11pt,a4paper]{report}
+
+% --------------------------
+% Packages
+% --------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{mathrsfs}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,capitalise]{cleveref}
+
+\usepackage[numbers,sort&compress]{natbib}
+
+% --------------------------
+% Spacing / Paragraphs
+% --------------------------
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% --------------------------
+% Theorem-like environments (optional)
+% --------------------------
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+% --------------------------
+% Custom commands (optional)
+% --------------------------
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\dd}{\,\mathrm{d}}
+
+\begin{document}
+
+% ==========================================================
+% Front matter
+% ==========================================================
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\Large \textbf{Geometry and Dynamics of Volatility Smiles}\par}
+  \vspace{1.5cm}
+  {\large Victor Felipe Gontijo \par}
+  \vspace{0.5cm}
+  {\large Quant Notes \par}
+  \vspace{0.5cm}
+  \vfill
+  {\large \today\par}
+\end{titlepage}
+
+\pagenumbering{roman}
+
+
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+
+% ==========================================================
+
+\section{Why Smile Geometry and Smile Dynamics Are Related in Stochastic Volatility Models}
+\label{sec:geometry_dynamics_link}
+
+This section explains why, in stochastic volatility (SV) models, the \emph{geometry} of the implied-volatility smile (ATM level, skew, curvature, wings) and its \emph{dynamics} under movements of the underlying forward are intimately connected.
+The key idea is that both (i) the smile geometry and (ii) the evolution of the risk-neutral law of the terminal underlying are controlled by the same mathematical object: the Markov generator of the state process (and its adjoint).
+
+\subsection{From option prices to the risk-neutral distribution}
+Fix a maturity $T>0$. Let $S_t$ denote the underlying price process, and work under a risk-neutral measure $\mathbb{Q}$ with money-market numeraire.
+For simplicity of exposition we assume deterministic interest rates and dividends; the relevant forward price is
+\begin{equation}
+F_t(T) \;=\; \mathbb{E}^{\mathbb{Q}}\!\left[S_T \mid \mathcal{F}_t\right],
+\end{equation}
+and we write $F_0:=F_0(T)$ when $T$ is fixed.
+
+Denote by $C(K,T)$ the time-$0$ price of a European call with strike $K>0$ and maturity $T$:
+\begin{equation}
+C(K,T) \;=\; \mathbb{E}^{\mathbb{Q}}\!\left[(S_T-K)^+\right].
+\end{equation}
+Assuming sufficient smoothness of $K \mapsto C(K,T)$ (which can be justified by mild no-arbitrage and regularity conditions), the \emph{Breeden--Litzenberger} identity links the call surface to the risk-neutral density of $S_T$:
+\begin{equation}
+f_{S_T}(K) \;=\; \frac{\partial^2 C}{\partial K^2}(K,T),
+\qquad
+\mu_T(\mathrm{d}s) \;=\; f_{S_T}(s)\,\mathrm{d}s.
+\label{eq:BL}
+\end{equation}
+Hence, the terminal risk-neutral law $\mu_T$ is (in principle) observable from the option price surface.\footnote{In practice one must smooth and interpolate a finite set of quotes; nonetheless \eqref{eq:BL} provides the conceptual bridge.}
+
+\subsection{From the risk-neutral distribution to implied-volatility geometry}
+Market quotes are often expressed via Black--Scholes implied volatility.
+Let $C^{BS}(K,T;\sigma)$ be the Black--Scholes call price with volatility parameter $\sigma>0$ and forward $F_0$.
+The implied volatility $\sigma_{\mathrm{imp}}(K,T)$ is defined as the unique solution (when it exists) of
+\begin{equation}
+C(K,T) \;=\; C^{BS}\!\left(K,T;\sigma_{\mathrm{imp}}(K,T)\right).
+\end{equation}
+It is common to work in log-moneyness coordinates
+\begin{equation}
+x \;=\; \log\!\left(\frac{K}{F_0}\right),
+\qquad
+K \;=\; F_0 e^{x},
+\end{equation}
+and to view the \emph{smile slice} at maturity $T$ as a function $x \mapsto \sigma_{\mathrm{imp}}(x,T)$.
+
+The \emph{geometry} of this slice near $x=0$ (ATM forward) can be summarized by local derivatives:
+\begin{align}
+\sigma_{\mathrm{ATM}}(T) &:= \sigma_{\mathrm{imp}}(0,T),\\
+\mathrm{Skew}(T) &:= \left.\frac{\partial \sigma_{\mathrm{imp}}}{\partial x}(x,T)\right|_{x=0},\\
+\mathrm{Curv}(T) &:= \left.\frac{\partial^2 \sigma_{\mathrm{imp}}}{\partial x^2}(x,T)\right|_{x=0}.
+\end{align}
+Intuitively, these geometric features encode properties of $\mu_T$:
+\begin{itemize}
+\item $\sigma_{\mathrm{ATM}}$ is chiefly related to the overall dispersion (variance) of $\mu_T$ around its mean (the forward).
+\item the ATM skew reflects the asymmetry of $\mu_T$ (left-tail versus right-tail weight), i.e.\ the sign and magnitude of negative versus positive moves priced under $\mathbb{Q}$;
+\item the curvature reflects how rapidly this asymmetry changes with moneyness, and is connected to tail thickness/kurtosis effects.
+\end{itemize}
+While the mapping from $\mu_T$ to $\sigma_{\mathrm{imp}}(\cdot,T)$ is nonlinear (because the Black--Scholes inversion is nonlinear), conceptually the message is simple: \emph{implied-volatility geometry is a reparametrization of the information contained in the risk-neutral distribution.}
+
+\subsection{Markov models: the generator controls the evolution of the distribution}
+Consider now a Markovian SV setting in which the market state is
+\begin{equation}
+X_t \;=\; (S_t,V_t),
+\end{equation}
+where $V_t$ is a (latent) variance factor.
+Under $\mathbb{Q}$, suppose $X_t$ is a time-homogeneous diffusion on an appropriate domain, with infinitesimal generator $\mathcal{L}$ acting on smooth test functions $\varphi$ as
+\begin{equation}
+(\mathcal{L}\varphi)(s,v)
+\;=\;
+b_s(s,v)\,\partial_s\varphi(s,v)
++
+b_v(s,v)\,\partial_v\varphi(s,v)
++\frac{1}{2}\sum_{i,j\in\{s,v\}} a_{ij}(s,v)\,\partial_{ij}\varphi(s,v),
+\label{eq:generator_general}
+\end{equation}
+where $a(s,v)$ is the instantaneous covariance matrix of $(S,V)$ increments.
+
+For a European payoff $\Phi(S_T)$, the option price
+\begin{equation}
+u(t,s,v) \;=\; \mathbb{E}^{\mathbb{Q}}\!\left[\Phi(S_T)\mid S_t=s,\,V_t=v\right]
+\end{equation}
+solves the backward Kolmogorov PDE
+\begin{equation}
+\partial_t u(t,s,v) + \mathcal{L}u(t,s,v)=0,
+\qquad
+u(T,s,v)=\Phi(s).
+\label{eq:backward}
+\end{equation}
+Dually, the transition density $p(t,s,v)$ of $(S_t,V_t)$ (when it exists) solves the forward Kolmogorov (Fokker--Planck) equation governed by the \emph{adjoint} operator $\mathcal{L}^\ast$:
+\begin{equation}
+\partial_t p(t,\cdot,\cdot) \;=\; \mathcal{L}^\ast p(t,\cdot,\cdot).
+\label{eq:forward_FP}
+\end{equation}
+The terminal risk-neutral law of $S_T$ is the marginal of $p(T,s,v)$:
+\begin{equation}
+f_{S_T}(s) \;=\; \int p(T,s,v)\,\mathrm{d}v,
+\qquad
+\mu_T(\mathrm{d}s)=f_{S_T}(s)\,\mathrm{d}s.
+\label{eq:marginal}
+\end{equation}
+Combining \eqref{eq:forward_FP}--\eqref{eq:marginal} with \eqref{eq:BL} shows that the \emph{option surface and the implied-volatility smile are driven by the same generator} $\mathcal{L}$ (via $\mathcal{L}^\ast$).
+
+\subsection{Where skew comes from: the mixed covariance term}
+To make the link between ``geometry'' and ``dynamics'' concrete, it is useful to display a familiar SV generator.
+For instance, in a Heston-like diffusion the generator typically contains a mixed derivative term:
+\begin{equation}
+\mathcal{L}f
+=
+r s f_s + \kappa(\theta-v)f_v
++\frac{1}{2} v s^2 f_{ss}
++\frac{1}{2}\xi^2 v f_{vv}
++\rho \xi v s f_{sv},
+\label{eq:heston_like_generator}
+\end{equation}
+where $\rho\in[-1,1]$ is the instantaneous correlation between spot and variance shocks, and $\xi$ controls variance-of-variance.
+
+The coefficient of $f_{sv}$ in \eqref{eq:heston_like_generator} is proportional to $\rho$ and represents the instantaneous covariance between the spot and variance increments.
+This term plays a dual role:
+\begin{itemize}
+\item It shapes the \emph{asymmetry} of the terminal distribution $\mu_T$ (hence the sign and magnitude of implied-volatility skew).
+In equity markets, typically $\rho<0$, producing a steeper left wing and negative ATM skew.
+\item It also governs how the conditional law of $S_T$ changes when the underlying moves: a negative spot shock tends to increase conditional future variance, thereby increasing near-ATM implied volatility.
+\end{itemize}
+Thus, the same structural parameter (here encoded in $\mathcal{L}$ through the mixed term) influences both the \emph{local geometry} of the smile and the \emph{direction and strength} with which the smile reacts to spot/forward moves.
+
+\subsection{Conclusion: geometry and dynamics share a common mathematical source}
+In a Markov SV model, the risk-neutral distribution $\mu_T$ of $S_T$ is determined by the adjoint evolution \eqref{eq:forward_FP} of the generator $\mathcal{L}$, and the implied-volatility smile is a reparametrization of option prices, hence of $\mu_T$.
+Consequently, smile geometry (ATM level, skew, curvature, wings) and smile dynamics under movements of the forward are not independent degrees of freedom: they are mathematically tied to the same object, namely the Markov generator (equivalently, the instantaneous covariance structure and drift of the state increments).
+This structural observation motivates the use of geometry-based diagnostics and ratios (such as skew-stickiness measures) as observable proxies for the otherwise latent spot--volatility dependence; these considerations are developed in the next section.
+
+
+% -----------------------------------
+\section{Geometry as an Observable Proxy: Smile-Dynamics Diagnostics and Market-Making Implications}\label{sec:geometry_proxy_ssr}
+
+Section~\ref{sec:geometry_dynamics_link} established that, in Markov stochastic-volatility settings, the implied-volatility smile geometry and its dynamics are both controlled by the same structural object (the Markov generator, equivalently the instantaneous covariance structure of the state increments).
+This section explains why, in practice, \emph{geometry is the easiest observable proxy} for dynamics, and how geometry--dynamics ratios (notably ``stickiness'' measures and the skew-stickiness ratio, SSR) can be used to assess the quality of a stochastic-volatility model.
+We then discuss the consequences for an options market-maker of trading with a model whose implied dynamics are materially different from empirically observed ones.
+
+\subsection{What is observable, and what is not}
+For a fixed maturity $T$, the market provides a finite set of option quotes $\{C(K_j,T)\}_j$ (or equivalently implied volatilities $\{\sigma_{\mathrm{imp}}(K_j,T)\}_j$) across strikes.
+After interpolation and smoothing, this yields an implied-volatility slice $x \mapsto \sigma_{\mathrm{imp}}(x,T)$, where $x=\log(K/F_0)$.
+Hence, \emph{smile geometry}---ATM level, skew, curvature, wing slopes---is directly accessible from static cross-sectional data:
+\begin{equation}
+\sigma_{\mathrm{ATM}}(T)=\sigma_{\mathrm{imp}}(0,T),
+\qquad
+\mathrm{Skew}(T)=\left.\partial_x\sigma_{\mathrm{imp}}(x,T)\right|_{x=0},
+\qquad
+\mathrm{Curv}(T)=\left.\partial_{xx}\sigma_{\mathrm{imp}}(x,T)\right|_{x=0},
+\end{equation}
+and similarly for other geometric functionals.
+
+By contrast, \emph{smile dynamics} refers to how the slice changes when the underlying forward moves:
+\begin{equation}
+F_0 \mapsto F_1,
+\qquad
+\sigma_{\mathrm{imp}}(\cdot,T)\mapsto \sigma_{\mathrm{imp}}^{(1)}(\cdot,T).
+\end{equation}
+Dynamics are not directly observable from a single snapshot; they must be inferred from time series.
+Moreover, the model-implied quantities that govern dynamics in SV models---spot/variance instantaneous correlation, volatility-of-volatility, jump asymmetry, etc.---are latent and only indirectly identifiable.
+This asymmetry of information motivates the use of \emph{observable geometry} as a proxy for the unobserved dynamical structure.
+
+\subsection{Stickiness rules and a diagnostic viewpoint}
+A convenient empirical lens is provided by ``stickiness'' heuristics, which can be stated in terms of invariances of the implied-volatility surface under spot/forward moves.
+
+\paragraph{Sticky strike.}
+A (pure) sticky-strike rule keeps the implied volatility associated with a fixed strike $K$ unchanged after a spot move:
+\begin{equation}
+\sigma_{\mathrm{imp}}^{(1)}(K,T) \approx \sigma_{\mathrm{imp}}^{(0)}(K,T).
+\end{equation}
+In log-moneyness coordinates, this means that the new ATM point ($K=F_1$) inherits the old implied volatility at the same strike, i.e.\ at old log-moneyness $x_1=\log(F_1/F_0)$.
+
+\paragraph{Sticky moneyness / sticky delta.}
+A sticky-moneyness rule keeps the smile as a function of log-moneyness $x=\log(K/F)$ invariant:
+\begin{equation}
+\sigma_{\mathrm{imp}}^{(1)}\!\left(\log\frac{K}{F_1},T\right)
+\approx
+\sigma_{\mathrm{imp}}^{(0)}\!\left(\log\frac{K}{F_0},T\right),
+\end{equation}
+and a sticky-delta rule similarly keeps implied volatility roughly constant at fixed option delta (which is a nonlinear function of $(K,F,\sigma)$).
+Empirically, different markets and maturities fall between these extremes; ``stickiness'' parameters quantify this interpolation.
+
+From a diagnostic standpoint, the purpose of such rules is not to assert universal truths, but to provide \emph{low-dimensional summaries} of how the surface moves relative to the underlying:
+they are measurable from time series and comparable across models.
+
+\subsection{A generic geometry--dynamics ratio: the skew-stickiness ratio (SSR)}
+We now formalize a representative diagnostic: the \emph{skew-stickiness ratio} (SSR).
+Because conventions vary across practitioners (strike vs log-strike, implied vol vs total variance, delta vs moneyness), we define SSR abstractly as a normalized sensitivity of the implied-volatility slice to a forward move.
+
+Fix maturity $T$ and consider a small forward move from $F_0$ to $F_1=F_0 e^{x_1}$, with $|x_1|\ll 1$.
+Let $y=\log(K/F_1)$ denote the new log-moneyness coordinate.
+A common object of interest is the change in the new ATM implied volatility:
+\begin{equation}
+\Delta \sigma_{\mathrm{ATM}}(T)
+\;:=\;
+\sigma_{\mathrm{imp}}^{(1)}(0,T) - \sigma_{\mathrm{imp}}^{(0)}(0,T).
+\end{equation}
+A first-order Taylor expansion of the old smile around the origin gives
+\begin{equation}
+\sigma_{\mathrm{imp}}^{(0)}(x_1,T)
+=
+\sigma_{\mathrm{imp}}^{(0)}(0,T)
++
+\left.\partial_x\sigma_{\mathrm{imp}}^{(0)}(x,T)\right|_{x=0}\,x_1
++O(x_1^2)
+=
+\sigma_{\mathrm{ATM}}^{(0)}(T)
++
+\mathrm{Skew}^{(0)}(T)\,x_1
++O(x_1^2).
+\label{eq:taylor_smile}
+\end{equation}
+If the new ATM volatility were to follow the old volatility at strike $K=F_1$ (a sticky-strike anchoring at the ATM), then to first order $\Delta\sigma_{\mathrm{ATM}} \approx \mathrm{Skew}\cdot x_1$.
+This motivates defining a \emph{dimensionless} ratio comparing the observed ATM move to the move predicted by the local skew:
+\begin{equation}
+\mathrm{SSR}(T)
+\;:=\;
+\frac{\Delta \sigma_{\mathrm{ATM}}(T)}{\mathrm{Skew}^{(0)}(T)\,x_1},
+\qquad |x_1|\ll 1,
+\label{eq:ssr_def}
+\end{equation}
+whenever the denominator is nonzero.
+Interpreting \eqref{eq:ssr_def}:
+\begin{itemize}
+\item $\mathrm{SSR}(T)\approx 1$ indicates that the ATM move is consistent with a sticky-strike anchoring at first order.
+\item $\mathrm{SSR}(T) < 1$ indicates that ATM moved \emph{less} than the local skew would suggest.
+\item $\mathrm{SSR}(T) > 1$ indicates \emph{more} ATM movement (per unit forward move) than implied by the initial skew.
+\end{itemize}
+In equity-index markets, where $\mathrm{Skew}^{(0)}(T)<0$, a negative return $x_1<0$ typically leads to $\Delta\sigma_{\mathrm{ATM}}>0$, and the ratio \eqref{eq:ssr_def} captures the strength of this leverage-type response in a scale-free way.
+In more sophisticated settings, SSR can be defined using total implied variance $w=\sigma^2 T$ or fixed-delta points; the guiding principle remains the same: \emph{normalize a dynamical response by a geometric slope.}
+
+\subsection{Why geometry proxies dynamics in SV models}
+In Markov SV models, both $\mathrm{Skew}(T)$ and the spot-induced response $\Delta\sigma_{\mathrm{ATM}}(T)$ are driven by the same structural channels:
+instantaneous spot--variance covariance, jump asymmetry, and volatility-of-volatility.
+Thus, while SSR is an empirical diagnostic computed from data, it also functions as a \emph{model test}.
+Concretely, a calibrated SV model determines:
+\begin{enumerate}
+\item the static smile geometry $\sigma_{\mathrm{imp}}^{(0)}(\cdot,T)$ (hence $\mathrm{Skew}^{(0)}(T)$), and
+\item the joint dynamics of $(S_t,V_t)$ (hence the spot-conditioned evolution of $\mu_T$, and therefore $\Delta\sigma_{\mathrm{ATM}}(T)$).
+\end{enumerate}
+Therefore it also determines an implied value of $\mathrm{SSR}(T)$.
+Comparing model-implied SSR to time-series estimates offers a parsimonious way to detect whether a model's encoded spot--vol dependence is consistent with the market.
+
+\subsection{Consequences for a market-maker: hedging and P\&L attribution}
+For a market-maker, the relevance of SSR-like diagnostics is practical rather than philosophical:
+a model that gets the static fit right but the dynamics wrong can produce systematic hedging losses.
+
+\paragraph{Delta-hedged P\&L depends on smile dynamics.}
+A delta-hedged options book is exposed to changes in the volatility surface as the underlying moves.
+If the desk marks and hedges under an assumed dynamic rule (implicit in the model or in the surface-updating procedure), then the realized P\&L is sensitive to the mismatch between assumed and actual smile motion.
+In particular, if the model underestimates the empirical $\mathrm{SSR}(T)$, then during sell-offs the desk will tend to underpredict ATM volatility increases and may:
+\begin{itemize}
+\item carry residual vega exposure after delta hedging,
+\item exhibit systematic losses on short-vol positions (or insufficient gains on long-vol positions),
+\item mis-attribute P\&L to ``unexplained'' surface moves rather than to a predictable spot--vol coupling.
+\end{itemize}
+
+\paragraph{Mis-specified dynamics distort risk sensitivities.}
+Greeks computed from a model implicitly assume a relationship between spot moves and surface moves.
+If the true market surface has different stickiness ratios, then the desk's effective risk is not the one reported by the model:
+a position may be locally delta-hedged under the model but not under realized dynamics, because the vol move induced by spot is mis-modeled.
+
+\paragraph{Dynamic/geometry ratios are calibration targets.}
+Because SSR and related ratios are low-dimensional and empirically measurable, they can be used as \emph{secondary calibration targets}:
+one may seek parameter sets or model extensions that reproduce not only a static smile but also the observed coupling between spot returns and volatility moves.
+This viewpoint is particularly valuable when several SV models fit the same implied-volatility slice equally well: dynamic diagnostics can discriminate between them.
+
+\subsection{Summary}
+Smile geometry is directly observable from cross-sectional option data, whereas smile dynamics must be inferred from time series and is governed by latent structural channels (spot--variance covariance, vol-of-vol, jump asymmetry).
+In Markov stochastic-volatility models these channels simultaneously determine both geometry and dynamics, making geometry-based ratios such as SSR informative diagnostics.
+For market-makers, large discrepancies between model-implied and empirically observed ratios translate into systematic hedging errors and P\&L effects, motivating the use of such diagnostics both for model validation and for the design of surface-updating rules.
+In the next section we show that, in local volatility frameworks, the dynamics are not intrinsic to the model but are effectively determined by the recalibration procedure used to update the surface as the underlying moves.
+
+% -----------------------------------
+\section{Local Volatility on a Trading Desk: Dynamics Delegated to Recalibration}
+\label{sec:localvol_recalibration_dynamics}
+
+Sections~\ref{sec:geometry_dynamics_link}--\ref{sec:geometry_proxy_ssr} emphasized that, in stochastic volatility (SV) models, the coupling between smile geometry and smile dynamics is largely intrinsic: both are controlled by the model's state dynamics (equivalently, its generator).
+This section explains why the situation is fundamentally different for \emph{local volatility} (LV) models as used on trading desks.
+While LV can be calibrated to match today's implied-volatility surface (via Dupire's formula), its \emph{effective spot--volatility dynamics in practice} is not an intrinsic feature of the LV specification alone.
+Rather, it is delegated to the \emph{recalibration and surface-updating machinery} used by the desk to keep the model aligned with market quotes as the underlying moves.
+
+\subsection{The local volatility model and Dupire calibration}
+In its canonical form, the local volatility model specifies the risk-neutral dynamics of the spot as
+\begin{equation}
+\mathrm{d}S_t \;=\; (r-q)\,S_t\,\mathrm{d}t \;+\; \sigma_{\mathrm{loc}}(t,S_t)\,S_t\,\mathrm{d}W_t,
+\label{eq:localvol_sde}
+\end{equation}
+where $\sigma_{\mathrm{loc}}(t,s)$ is a deterministic function of time and spot, calibrated such that the model reproduces the observed European option surface at time $0$.
+
+Under standard regularity assumptions, Dupire's formula expresses the local variance in terms of derivatives of the call price surface $C(K,T)$:
+\begin{equation}
+\sigma_{\mathrm{loc}}^2(T,K)
+\;=\;
+\frac{\partial_T C(K,T)}{\tfrac{1}{2}K^2\,\partial_{KK}C(K,T)},
+\label{eq:dupire}
+\end{equation}
+(with suitable modifications for non-zero rates/dividends and to ensure numerically stable implementation).
+Thus, at time $0$ the LV model can be made \emph{perfectly consistent} with the observed implied-volatility surface:
+it matches the entire family of marginal laws $\{\mu_T\}_{T>0}$ of $S_T$ under $\mathbb{Q}$.
+
+\subsection{A conceptual limitation: correct marginals do not fix dynamics}
+A central conceptual point is that \emph{matching all European prices at time $0$} only pins down the \emph{marginal} distributions of $S_T$.
+It does not uniquely identify the \emph{pathwise} dynamics, in particular the joint law of $(S_t,S_T)$ or the conditional distribution of $S_T$ given information at time $t$.
+Different models can share the same one-dimensional marginals while implying different conditional evolutions and therefore different smile dynamics under spot moves.
+
+In the LV model \eqref{eq:localvol_sde}, the surface $\sigma_{\mathrm{loc}}(t,s)$ is deterministic once calibrated at $t=0$.
+Consequently, the model implies a specific conditional evolution:
+at time $t$, conditional on $S_t=s$, the distribution of $S_T$ is entirely determined by the LV PDE (or equivalently by the transition density associated with \eqref{eq:localvol_sde}).
+From a purely theoretical standpoint, this is a fully specified dynamics.
+
+However, in desk practice, the situation is different: market quotes change through time, and the desk must decide how to update $\sigma_{\mathrm{loc}}$ (or, more generally, the implied-volatility surface) as new market information arrives.
+This makes the \emph{implemented} dynamics depend crucially on the recalibration procedure.
+
+\subsection{Recalibration as the true source of spot--vol dynamics}
+Suppose the desk calibrates an LV surface at time $t=0$ from the market implied-volatility surface.
+After a short time interval, the forward moves $F_0\mapsto F_1$ and the quoted implied-volatility surface changes accordingly.
+A desk that continuously marks and hedges must decide how to produce an updated surface consistent with new quotes.
+Two idealized approaches highlight the distinction:
+
+\paragraph{(i) Freeze the local volatility surface.}
+One may keep $\sigma_{\mathrm{loc}}(t,s)$ fixed as calibrated at $0$ and reprice/hedge using the resulting model dynamics.
+This is internally consistent but typically fails to match the observed market surface at later times:
+the LV model's \emph{model-implied} smile move under spot will generally not coincide with the \emph{market-implied} smile move.
+The desk then faces a persistent model-to-market discrepancy.
+
+\paragraph{(ii) Recalibrate the surface to match the market.}
+More commonly, the desk recalibrates the implied-volatility surface (and therefore the local volatility surface through Dupire or an equivalent procedure) whenever market data updates.
+In this case, the spot--volatility relationship experienced by the desk is not the one implied by the frozen LV model, but the one induced by the \emph{recalibration map}
+\begin{equation}
+\mathcal{U}:\ (\text{old surface},\ \text{spot/forward move},\ \text{new quotes}) \longmapsto \text{new surface}.
+\end{equation}
+In other words, the effective dynamics is ``delegated'' to the updating mechanism.
+
+This delegation is unavoidable in practice because the LV model is calibrated to a cross-section at a given time, whereas market-making requires a rule for moving that cross-section through time.
+Hence, from a trading standpoint, the crucial design choice is not merely the LV specification, but the pair:
+\begin{equation}
+\Big(\text{parametric representation of the surface}\Big)
+\quad + \quad
+\Big(\text{surface-updating / recalibration dynamics}\Big).
+\end{equation}
+
+\subsection{Why a dynamical smile-update rule is required}
+A desk does not observe a continuum of option prices; it observes a sparse grid of quotes that evolves with time and with the underlying.
+To construct a consistent surface at each recalibration time, one needs:
+\begin{enumerate}
+\item \textbf{A parametric or functional representation of the smile/surface} (e.g.\ SVI, splines, basis expansions) that interpolates between quoted points and enforces static no-arbitrage constraints as much as possible.
+\item \textbf{A dynamical update rule} that maps an existing parametrization to a new one when the forward moves and/or when new quotes arrive.
+\end{enumerate}
+The second item is precisely a \emph{smile-dynamics model}.
+It may be motivated by SV-model intuition (as in Sections~\ref{sec:geometry_dynamics_link}--\ref{sec:geometry_proxy_ssr}) or purely empirically, but it is a separate component from the LV calibration itself.
+
+Importantly, a poorly chosen update rule can create undesirable behavior even if each recalibrated surface is statically arbitrage-free:
+\begin{itemize}
+\item unstable day-to-day parameter jumps,
+\item implausible implied spot--vol correlation (e.g.\ SSR far from empirical values),
+\item hedging P\&L inconsistencies (systematic ``vol marking'' drift),
+\item dynamic arbitrage manifestations when considering the surface as a time series (even if each snapshot is clean).
+\end{itemize}
+Thus, in desk implementations, LV is best viewed as a \emph{static replication engine} (matching today’s marginals) combined with an \emph{exogenous dynamics} supplied by the recalibration procedure.
+
+\subsection{A useful perspective: local vol as a choice of coordinates}
+An alternative interpretation is to view LV as a convenient coordinate system for encoding the current European price surface.
+Dupire's mapping \eqref{eq:dupire} converts the observed surface into a function $\sigma_{\mathrm{loc}}(t,s)$.
+But the desk's forward-looking risk management hinges on how this object is updated through time, which depends on the desk's calibration protocol and on the assumed smile dynamics.
+Therefore, while LV provides a powerful static fit, it does not relieve the practitioner from specifying (explicitly or implicitly) how the smile should move with the underlying.
+
+\subsection{Summary}
+Local volatility models can be calibrated to match today's option surface, but the \emph{effective} spot--volatility dynamics encountered in trading depends primarily on the \emph{recalibration rule} used to update the surface as the underlying moves and quotes refresh.
+Consequently, desk practice requires not only a parametric representation of the implied-volatility surface but also a dynamical updating mechanism.
+The next section presents a concrete example of such a mechanism: a basis-expansion smile parametrization equipped with a geometry-driven update rule, interpreted as a controlled perturbation of a sticky-strike anchoring of the new ATM level.
+
+% -----------------------------------
+\section{A Geometry-Driven Smile Update Rule: Sticky-Strike Anchoring with Skew/Curvature Stickiness}
+\label{sec:geometry_driven_update_model}
+
+This section presents the specific smile-update mechanism discussed in the previous dialogue.
+We start from a basis-expansion parametrization of the implied-volatility smile at a fixed maturity, expressed in log-moneyness with respect to an initial forward $F_0$.
+When the forward moves to $F_1$, we define a new smile as a function of the \emph{new} log-moneyness.
+The update preserves the smile \emph{shape in moneyness space} up to a vertical shift, and chooses the new ATM level via a controlled perturbation of a simple sticky-strike anchoring.
+The perturbation admits a transparent interpretation in terms of (i) a skew-stickiness factor and (ii) a curvature-stickiness factor.
+
+\subsection{Initial smile parametrization}
+Fix a maturity $T$ (suppressed in notation).
+Let $F_0$ denote the reference forward at calibration time, and define log-moneyness
+\begin{equation}
+x \;=\; \log\!\left(\frac{K}{F_0}\right).
+\end{equation}
+The initial implied-volatility smile is represented by the basis expansion
+\begin{equation}
+\sigma_0(x)
+\;=\;
+a_0 + b_0 x + \sum_{i=1}^n C_0^{i}\,\psi_i(x).
+\label{eq:sigma0_basis}
+\end{equation}
+The basis functions $\psi_i$ are chosen such that:
+\begin{itemize}
+\item $b_0$ coincides with the local slope of the smile at the origin (ATMF skew):
+\begin{equation}
+b_0 \;=\; \left.\frac{\partial \sigma_0}{\partial x}(x)\right|_{x=0};
+\end{equation}
+\item the coefficients $C_0^i$ control local curvature contributions around centers on the $x$-axis, according to the localization of $\psi_i$.
+\end{itemize}
+This interpretation holds, for instance, when $\psi_i$ are localized bumps or spline basis functions.
+
+\subsection{Forward move and change of coordinates}
+Suppose the market forward moves from $F_0$ to $F_1$.
+Define the log-forward return
+\begin{equation}
+x_1 \;=\; \log\!\left(\frac{F_1}{F_0}\right).
+\label{eq:x1_def}
+\end{equation}
+After the move, it is natural to re-express the smile in terms of the new log-moneyness
+\begin{equation}
+y \;=\; \log\!\left(\frac{K}{F_1}\right).
+\end{equation}
+The two coordinates are related by a translation:
+\begin{equation}
+x \;=\; \log\!\left(\frac{K}{F_0}\right)
+\;=\;
+\log\!\left(\frac{K}{F_1}\right) + \log\!\left(\frac{F_1}{F_0}\right)
+\;=\;
+y + x_1.
+\label{eq:coord_translation}
+\end{equation}
+In particular, the new ATM strike $K=F_1$ corresponds to $y=0$ and to $x=x_1$ in the old coordinate system.
+
+\subsection{Definition of the updated smile: shape transport plus level shift}
+The update rule defines the post-move smile $\sigma_1$ as a function of $y$ by preserving the pre-move \emph{shape in moneyness space} while allowing a vertical shift:
+\begin{equation}
+\sigma_1(y)
+\;=\;
+(a_1-a_0) + \sigma_0(y),
+\label{eq:sigma1_def}
+\end{equation}
+where $a_1$ will be chosen to anchor the new ATM level.
+Note that $\sigma_1(0)=a_1$, since $\sigma_0(0)=a_0$ by \eqref{eq:sigma0_basis}.
+
+Equation \eqref{eq:sigma1_def} is geometrically simple:
+\begin{itemize}
+\item the map $x \mapsto y$ shifts the coordinate system with the forward (a horizontal translation in log-moneyness);
+\item the term $(a_1-a_0)$ applies a vertical translation to adjust the overall level.
+\end{itemize}
+Thus, all non-level features (skew/curvature modes) are transported through the coordinate change, while the ATM level is re-anchored through $a_1$.
+
+\subsection{Sticky-strike anchoring of the new ATM as a baseline}
+A natural baseline for $a_1$ is obtained by ``sticky strike'' logic at the new ATM strike.
+Since the new ATM strike is $K=F_1$, its old log-moneyness was $x_1$.
+Therefore the old implied volatility at this strike is $\sigma_0(x_1)$, and the simplest anchoring sets
+\begin{equation}
+a_1^{\mathrm{SS}} \;:=\; \sigma_0(x_1).
+\label{eq:a1_sticky_strike}
+\end{equation}
+Under this rule, the new ATM level equals the old implied volatility at the strike that has become ATM.
+
+\subsection{Perturbing the baseline: skew and curvature stickiness}
+Empirically, the market's ATM volatility response to a forward move is not always captured by \eqref{eq:a1_sticky_strike}.
+The model therefore introduces a controlled perturbation:
+\begin{equation}
+a_1
+\;=\;
+\sigma_0(x_1) + \sigma_{\varepsilon,\delta}(x_1),
+\label{eq:a1_perturb}
+\end{equation}
+where the perturbation is defined as
+\begin{equation}
+\sigma_{\varepsilon,\delta}(x_1)
+\;=\;
+\varepsilon\, b_0 x_1
+\;+\;
+\sum_{i=1}^n \delta\, C_0^{i}\,\psi_i(x_1).
+\label{eq:sigma_eps_delta}
+\end{equation}
+Here $\varepsilon$ and $\delta$ are dimensionless parameters controlling how strongly the ATM anchoring reacts to the locally observed smile geometry.
+
+Substituting \eqref{eq:sigma0_basis} and \eqref{eq:sigma_eps_delta} into \eqref{eq:a1_perturb} yields an explicit expression for the ATM-level change:
+\begin{align}
+a_1-a_0
+&=
+\big(\sigma_0(x_1)-\sigma_0(0)\big)
++ \varepsilon\, b_0 x_1 + \sum_{i=1}^n \delta\, C_0^{i}\,\psi_i(x_1)
+\nonumber\\
+&=
+b_0 x_1 + \sum_{i=1}^n C_0^{i}\,\psi_i(x_1)
+\;+\;
+\varepsilon\, b_0 x_1
+\;+\;
+\sum_{i=1}^n \delta\, C_0^{i}\,\psi_i(x_1)
+\nonumber\\
+&=
+(1+\varepsilon)\, b_0 x_1
+\;+\;
+\sum_{i=1}^n (1+\delta)\, C_0^{i}\,\psi_i(x_1).
+\label{eq:a1_minus_a0_final}
+\end{align}
+
+\subsection{Interpretation: the ATM move as geometry times return, filtered by basis localization}
+Equation \eqref{eq:a1_minus_a0_final} is the central diagnostic form of the model.
+It shows that the change in ATM volatility is driven by:
+\begin{enumerate}
+\item \textbf{Local skew at the origin} ($b_0$), multiplied by the log-forward return $x_1$, and scaled by a factor $(1+\varepsilon)$.
+This factor plays the role of a \emph{skew-stickiness multiplier}: it controls how much of the local slope of the smile is translated into an ATM level move when the forward shifts.
+\item \textbf{Localized curvature contributions} ($C_0^i$), evaluated through the basis functions at the move size $x_1$, and uniformly scaled by $(1+\delta)$ in coefficient space.
+The value $\psi_i(x_1)$ acts as a \emph{localization filter}: only basis functions whose support/weight overlaps the realized move $x_1$ contribute significantly.
+The factor $(1+\delta)$ can therefore be interpreted as a \emph{curvature-stickiness multiplier} that bumps all local curvature coefficients $C_0^i$ at the same proportional rate (uniform across centers).
+\end{enumerate}
+
+This provides a geometric view of the anchoring step:
+\begin{equation}
+\Delta\sigma_{\mathrm{ATM}}
+=
+a_1-a_0
+\approx
+\underbrace{(1+\varepsilon)\,b_0}_{\text{skew-controlled response}}
+\cdot
+\underbrace{x_1}_{\text{move size}}
+\;+\;
+\underbrace{(1+\delta)\sum_i C_0^i\psi_i(x_1)}_{\text{curvature modes activated by the move}}.
+\end{equation}
+For small moves $|x_1|\ll 1$, the curvature term may be dominated by basis functions centered near the origin, whereas for larger moves additional centers become active through $\psi_i(x_1)$.
+
+\subsection{Consistency checks and limiting cases}
+The parametrization admits intuitive limiting behaviors:
+\begin{itemize}
+\item $\varepsilon=\delta=0$ reduces to the sticky-strike anchoring $a_1=\sigma_0(x_1)$.
+\item $\varepsilon>-1$ increases the magnitude of the skew-driven ATM response relative to baseline; $\varepsilon<-1$ would invert it.
+\item $\delta$ uniformly scales the contribution of all curvature coefficients in the anchoring adjustment, thereby controlling how strongly ``wing/curvature'' geometry influences the ATM level after a large move.
+\end{itemize}
+These parameters can be calibrated empirically from time series by regressing observed $\Delta\sigma_{\mathrm{ATM}}$ on $(b_0 x_1)$ and on $\sum_i C_0^i\psi_i(x_1)$, optionally conditioning on maturity and regime.
+
+\subsection{Summary}
+The update rule \eqref{eq:sigma1_def}--\eqref{eq:a1_minus_a0_final} separates (i) a coordinate translation induced by the forward move from (ii) an ATM-level re-anchoring.
+The anchoring is expressed as a perturbation of sticky strike, with two interpretable stickiness multipliers:
+$(1+\varepsilon)$ modulates the skew-driven component of the ATM move, and $(1+\delta)$ modulates the curvature-mode component (uniformly across centers in coefficient space), with the basis localization $\psi_i(x_1)$ selecting which curvature centers are activated by the realized move.
+This construction provides a parsimonious, geometry-driven dynamical machinery suitable for desk recalibration workflows.
+
+% ==========================================================
+
+% Bibliography
+% ==========================================================
+\clearpage
+\bibliographystyle{plainnat}
+
+% Option A: BibTeX file (recommended)
+% Create a file named references.bib and uncomment:
+% \bibliography{references}
+
+% Option B: Manual bibliography entries (quick start)
+\begin{thebibliography}{99}
+
+\bibitem{BreedenLitzenberger1978}
+D.~T. Breeden and R.~H. Litzenberger.
+\newblock Prices of state-contingent claims implicit in option prices.
+\newblock \emph{Journal of Business}, 51(4):621--651, 1978.
+
+\end{thebibliography}
+
+\end{document}
+
+
