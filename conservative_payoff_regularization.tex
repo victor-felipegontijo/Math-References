@@ -1,661 +1,580 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage[margin=27mm]{geometry}
-\usepackage{amsmath,amssymb,amsthm,mathtools,bm,microtype,booktabs,longtable,array}
-\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs,tabularx,array}
 \usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{needspace}
+\usepackage{enumitem}
+\geometry{margin=29mm,headheight=15pt,headsep=14pt}
+\definecolor{ink}{HTML}{1E3045}
+\definecolor{accent}{HTML}{235B84}
+\definecolor{quiet}{HTML}{5E7182}
+\hypersetup{colorlinks=true,linkcolor=accent,urlcolor=accent,citecolor=accent,pdftitle={Local Sobolev Continuity and Finite-Order Parabolic Smoothing},pdfauthor={Mathematical exposition}}
+\titleformat{\section}{\normalfont\Large\bfseries\color{ink}}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{ink}}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries\color{ink}}{\thesubsubsection}{0.8em}{}
+\titlespacing*{\section}{0pt}{18pt}{7pt}
+\titlespacing*{\subsection}{0pt}{13pt}{5pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{quiet}Local parabolic Sobolev regularity}
+\fancyhead[R]{\small\color{quiet}Non-divergence-form operators}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5.2pt}
+\setlist[itemize]{topsep=3pt,itemsep=2pt,leftmargin=1.6em}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,leftmargin=1.8em}
+\allowdisplaybreaks[1]
 \newtheorem{theorem}{Theorem}[section]
-\newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
-\theoremstyle{definition}\newtheorem{definition}[theorem]{Definition}
-\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}
-\newcommand{\R}{\mathbb R}\newcommand{\E}{\mathbb E}\newcommand{\PP}{\mathbb P}
-\newcommand{\1}{\mathbf1}\newcommand{\eps}{\varepsilon}\newcommand{\dd}{\,d}
-\newcommand{\norm}[1]{\left\lVert#1\right\rVert}\newcommand{\abs}[1]{\left|#1\right|}
-\newcommand{\supp}{\operatorname{supp}}\newcommand{\dist}{\operatorname{dist}}
-\newcommand{\Lip}{\operatorname{Lip}}\newcommand{\cD}{\mathcal D}
-\DeclareMathOperator{\erf}{erf}
-\title{Conservative Local Regularization of Option Payoffs\\[4pt]\large Spectral heat flow, singular Greeks, and quantitative price bounds}
-\author{Research manuscript}
-\date{16 October 2026}
-\hypersetup{pdftitle={Conservative Local Regularization of Option Payoffs},pdfsubject={Spectral heat flow, singular Greeks, and quantitative price bounds}}
-\setcounter{tocdepth}{1}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{caution}[theorem]{Technical clarification}
+\newcommand{\loc}{\mathrm{loc}}
+\newcommand{\inter}{\operatorname{int}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb R}
+\newcommand{\N}{\mathbb N}
+\newcommand{\cD}{\mathcal D}
+\newcommand{\supp}{\operatorname{supp}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\br}[1]{\left(#1\right)}
+\newcommand{\bluebox}[1]{\begin{center}\fcolorbox{accent!55}{accent!4}{\begin{minipage}{0.91\linewidth}\centering\strut #1\strut\end{minipage}}\end{center}}
+
 \begin{document}
-\maketitle
-\begin{abstract}
-Discontinuous option payoffs produce smooth prices at every positive time to expiry, while their spatial derivatives concentrate and diverge near the terminal singularities. We give a self-contained one-dimensional analysis connecting this phenomenon to positive diffusion semigroups, weighted spectral theory, and a Gaussian heat parametrix. For smooth uniformly elliptic coefficients we prove the parabolic-scale limit of every digital Greek and construct smooth, local upper and lower payoff approximations. Their prices bracket the original price; their $j$th spatial derivatives are bounded by $C\min(t^{-j/2},\eps^{-j})$; and their price errors are bounded by $C\min(1,\eps/\sqrt t)$ with Gaussian localization. We also prove derivative-error estimates, a two-scale transition limit, local regularization for piecewise smooth continuation values, sharper estimates for piecewise affine payoffs, and propagation through discrete observation dates. A sharp lower bound relates the area of any one-sided digital approximation to its delta cap. The treatment separates whole-line estimates from Dirichlet boundary effects and distinguishes smooth-coefficient results from finite-regularity conclusions. The paper develops a rigorous synthesis and explicit constructions; it does not assert priority over the existing smoothing literature.
-\end{abstract}
-\begingroup\small
+\begin{titlepage}
+\vspace*{34mm}
+{\color{accent}\rule{\linewidth}{1.3pt}}\par\vspace{12mm}
+{\Huge\bfseries\color{ink}Local Sobolev Continuity\\[7pt]
+and Finite-Order\\[7pt]
+Parabolic Smoothing\par}
+\vspace{9mm}
+{\Large\color{quiet}Initial-time behavior for non-divergence-form\\
+elliptic operators with $C^{k,1}$ coefficients\par}
+\vspace{15mm}
+{\color{accent}\rule{\linewidth}{0.7pt}}\par
+\vspace{15mm}
+{\large A theorem--proof exposition with energy estimates, elliptic bootstrapping, examples, counterexamples, and derivative corollaries\par}
+\vfill
+\begin{minipage}{\linewidth}
+\small\color{quiet}
+\textbf{Background references.} M. E. Taylor, \emph{Partial Differential Equations I: Basic Theory}, 3rd ed., Springer (2023), and N. V. Krylov, \emph{Lectures on Elliptic and Parabolic Equations in Sobolev Spaces}, AMS (2008).\par
+\vspace{7pt}
+\textbf{Scope.} Local interior regularity and convergence at $t=0$ for solutions satisfying the natural local energy and initial-trace hypotheses. Neither completeness nor a prescribed boundary condition is used in the interior arguments.
+\end{minipage}
+\vspace{20mm}
+\end{titlepage}
 \tableofcontents
-\endgroup
 \newpage
 
-\section{Introduction}
-\subsection{The market-making problem}
-A cash-or-nothing digital put pays $H_K(s)=\1_{\{s<K\}}$. Near expiry and near the strike, a small change in spot can change its value substantially. A dealer can replace the discontinuity by a narrow put spread. The two payoffs
-\begin{equation}\label{eq:ramps}
- R^-_\eps(s)=\frac{(K-s)^+-(K-\eps-s)^+}{\eps},\qquad
- R^+_\eps(s)=\frac{(K+\eps-s)^+-(K-s)^+}{\eps}
+\section{Purpose and the three questions}
+
+Let $M$ be a smooth Riemannian manifold, possibly noncompact and possibly with boundary. Given a time-independent second-order, non-divergence-form elliptic operator $P$ with $C^{k,1}$ coefficients, we wish to analyze the heat-type equation
+\begin{equation}\label{eq:heat}
+\partial_tu+Pu=0,\qquad u(0)=u_0.
 \end{equation}
-satisfy $R^-_\eps\le H_K\le R^+_\eps$, also at $K$ with the convention just fixed. A positive pricing operator preserves these inequalities. This gives a conservative lower price for a bid and upper price for an ask, before transaction costs, funding and inventory considerations. The ramp has slope bounded by $\eps^{-1}$, but corners remain: a ramp stabilizes delta without uniformly stabilizing gamma at expiry. A $C^2$ transition is needed to control both terminal derivatives.
-
-The same mechanism appears at discrete coupon observations and knock-out tests: the continuation value can have a jump when an indicator switches on or off. Continuously monitored barriers are different. They change the evolution operator by imposing killing at a boundary and can create an additional boundary layer. We treat these cases separately.
-
-Risk-neutral valuation begins with a family of expectations. Identifying it as a positive semigroup, and then as the solution operator of a parabolic PDE, adds the tools needed to explain the heuristic: regularity, derivative bounds, weak convergence, localization, and boundary compatibility. The original payoff need not have classical derivatives for its positive-time value to be smooth. Conversely, smoothness at each positive time does not give a derivative bound uniform down to expiry.
-
-In the constant-coefficient heat equation, $DH_K=-\delta_K$ and
-\[
- D(e^{taD^2}H_K)(x)=-(4\pi at)^{-1/2}e^{-(x-K)^2/(4at)}.
-\]
-Thus the delta diverges like $t^{-1/2}$ while converging to a measure in distributions. The $j$th derivative diverges in supremum norm like $t^{-j/2}$. These conclusions follow from an explicit Gaussian, but their nature is local and persists under smooth variable coefficients. Replacing the payoff by a smooth order bracket spreads the singular mass over a window of width $\eps$. The competition is between that window and the diffusion length $\sqrt t$.
-
-\subsection{Results, assumptions, and relation to the references}
-The main quantitative theorem is Theorem~\ref{thm:main}. It includes conservative ordering, localized price error, derivative error, and uniform Greek caps. Theorem~\ref{thm:profile} proves the short-time singular profile. Theorems~\ref{thm:general} and \ref{thm:events} treat more general continuation values and repeated observation dates. Proposition~\ref{prop:optimal} gives a sharp constraint on attainable bias under a delta cap.
-
-The organization follows Taylor's route from functional analysis to evolution equations. The weighted Friedrichs realization and spectral scale in Section~\ref{sec:spectral} adapt \cite[Ch.~5, \S1 and Appendix A; Ch.~6, \S1]{TaylorI}. The heat-kernel argument in Section~\ref{sec:kernel} is a one-dimensional, explicitly convergent realization of the parametrix strategy in \cite[Ch.~7, \S13]{TaylorII}. Instead of assuming a differentiated remainder estimate, we prove it using a Gaussian bridge expansion. Evans supplies alternative background on weak solutions, elliptic regularity, and parabolic evolution \cite[\S\S6.2--6.5, 7.1, 7.4]{Evans}; Gilbarg--Trudinger provides the elliptic perspective \cite[Chs.~6, 8]{GT}. The source guide at the end specifies which arguments are reproduced here.
-
-All principal quantitative claims are proved below. The foundational inputs taken as known are the Hilbert-space spectral theorem, the Riesz representation theorem, compactness of the one-dimensional Sobolev embedding, elementary Gaussian integration, and It\^o's formula with existence and uniqueness for globally Lipschitz SDEs. We do not claim a new general heat-kernel theorem. Nor do we claim that these estimates establish optimality of a dealer's full quoting policy. The contribution of this manuscript is the precise combination of these tools with explicit local conservative constructions.
-
-\section{Pricing operators and notation}\label{sec:model}
-Time $t\ge0$ always denotes \emph{time to maturity}, so the initial datum of the forward evolution is the financial terminal payoff. On $\R$ put
-\begin{equation}\label{eq:A}
- A=a(x)D^2+b(x)D-r(x),\qquad
- dX_t=b(X_t)\dd t+\sqrt{2a(X_t)}\dd W_t.
-\end{equation}
-Except in Section~\ref{sec:finite}, assume
-\begin{equation}\label{eq:smooth}
- a,b,r\in C_b^\infty(\R),\qquad 0<\lambda\le a\le\Lambda,\qquad r\ge0.
-\end{equation}
-Here $C_b^m$ means bounded classical derivatives through order $m$. Constants $C$ may depend on a fixed $T<\infty$, ellipticity, finitely many coefficient norms, derivative orders and a chosen profile, but never on $0<t\le T$ or $0<\eps\le1$. We use
-\begin{equation}\label{eq:Pt}
- P_tf(x)=\E_x\!\left[e^{-\int_0^t r(X_s)\dd s}f(X_t)\right].
-\end{equation}
-For bounded Borel $f$, $P_t$ is positive, $P_{t+s}=P_tP_s$, and $\norm{P_tf}_\infty\le\norm f_\infty$. The semigroup property follows by conditioning at time $t$ and using the Markov property; the other two properties follow directly from the nonnegative discount factor. If $r$ is only bounded below, the same arguments give a factor $e^{t\norm{r^-}_\infty}$.
-
-On an interval $I=(l,h)$ the killed version is
-\begin{equation}\label{eq:killed}
- P_t^If(x)=\E_x\!\left[e^{-\int_0^t r(X_s)\dd s}f(X_t)\1_{\{t<\tau_I\}}\right],
- \qquad \tau_I=\inf\{s:X_s\notin I\}.
-\end{equation}
-It describes zero Dirichlet boundary data. A fixed nonzero rebate can be treated by subtracting a common boundary lifting; it is not part of the homogeneous operator.
-
-The notation $D^jf$ denotes a distributional derivative when $f$ is not smooth. For a piecewise $C^1$ function with finitely many jumps $J_i=f(K_i+)-f(K_i-)$,
-\begin{equation}\label{eq:distjump}
- Df=f'_{\rm reg}+\sum_iJ_i\delta_{K_i}.
-\end{equation}
-Indeed, integration by parts on each interval yields the interior derivative and the difference of the two traces at each endpoint. Point values at jumps do not alter this distribution, although they matter for pointwise payoff order at time zero.
-
-\section{The weighted spectral foundation}\label{sec:spectral}
-In this section $I$ is bounded; coefficients extend smoothly to $\overline I$, $a>0$, and $r\ge0$. We prove the global existence and smoothing mechanism without assuming symmetry in Lebesgue measure.
-
-\subsection{Speed measure and the Friedrichs operator}
-Fix $x_0\in I$ and define
-\begin{equation}\label{eq:weight}
- p(x)=\exp\!\left(\int_{x_0}^x\frac{b(s)}{a(s)}\dd s\right),\qquad
- \rho(x)=p(x)/a(x).
-\end{equation}
-Then $(a\rho)'=b\rho$ and
-\[
- A u=\rho^{-1}(p u')'-ru.
-\]
-The density $\rho$ is a speed density up to normalization. On a bounded interval, $p,\rho$ and their reciprocals are bounded. Set $\mathcal H=L^2(I,\rho\dd x)$ and
-\begin{equation}\label{eq:form}
- \mathfrak q(u,v)=\int_I p u'\overline{v'}\dd x+\int_I r\rho u\overline v\dd x,
- \qquad u,v\in H_0^1(I).
-\end{equation}
-
-\begin{theorem}[Spectral realization and heat evolution]\label{thm:spectral}
-There is a nonnegative self-adjoint operator $L=-A$ on $\mathcal H$, with
-\[
- \mathcal D(L)=H^2(I)\cap H_0^1(I),
-\]
-whose form is \eqref{eq:form}. It has an orthonormal eigenbasis $(e_n)$ and eigenvalues $0<\lambda_n\to\infty$. For $f\in\mathcal H$,
-\begin{equation}\label{eq:spectral}
- e^{-tL}f=\sum_{n=1}^\infty e^{-t\lambda_n}(f,e_n)_\mathcal H e_n
-\end{equation}
-is the unique weak heat solution in the energy class
-$C([0,T];\mathcal H)\cap L^2(0,T;H_0^1)$ with time derivative in $L^2(0,T;H^{-1})$.
-Define $\mathcal H_L^s$ by the norm
-\[
- \norm f_{\mathcal H_L^s}^2=\sum_n(1+\lambda_n)^s|(f,e_n)_\mathcal H|^2,
-\]
-using completion for negative $s$. For every $s\in\R$, $\nu\ge0$, and $0<t\le T$,
-\begin{equation}\label{eq:specsmooth}
- \norm{e^{-tL}f}_{\mathcal H_L^{s+2\nu}}\le C_{\nu,T}t^{-\nu}\norm f_{\mathcal H_L^s}.
-\end{equation}
-The semigroup is positive and contractive on $L^\infty$, and agrees with $P_t^I$.
-\end{theorem}
-\begin{proof}
-The form norm $\mathfrak q(u,u)+\norm u_\mathcal H^2$ is equivalent to the $H^1$ norm on $H_0^1$. For $f\in\mathcal H$, Riesz representation gives a unique $u\in H_0^1$ such that
-\[
- (u,v)_\mathcal H+\mathfrak q(u,v)=(f,v)_\mathcal H\quad(v\in H_0^1).
-\]
-The resulting resolvent $R$ is bounded, positive as a Hilbert-space operator, self-adjoint and injective on $\mathcal H$. Its image is dense because $(\operatorname{Ran}R)^\perp=\ker R=0$. The map into $H_0^1$ is bounded, and its inclusion in $\mathcal H$ is compact. The compact self-adjoint spectral theorem gives eigenvectors of $R$ with eigenvalues $\mu_n>0$ tending to zero. Setting $\lambda_n=\mu_n^{-1}-1$ defines $L$ and its spectral domain. Poincar\'e's inequality and $p>0$ imply $\lambda_n>0$.
-
-The weak equation $Lu=f$ says $(pu')'=\rho(ru-f)\in L^2$. Consequently $pu'\in H^1$, hence $u\in H^2$; conversely every $u\in H^2\cap H_0^1$ has the stated form action. This proves the domain identity. Formula~\eqref{eq:spectral} converges in $\mathcal H$ and tends to $f$ as $t\downarrow0$ by dominated convergence. Moreover
-\[
- \norm{e^{-tL}f}_\mathcal H^2+2\int_0^t\mathfrak q(e^{-sL}f,e^{-sL}f)\dd s=\norm f_\mathcal H^2.
-\]
-It follows first for finite sums and then by monotone convergence. The equation gives the required $H^{-1}$ bound for the time derivative. Testing the difference of two energy solutions against itself proves uniqueness (time averaging justifies the test). Finally,
-\[
- (1+\lambda)^\nu e^{-t\lambda}\le C_{\nu,T}t^{-\nu}
-\]
-proves \eqref{eq:specsmooth} term by term.
-
-For positivity, the weak resolvent equation $(1+hL)u=f\ge0$, tested with $u^- =\max(-u,0)$, has nonpositive left-hand side and nonnegative right-hand side, forcing $u^-=0$. If $f\le1$, testing with $(u-1)^+\in H_0^1$ shows $u\le1$, since $r\ge0$. Apply also to $-u$. Thus $(1+hL)^{-1}$ is positive and an $L^\infty$ contraction. Its iterates converge spectrally to $e^{-tL}$, proving the same assertions for the semigroup.
-
-For $f\in C_c^\infty(I)$, elliptic bootstrapping below gives a classical heat solution. Apply It\^o's formula to the discounted $u(t-s,X_s)$ stopped at $\tau_I$ and at $t-\delta$. The drift vanishes; the boundary value is zero. Let $\delta\downarrow0$, using boundedness and continuity at time zero, to obtain \eqref{eq:killed}. Equality extends first in $L^2$ and then to bounded Borel data. One precise extension is to view, at fixed $t>0,x\in I$, both sides as finite measures in the initial datum: they agree on $C_c^\infty(I)$, hence on Borel sets. Point evaluation on the spectral side is continuous after positive time by \eqref{eq:specsmooth} and the elliptic estimate below; positivity supplies the corresponding measure. The stochastic measure has no endpoint mass before exit. This proves the identification.
-\end{proof}
-
-\subsection{Elliptic bootstrapping, and why wave flow differs}
-\begin{lemma}[One-dimensional elliptic estimate]\label{lem:elliptic}
-For every integer $q\ge0$ and smooth $v$ vanishing on $\partial I$,
-\begin{equation}\label{eq:elliptic}
- \norm v_{H^{q+2}(I)}\le C_q(\norm{Lv}_{H^q(I)}+\norm v_{L^2(I)}).
-\end{equation}
-In particular, for integer $N\ge1$,
-\begin{equation}\label{eq:sobheat}
- \norm{e^{-tL}f}_{H^{2N}}\le C_{N,T}t^{-N}\norm f_\mathcal H.
-\end{equation}
-\end{lemma}
-\begin{proof}
-The identity $a v''=-Lv-bv'+rv$ gives
-$\norm{v''}_2\le C(\norm{Lv}_2+\norm{v'}_2+\norm v_2)$.
-Integration by parts, using $v=0$ at the endpoints, yields
-$\norm{v'}_2^2=-\int v''\overline v\le\norm{v''}_2\norm v_2$.
-Young's inequality absorbs the first-derivative term and proves the case $q=0$. If the estimate has been proved through $q-1$, differentiate
-$v''=a^{-1}(-Lv-bv'+rv)$ exactly $q$ times. The product rule bounds its $H^q$ norm by $C(\norm{Lv}_{H^q}+\norm v_{H^{q+1}})$. The inductive estimate bounds the latter by $C(\norm{Lv}_{H^{q-1}}+\norm v_2)$; this proves \eqref{eq:elliptic}. Density gives the corresponding weak statements. Iterating it on $v,Lv,\ldots$ gives $\norm v_{H^{2N}}\le C_N\sum_{j=0}^N\norm{L^jv}_2$ for $v\in\mathcal D(L^N)$. The spectral multiplier estimate proves \eqref{eq:sobheat}.
-\end{proof}
-In one dimension $H^s\hookrightarrow C^m$ when $s>m+\tfrac12$. Thus \eqref{eq:sobheat} gives every positive-time spatial derivative under smooth coefficients. This is exactly the spectral damping mechanism emphasized in Taylor. In contrast, the wave solution has multipliers $\cos(t\sqrt{\lambda_n})$ and $\sin(t\sqrt{\lambda_n})/\sqrt{\lambda_n}$, with no heat-like exponential decay. Its displacement/velocity scale $\mathcal H_L^{s+1}\times\mathcal H_L^s$ is preserved by the invertible wave group; it does not acquire arbitrary regularity as heat flow does.
-
-\begin{remark}[Boundary conditions in fractional domains]
-The notation $\mathcal H_L^s$ is intentional: it is not automatically the ordinary $H^s(I)$ with no boundary conditions. For example $\mathcal D(L)=H^2\cap H_0^1$, and for smooth coefficients $\mathcal D(L^N)$ imposes $L^jv|_{\partial I}=0$ for $0\le j<N$. The embeddings used above go from the spectral domain into ordinary Sobolev spaces, not conversely without compatibility. On $\R$, the speed density can grow exponentially, so a bounded digital need not belong to $L^2(\rho\dd x)$. The local and whole-line estimates below therefore do not place the digital in that space.
-\end{remark}
-
-\section{A differentiated Gaussian parametrix}\label{sec:kernel}
-We now return to \eqref{eq:smooth} on $\R$. This section proves the kernel estimates used later rather than importing them as an unproved assumption.
-
-\subsection{Flattening the principal part}
-Set
-\begin{equation}\label{eq:lamperti}
- z=\psi(x)=\int_0^x a(s)^{-1/2}\dd s,\quad x=\chi(z),\quad
- \beta(z)=\left(\frac{b-a'/2}{\sqrt a}\right)(\chi(z)),\quad R(z)=r(\chi(z)).
-\end{equation}
-Uniform ellipticity makes $\psi$ a bi-Lipschitz diffeomorphism of $\R$. All its positive-order derivatives and those of $\chi$ are bounded. For $u(x)=v(\psi(x))$,
-\[
- Au=(v''+\beta v'-Rv)\circ\psi.
-\]
-Choose $B'=\beta/2$ and put $V=R+\beta'/2+\beta^2/4$. A direct product calculation gives
-\begin{equation}\label{eq:gauge}
- (D_z^2+\beta D_z-R)(e^{-B}w)=e^{-B}(D_z^2-V)w.
-\end{equation}
-The functions $\beta,V$ have bounded derivatives of all orders; $B$ itself may be unbounded, but $|B(w)-B(z)|\le C|w-z|$.
-
-\begin{lemma}[Bridge expansion and differentiated remainder]\label{lem:bridge}
-Let $G_t(v)=(4\pi t)^{-1/2}e^{-v^2/(4t)}$ and let $W^0_s=W_s-sW_1$, $0\le s\le1$, be a standard Brownian bridge. The kernel of $D_z^2-V$ is
-\begin{align}
- k(t,z,w)&=G_t(z-w)F(t,z,w),\label{eq:bridge}\\
- F(t,z,w)&=\E\exp\!\left[-t\int_0^1 V((1-s)z+sw+\sqrt{2t}W^0_s)\dd s\right].\nonumber
-\end{align}
-For $0<t\le T$,
-\begin{equation}\label{eq:Fbounds}
- |F-1|\le C_Tt,\qquad |\partial_z^i\partial_w^jF|\le C_{i,j,T}t\quad(i+j\ge1).
-\end{equation}
-The discounted pricing kernel relative to $\dd y$ is
-\begin{equation}\label{eq:q}
- q(t,x,y)=e^{B(\psi(y))-B(\psi(x))}G_t(\psi(x)-\psi(y))F(t,\psi(x),\psi(y))\psi'(y).
-\end{equation}
-For all integers $i,j\ge0$,
-\begin{equation}\label{eq:gauss}
- |\partial_x^i\partial_y^jq(t,x,y)|\le C_{i,j,T}t^{-(1+i+j)/2}
- \exp\!\left[-\frac{|x-y|^2}{c_{i,j,T}t}\right].
-\end{equation}
-\end{lemma}
-\begin{proof}
-Iterate Duhamel's equation for $D^2-V$ about the Gaussian semigroup. The term with $n$ insertions of $V$ is an integral over $0<s_1<\cdots<s_n<t$ of a product of $n+1$ Gaussian kernels and $n$ potentials, with sign $(-1)^n$. Integrating the spatial variables in absolute value bounds it by
-\[
- G_t(z-w)\frac{(t\norm V_\infty)^n}{n!}.
-\]
-Thus the series converges absolutely and defines the unique bounded-potential perturbation: uniqueness follows by iterating the difference of two Duhamel solutions, with the same factorial bound. The product of the Gaussian kernels divided by $G_t(z-w)$ is the joint density of a diffusion bridge of variance parameter $2$, at times $s_1,\ldots,s_n$. This follows either by conditioning independent Gaussian increments or by completing squares. Rescale these times by $t$. Symmetry of the cube integral shows that summing the series is precisely the exponential expectation in \eqref{eq:bridge}.
-
-Write its exponent as $-tJ(z,w)$. Every endpoint derivative of $J$ is bounded, because differentiating the affine bridge argument only inserts factors $s$ or $1-s$ and a bounded derivative of $V$. A derivative of $e^{-tJ}$ is a finite sum of products of such derivatives multiplied by $t^\ell e^{-tJ}$, with $\ell\ge1$. Since $|J|\le\norm V_\infty$, dominated differentiation is valid and proves \eqref{eq:Fbounds}. The case $F-1$ follows from $|e^{-tJ}-1|\le t\norm V_\infty e^{t\norm V_\infty}$.
-
-The coordinate and gauge identities give \eqref{eq:q}. This kernel solves $u_t=Au$ with the prescribed initial datum. To identify it with \eqref{eq:Pt}, first take smooth bounded data. Gaussian domination gives a bounded classical solution; It\^o's formula for its discounted backward-time evaluation, stopped in $[-N,N]$ and before time zero, gives the expectation formula as $N\to\infty$ and the remaining time tends to zero. The exit terms vanish because bounded drift and diffusion give vanishing exit probability for fixed initial point as $N\to\infty$. Equality for Borel data follows by equality of the finite kernel measures on smooth compactly supported tests. This also proves positivity and mass at most one, independently of the gauge representation.
-
-Each Gaussian derivative has the bound
-$|D^nG_t(v)|\le C_n t^{-(1+n)/2}e^{-v^2/(8t)}$,
-by differentiating the Gaussian and absorbing its polynomial into a weaker Gaussian. Differentiate \eqref{eq:q} by the product and chain rules. Derivatives of $F$ are bounded, derivatives of the gauge factor are bounded by $C e^{C|z-w|}$, and coordinate derivatives are bounded. Use
-\[
- C|z-w|-\frac{|z-w|^2}{8t}\le C_T-\frac{|z-w|^2}{16t}
-\]
-and bi-Lipschitz equivalence of $|z-w|$ and $|x-y|$. Terms of lower derivative order can be bounded by the displayed power of $t$ on $0<t\le T$. This proves \eqref{eq:gauss}.
-\end{proof}
-
-\subsection{Kernel scaling and localization}
-For $a_0>0$ let $g_{a_0}(v)=(4\pi a_0)^{-1/2}e^{-v^2/(4a_0)}$. Formula~\eqref{eq:q}, the Taylor expansion of $\psi$, and \eqref{eq:Fbounds} imply, for bounded $\xi,\eta$ and every $m\ge0$,
-\begin{equation}\label{eq:rescaledkernel}
- t^{(m+1)/2}\partial_x^mq(t,K+\sqrt t\,\xi,K+\sqrt t\,\eta)
- \longrightarrow \partial_\xi^m g_{a(K)}(\xi-\eta)
-\end{equation}
-uniformly on compact sets. To see the derivative claim explicitly, the only nonvanishing leading term differentiates the Gaussian $m$ times through $\psi'(x)$; differentiating any coefficient or higher coordinate derivative removes at least one factor $t^{-1/2}$. The gauge factor tends to one and $\psi'(K)=a(K)^{-1/2}$. These observations give exactly the derivative of the Gaussian with variance $2a(K)$.
-
-\begin{lemma}[Localized error bounds]\label{lem:localerror}
-Suppose $h$ is supported in an interval $E$ of length $\ell$, $\norm h_\infty\le M$, and $0<t\le T$. Then for every integer $j\ge0$,
-\begin{equation}\label{eq:localerror}
- |D^jP_th(x)|\le C_jM t^{-j/2}\min\{1,\ell/\sqrt t\}
- \exp\!\left[-\frac{\dist(x,E)^2}{c_jt}\right].
-\end{equation}
-For $j=0$ and $h\ge0$, also $P_th\ge0$. If $h_\eps$ is supported in $K+\eps[\alpha,\beta]$, and $h_\eps(K+\eps z)=h_*(z)$ with bounded fixed $h_*$, then at each fixed $t>0$,
-\begin{equation}\label{eq:biasexp}
- D^jP_th_\eps(x)=\eps\partial_x^jq(t,x,K)\int_\alpha^\beta h_*(z)\dd z+O(\eps^2),
-\end{equation}
-locally uniformly in $x$.
-\end{lemma}
-\begin{proof}
-Integrate \eqref{eq:gauss} against $h$. Split the Gaussian exponent in half and extract $e^{-\dist(x,E)^2/(2ct)}$. The remaining integral is at most both $\ell$ and $C\sqrt t$, yielding \eqref{eq:localerror}. For \eqref{eq:biasexp}, change variables $y=K+\eps z$ and use the mean-value theorem on $\partial_x^jq$ in $y$; its first $y$ derivative is bounded on the fixed compact set involved. The remainder is bounded by $C\eps^2\int|z h_*(z)|\dd z$.
-\end{proof}
-
-\section{Singular terminal derivatives and sharp short-time rates}\label{sec:singular}
-\begin{theorem}[Digital and jump profiles]\label{thm:profile}
-Under \eqref{eq:smooth}, $P_tH_K\to H_K$ in $L^p_{\rm loc}$ for every $1\le p<\infty$, and
-\begin{equation}\label{eq:weak}
- D^mP_tH_K\longrightarrow- D^{m-1}\delta_K\quad\hbox{in }\cD'(\R),\qquad m\ge1.
-\end{equation}
-For each $m\ge1$,
-\begin{equation}\label{eq:profile}
- t^{m/2}D^mP_tH_K(K+\sqrt t\,\xi)
- \longrightarrow -g_{a(K)}^{(m-1)}(\xi)
-\end{equation}
-locally uniformly in $\xi$. Consequently, for sufficiently small $t$,
-\begin{equation}\label{eq:sharp}
- c_m t^{-m/2}\le\norm{D^mP_tH_K}_\infty\le C_m t^{-m/2}.
-\end{equation}
-More generally, if bounded $f$ has left and right limits at $K$, with jump $J=f(K+)-f(K-)$, then the right-hand side of \eqref{eq:profile} for $P_tf$ is $Jg_{a(K)}^{(m-1)}(\xi)$.
-\end{theorem}
-\begin{proof}
-For $x\ne K$, continuity in probability of $X_t^x$ at $x$ and convergence of the discount to one give $P_tH_K(x)\to H_K(x)$. Dominated convergence on compact intervals gives $L^p_{\rm loc}$ convergence. Testing derivatives against $\varphi\in C_c^\infty$ gives
-$\langle D^mP_tH_K,\varphi\rangle=(-1)^m\int P_tH_K D^m\varphi$,
-which proves \eqref{eq:weak}.
-
-For the profile, substitute $y=K+\sqrt t\,\eta$ in the differentiated kernel integral over $y<K$. The integrand is the left side of \eqref{eq:rescaledkernel}. For $\xi$ in a compact set, \eqref{eq:gauss} dominates it by $C e^{-(\xi-\eta)^2/c}$ independently of $t$. Dominated convergence, with uniform tail control, yields
-\[
- \int_{-\infty}^0\partial_\xi^m g_{a(K)}(\xi-\eta)\dd\eta
- =-g_{a(K)}^{(m-1)}(\xi).
-\]
-Local uniformity follows from uniform convergence on truncated integration ranges and the uniform Gaussian tail. The upper bound in \eqref{eq:sharp} follows by integrating \eqref{eq:gauss}; for the lower bound choose $\xi$ where $g_{a(K)}^{(m-1)}(\xi)\ne0$.
-
-For the last assertion, $f(K+\sqrt t\,\eta)$ tends to its appropriate one-sided limit for every $\eta\ne0$. Repeat the same dominated-convergence argument. The integral over all $\eta$ of a positive-order Gaussian derivative is zero. The difference between the right and left constants therefore produces $Jg^{(m-1)}_{a(K)}$.
-\end{proof}
-\begin{remark}[What the blow-up statement means]
-The lower bound concerns a supremum over a shrinking neighborhood, not every fixed point. For example, in the driftless heat model gamma vanishes exactly at $x=K$, although its supremum grows like $t^{-1}$. A jump of nonzero size forces the rates in \eqref{eq:sharp}; mere distributional convergence alone would not determine them.
-\end{remark}
-
-\begin{proposition}[Constant-coefficient $L^p$ scaling]\label{prop:lp}
-For $A=aD^2+bD-r$ with constant $a>0$, $r\ge0$, and $1\le p\le\infty$,
-\begin{equation}\label{eq:lp}
- \norm{D^mP_tH_K}_{L^p(\R)}=e^{-rt}t^{-m/2+1/(2p)}\norm{g_a^{(m-1)}}_{L^p(\R)},\quad m\ge1,
-\end{equation}
-where $1/\infty=0$. In particular delta converges weakly to a Dirac mass but has bounded $L^1$ norm.
-\end{proposition}
-\begin{proof}
-The solution is $e^{-rt}\int_{-\infty}^K G_{at}(x+bt-y)\dd y$, where $G_{at}(v)=(4\pi at)^{-1/2}e^{-v^2/(4at)}$. Its $m$th derivative is $-e^{-rt}t^{-m/2}g_a^{(m-1)}((x+bt-K)/\sqrt t)$. Change variables in the $L^p$ integral; translation does not affect the norm.
-\end{proof}
-
-\section{Smooth conservative digital regularization}\label{sec:regularization}
-\subsection{Profiles and deterministic bounds}
-Choose $\eta:\R\to[0,1]$ nonincreasing, with $\eta=1$ on $(-\infty,0]$ and $\eta=0$ on $[1,\infty)$. For a $C^m$ profile all derivatives through $m$ must match the constant pieces at both endpoints. Define
-\begin{equation}\label{eq:smoothing}
- H^+_\eps(x)=\eta((x-K)/\eps),\qquad
- H^-_\eps(x)=\eta((x-K+\eps)/\eps).
-\end{equation}
-Then $H^-_\eps\le H_K\le H^+_\eps$ everywhere. The upper error is supported in $[K,K+\eps]$, the lower error in $[K-\eps,K]$, and
-\begin{equation}\label{eq:payoffder}
- \norm{D^jH^\pm_\eps}_\infty=\eps^{-j}\norm{\eta^{(j)}}_\infty\quad(1\le j\le m).
-\end{equation}
-In particular the quintic profile
-\begin{equation}\label{eq:quintic}
- \eta(z)=1-10z^3+15z^4-6z^5\quad(0\le z\le1)
-\end{equation}
-with constant extensions is $C^{2,1}$ and satisfies
-\begin{equation}\label{eq:quinticconstants}
- \norm{\eta'}_\infty=\frac{15}{8},\qquad
- \norm{\eta''}_\infty=\frac{10}{\sqrt3},\qquad \int_0^1\eta(z)\dd z=\frac12.
-\end{equation}
-Indeed $\eta'=-30z^2(1-z)^2$ and $\eta''=-60z(1-z)(1-2z)$; maximizing these polynomials gives the constants. For unlimited differentiability take
-\[
- w(z)=c\exp[-1/(z(1-z))]\1_{(0,1)}(z),\quad \int w=1,\qquad \eta(z)=\int_z^\infty w(v)\dd v.
-\]
-All derivatives of $w$ vanish at both endpoints, so the extension is $C^\infty$.
-
-\subsection{Propagation of smooth payoff derivatives}
-\begin{lemma}[$C_b^m$ stability]\label{lem:Cm}
-For $f\in C_b^m(\R)$, $0\le t\le T$, and integers $m\ge0$,
-\begin{equation}\label{eq:Cm}
- \norm{P_tf}_{C_b^m}\le C_{m,T}\norm f_{C_b^m}.
-\end{equation}
-For $j\ge0$ and bounded Borel $f$,
-\begin{equation}\label{eq:Linfsmooth}
- \norm{D^jP_tf}_\infty\le C_{j,T}t^{-j/2}\norm f_\infty\quad(0<t\le T).
-\end{equation}
-If $D^jf$ is bounded uniformly continuous for $0\le j\le m$, then $P_tf\to f$ in $C_b^m$ as $t\downarrow0$.
-\end{lemma}
-\begin{proof}
-The second bound follows by integration of \eqref{eq:gauss}. For the first, initially take smooth data with bounded derivatives of every order. These data give the classical initial traces of all derivatives: in \eqref{eq:q}, change variables to $w=z+\sqrt t\,v$ before differentiating in $z$. The fixed Gaussian measure in $v$, bounded coefficient derivatives, and \eqref{eq:Fbounds} allow dominated differentiation; every derivative tends uniformly to the corresponding derivative of $f$. Now set $w_j=D^ju$. The product rule gives
-\begin{align}\label{eq:triangular}
- (w_j)_t={}&a w_j''+(b+ja')w_j'+c_jw_j+\sum_{i=0}^{j-1}d_{ji}w_i,\\
- c_j={}&\binom j2 a''+jb'-r,\nonumber
-\end{align}
-where the $d_{ji}$ are bounded combinations of derivatives of $a,b,r$. Terms involving $a$ with derivative order at least three, $b$ with order at least two, and $r$ with order at least one contribute to this last sum. Thus no derivative above $j$ remains in the source. The diffusion with drift $b+ja'$ is nonexplosive. Applying It\^o's formula to this inhomogeneous scalar equation, or the scalar maximum principle with an exponential integrating factor, gives
-\[
- \norm{w_j(t)}_\infty\le e^{Ct}\norm{D^jf}_\infty
- +C\int_0^t e^{C(t-s)}\sum_{i<j}\norm{w_i(s)}_\infty\dd s.
-\]
-Induction on $j$, starting with the contraction for $j=0$, proves \eqref{eq:Cm}.
-
-For general $C_b^m$ data, convolve with smooth approximate identities. The derivatives remain uniformly bounded and converge locally uniformly through order $m$. The kernel estimates give local uniform convergence of all positive-time derivatives; hence the same bounds pass to the limit. For the final assertion, the initial term in the scalar evolution for $w_j$ converges uniformly to $D^jf$: a bounded uniformly continuous function is uniformly approximated by its expectation under a diffusion with bounded coefficients, since $\sup_x\E|X_t^x-x|^2\le Ct$ for small $t$. The bounded zero-order factor tends to one and the source integral is $O(t)$. Induction in \eqref{eq:triangular} completes the proof.
-\end{proof}
-
-\begin{theorem}[Conservative price bounds and stabilized Greeks]\label{thm:main}
-Assume \eqref{eq:smooth}, let $m\ge2$, and use a $C^m$ profile in \eqref{eq:smoothing}. Write $u=P_tH_K$, $u^\pm_\eps=P_tH^\pm_\eps$. For $0<\eps\le1$:
+The objective is \emph{local in space}, including behavior as $t\downarrow0$. Three separate issues arise:
 \begin{enumerate}
-\item For all $t\ge0$, $u^-_\eps\le u\le u^+_\eps$.
-\item For $0<t\le T$, with $E_+=[K,K+\eps]$ and $E_-=[K-\eps,K]$,
-\begin{equation}\label{eq:mainbias}
- 0\le\pm(u^\pm_\eps-u)(t,x)\le C\min\{1,\eps/\sqrt t\}
- e^{-\dist(x,E_\pm)^2/(ct)}.
-\end{equation}
-For each $j\ge0$,
-\begin{equation}\label{eq:greekerror}
- |D^j(u^\pm_\eps-u)(t,x)|\le C_j t^{-j/2}\min\{1,\eps/\sqrt t\}
- e^{-\dist(x,E_\pm)^2/(c_jt)}.
-\end{equation}
-\item For $1\le j\le m$ and $0<t\le T$,
-\begin{equation}\label{eq:cap}
- \norm{D^ju^\pm_\eps(t)}_\infty\le C_{j,T,\eta}\min\{t^{-j/2},\eps^{-j}\}.
-\end{equation}
-In particular the supremum over $0\le t\le T$ is at most $C\eps^{-j}$.
-\item As $\eps\downarrow0$, $H^\pm_\eps\to H_K$ in $L^p_{\rm loc}$ for $p<\infty$, and all distributional derivatives converge. For fixed $t>0$ every positive-time derivative converges uniformly on $\R$. For fixed $\eps$, $u^\pm_\eps(t)\to H^\pm_\eps$ in $C_b^m$ as $t\downarrow0$.
+\item For which $s\geq0$ does $u_0\in H^s_{\loc}$ imply strong convergence $u(t)\to u_0$ in $H^s_{\loc}$?
+\item Given the limited coefficient regularity, what is the largest guaranteed spatial Sobolev order at each positive time?
+\item For a stronger order $r$, what is the behavior of $\norm{u(t)}_{H^r(U)}$ as $t\downarrow0$?
 \end{enumerate}
+A local regularity theorem answers all three without constructing a heat semigroup for each possible boundary condition. The main distinction is between the \emph{local regularity of an already existing solution} and the \emph{global well-posedness problem} that produces that solution.
+
+\section{The consolidated theorem}
+
+Let $M^\circ=M\setminus\partial M$. In local coordinates consider
+\begin{equation}\label{eq:operator}
+P=-a^{ij}(x)\nabla_i\nabla_j+b^i(x)\nabla_i+c(x),
+\end{equation}
+where $a^{ij},b^i,c\in C^{k,1}_{\loc}(M^\circ)$, $k\in\N_0$. Assume the scalar real-coefficient principal part is strongly elliptic on compact subsets: for each $K\Subset M^\circ$ there exists $\lambda_K>0$ with
+\begin{equation}\label{eq:elliptic}
+a^{ij}(x)\xi_i\xi_j\geq\lambda_K\abs{\xi}_g^2,
+\qquad x\in K.
+\end{equation}
+The coefficients do not depend on $t$. A \emph{local energy solution up to $t=0$} means a distributional solution of \eqref{eq:heat} such that, for every $V\Subset M^\circ$ and $T'<T$,
+\begin{equation}\label{eq:energyclass}
+u\in L^2(0,T';H^1(V)),\quad
+u_t\in L^2(0,T';H^{-1}(V)),\quad
+u(0)=u_0\in L^2_{\loc}(M^\circ)
+\end{equation}
+with the initial equality interpreted via the $L^2$-continuous representative. An equivalent local formulation uses smooth cutoffs $\chi u$ on coordinate balls; this avoids requiring smooth boundaries for arbitrary $V$.
+
+\begin{theorem}[Local Sobolev continuity and finite-order smoothing]\label{thm:main}
+Set
+\begin{equation}\label{eq:R}
+R=k+3.
+\end{equation}
+Under \eqref{eq:operator}--\eqref{eq:energyclass}, the following hold.
+
+\smallskip
+\textbf{(A) Initial-time strong continuity.} For every real $0\leq s\leq R$,
+\begin{equation}\label{eq:A}
+u_0\in H^s_{\loc}(M^\circ)
+\quad\Longrightarrow\quad
+u\in C\bigl([0,T);H^s_{\loc}(M^\circ)\bigr).
+\end{equation}
+In particular, for each $U\Subset M^\circ$,
+\begin{equation}\label{eq:strong}
+\lim_{t\downarrow0}\norm{u(t)-u_0}_{H^s(U)}=0.
+\end{equation}
+
+\smallskip
+\textbf{(B) Positive-time smoothing.} Even when only $u_0\in L^2_{\loc}$ is assumed,
+\begin{equation}\label{eq:B}
+u\in C\bigl((0,T);H^R_{\loc}(M^\circ)\bigr).
+\end{equation}
+Thus $u(t)\in H^{k+3}_{\loc}$ for every $t>0$. The integer threshold $k+3$ is sharp as a coefficient-dependent guarantee.
+
+\smallskip
+\textbf{(C) Limits of stronger norms.} Fix $U\Subset M^\circ$ and $0\leq r\leq R$.
+\begin{itemize}
+\item If $u_0\in H^r(V)$ for some $U\Subset V\Subset M^\circ$, then
+\begin{equation}\label{eq:finite}
+\lim_{t\downarrow0}\norm{u(t)}_{H^r(U)}=\norm{u_0}_{H^r(U)}.
+\end{equation}
+\item If $u_0\notin H^r(U)$, then
+\begin{equation}\label{eq:infinite}
+\lim_{t\downarrow0}\norm{u(t)}_{H^r(U)}=+\infty.
+\end{equation}
+\end{itemize}
+When $u_0\in H^r(U)$ but has no $H^r$ regularity on a neighborhood of $\overline U$, neither alternative is automatic.
+
+\smallskip
+\textbf{(D) Independence of the boundary realization.} The conclusions apply to every boundary realization for which the corresponding solution satisfies \eqref{eq:energyclass}; the local constants do not involve the boundary operator. Numerical estimates may nevertheless depend on lower-order norms of the particular solution.
 \end{theorem}
-\begin{proof}
-The payoff order and positivity prove assertion 1. The two signed errors are nonnegative, bounded by one, and supported in the specified intervals. Apply Lemma~\ref{lem:localerror} to get assertions 2 and the positive-time convergence in assertion 4. By \eqref{eq:payoffder}, $\norm{H^\pm_\eps}_{C_b^j}\le C_{j,\eta}\eps^{-j}$ when $\eps\le1$. Lemma~\ref{lem:Cm} gives the $\eps^{-j}$ bound; its kernel bound gives the $t^{-j/2}$ bound. Taking the smaller proves assertion 3. The payoff differences have $L^p$ norm at most $\eps^{1/p}$, which implies convergence of distributional derivatives by testing. Finally every derivative through $m$ of the regularized payoff is bounded uniformly continuous, so Lemma~\ref{lem:Cm} proves the fixed-$\eps$ time limit.
+
+\begin{remark}[Scope of the proof]
+The integer-order estimates below are developed explicitly using energy arguments, commutators, and the elliptic estimate. Extending the estimates to every noninteger exponent requires standard fractional Sobolev commutator/localization estimates or an equivalent parabolic parametrix. We state that analytic input precisely in \S\ref{sec:fractional}, rather than presenting the elementary differentiation calculation as a complete substitute for it. Likewise, passing from formal differentiated equations to weak solutions uses standard difference-quotient regularization and the initial-trace theorem; see \cite{Taylor2023,Krylov2008}.
+\end{remark}
+
+\section{The basic local parabolic estimate}\label{sec:energy}
+
+We work in one coordinate chart; the geometry contributes only smooth coefficient terms. Replacing $a^{ij}$ by its symmetric part does not alter the principal second-derivative term. In Euclidean notation,
+\begin{equation}\label{eq:localP}
+P=-a^{ij}(x)\partial_i\partial_j+b^i(x)\partial_i+c(x).
+\end{equation}
+
+\begin{lemma}[Local energy estimate and continuity]\label{lem:energy}
+Let $q$ be an integer with $0\leq q\leq k+1$. If $v$ is a local energy solution of $v_t+Pv=0$ and $v_0\in H^q_{\loc}$, then, for $U\Subset V\Subset M^\circ$ and $0<T'<T$,
+\begin{equation}\label{eq:energy}
+\begin{aligned}
+&\sup_{0\leq t\leq T'}\norm{v(t)}_{H^q(U)}^2
++\int_0^{T'}\norm{v(t)}_{H^{q+1}(U)}^2\,\dd t\\
+&\qquad\leq C\left(\norm{v_0}_{H^q(V)}^2
++\int_0^T\norm{v(t)}_{L^2(V)}^2\,\dd t\right).
+\end{aligned}
+\end{equation}
+Moreover $v\in C([0,T);H^q_{\loc})$. There is an analogous positive-time estimate, without $H^q$ initial regularity, on every cylinder compactly contained in $M^\circ\times(0,T)$.
+\end{lemma}
+
+\subsection{The case $q=0$}
+Choose $\chi\in C_c^\infty(V)$ with $\chi=1$ on $U$. Formally multiply the equation
+\[
+v_t-a^{ij}\partial_i\partial_jv+b^i\partial_iv+cv=0
+\]
+by $\chi^2v$, and integrate in space. Integration by parts gives
+\begin{equation}\label{eq:ibp}
+\begin{aligned}
+-\int\chi^2v\,a^{ij}\partial_i\partial_jv
+={}&\int\chi^2a^{ij}\partial_iv\,\partial_jv\\
+&+2\int\chi(\partial_i\chi)a^{ij}v\,\partial_jv\\
+&+\int\chi^2(\partial_i a^{ij})v\,\partial_jv.
+\end{aligned}
+\end{equation}
+Ellipticity controls the first term from below by $\lambda\norm{\chi\nabla v}_{L^2}^2$. The remaining terms and the first- and zeroth-order contributions are controlled by Young's inequality. Consequently,
+\begin{equation}\label{eq:baseenergy}
+\frac{\dd}{\dd t}\norm{\chi v}_{L^2}^2
++\lambda\norm{\chi\nabla v}_{L^2}^2
+\leq C\norm{v}_{L^2(\supp\chi)}^2.
+\end{equation}
+Integration over $[0,t]$ gives the $q=0$ case of \eqref{eq:energy}. Because $v$ belongs to the local Hilbert triple
+\[
+H^1(U)\subset L^2(U)\subset H^{-1}(U),
+\]
+its weak time derivative and the energy assumptions give an $L^2$-continuous representative. The calculation for weak solutions is justified by Steklov averages (or a time-mollification argument).
+
+\subsection{Higher integer orders}
+Let $1\leq q\leq k+1$ and $\abs{\alpha}\leq q$. Set $v_\alpha=D^\alpha v$. Differentiation formally gives
+\begin{equation}\label{eq:diff}
+(v_\alpha)_t+Pv_\alpha=F_\alpha,
+\qquad F_\alpha=-[D^\alpha,P]v.
+\end{equation}
+The highest-order commutator is
+\begin{equation}\label{eq:commutator}
+[D^\alpha,a^{ij}\partial_i\partial_j]v
+=\sum_{0<\beta\leq\alpha}\binom{\alpha}{\beta}
+(D^\beta a^{ij})\,\partial_i\partial_jD^{\alpha-\beta}v.
+\end{equation}
+Every $\beta$ in this sum is nonzero; therefore
+\[
+2+\abs{\alpha-\beta}\leq q+1.
+\]
+Thus the commutator costs at most $q+1$ spatial derivatives of $v$, and it differentiates the coefficients at most $q$ times. Those derivatives are bounded since $q\leq k+1$.
+
+Testing \eqref{eq:diff} against $\chi^2v_\alpha$, integrating by parts, and applying Young's inequality gives schematically
+\begin{equation}\label{eq:highenergy}
+\begin{aligned}
+\frac{\dd}{\dd t}\norm{\chi v_\alpha}_{L^2}^2
++c\norm{\chi\nabla v_\alpha}_{L^2}^2
+\leq C\norm{v}_{H^q(\supp\chi)}^2
++C\norm{v}_{H^q(\supp\nabla\chi)}^2.
+\end{aligned}
+\end{equation}
+The terms of order $q+1$ arising from the commutator are absorbed into the coercive gradient term; lower-order errors remain on the right. Summing over $\abs\alpha\leq q$ and using nested spatial cutoffs yields \eqref{eq:energy} by induction on $q$ and Gronwall's inequality.
+
+For continuity, the differentiated equation gives, locally,
+\begin{equation}\label{eq:triple}
+D^\alpha v\in L^2(0,T';H^1(U)),\qquad
+\partial_tD^\alpha v\in L^2(0,T';H^{-1}(U)).
+\end{equation}
+The Hilbert-triple continuity theorem implies $D^\alpha v\in C([0,T'];L^2(U))$. Summing over $\abs\alpha\leq q$ yields $v\in C([0,T'];H^q(U))$.
+
+To justify differentiating a weak solution, one first works with spatial difference quotients or regularized solutions, proves bounds independent of the regularization, and passes to the limit. The use of nested cutoffs is the same mechanism as in the interior elliptic argument of \cite{Taylor2023}: commutation with a cutoff lowers the order by one.
+
+\section{Time differentiation and the elliptic bootstrap}\label{sec:time}
+
+Because $P$ is independent of $t$,
+\begin{equation}\label{eq:commtime}
+[\partial_t,P]=0.
+\end{equation}
+Hence, formally, $w=u_t$ solves
+\begin{equation}\label{eq:w}
+w_t+Pw=0.
+\end{equation}
+When $u_0$ has two additional spatial derivatives, the natural initial trace for $w$ is
+\begin{equation}\label{eq:w0}
+w(0)=-Pu_0.
+\end{equation}
+The following standard time-difference-quotient lemma makes this precise.
+
+\begin{lemma}[Initial trace of the time derivative]\label{lem:time}
+Let $0\leq q\leq k+1$ be an integer. If $u_0\in H^{q+2}_{\loc}$, then $w=u_t$ is a local energy solution up to $t=0$ of \eqref{eq:w}, with initial trace $-Pu_0\in H^q_{\loc}$. Consequently,
+\begin{equation}\label{eq:ut-cont}
+u_t\in C([0,T);H^q_{\loc}).
+\end{equation}
+\end{lemma}
+
+\begin{proof}[Explanation of the standard regularization argument]
+For smooth solutions, test the equation against $\chi^2u_t$. Integration by parts gives
+\begin{equation}\label{eq:test-ut}
+\begin{aligned}
+&\int\chi^2\abs{u_t}^2
++\frac12\frac{\dd}{\dd t}\int\chi^2a^{ij}\partial_iu\,\partial_ju\\
+&\qquad\leq C\int_{\supp\chi}(\abs{u}^2+\abs{\nabla u}^2)
++\frac12\int\chi^2\abs{u_t}^2.
+\end{aligned}
+\end{equation}
+No $\partial_ta^{ij}$ term occurs. Together with the preceding local energy bound this yields $u_t\in L^2_{\loc}([0,T)\times M^\circ)$.
+
+To identify the initial value rigorously, extend $u$ by $u_0$ for negative times:
+\[
+\widetilde u(t)=\begin{cases}u_0,&t<0,\\u(t),&t\geq0.\end{cases}
+\]
+Continuity of the $L^2$ trace prevents a Dirac mass in $\partial_t\widetilde u$. Distributionally,
+\begin{equation}\label{eq:extended}
+(\partial_t+P)\widetilde u=\mathbf1_{\{t<0\}}Pu_0.
+\end{equation}
+For the forward difference quotient
+\[
+W_h(t)=\frac{\widetilde u(t+h)-\widetilde u(t)}{h},
+\]
+we obtain
+\begin{equation}\label{eq:wh}
+(\partial_t+P)W_h=-h^{-1}\mathbf1_{(-h,0)}Pu_0.
+\end{equation}
+The source on the right has uniformly bounded $L^1_tH^q_x$ norm on compact spatial regions:
+\[
+\int_{-h}^0\norm{h^{-1}Pu_0}_{H^q(U)}\,\dd t
+=\norm{Pu_0}_{H^q(U)}.
+\]
+The inhomogeneous local parabolic estimate, combined with the established $L^2$ control of $u_t$, controls the regularized difference quotients. Passing to the limit identifies the jump of $W_h$ at $t=0$ with $-Pu_0$, gives the energy regularity of $w$, and yields \eqref{eq:ut-cont} by Lemma~\ref{lem:energy}.
+
+\emph{Analytic input:} the preceding passage uses the standard inhomogeneous parabolic estimate with initial trace and time-difference-quotient approximation. It is a compact description of that standard argument, not a claim that the displayed $L^1_t$ bound alone proves the required $L^2_tH^{q+1}_x$ bound. A complete construction of the approximation and trace spaces is part of parabolic $L^2$ regularity theory; compare \cite{Krylov2008}.
 \end{proof}
 
-\begin{corollary}[Leading bias and the two small parameters]\label{cor:bias}
-Let $A_\eta=\int_0^1\eta(z)\dd z$. At fixed $t>0$, locally uniformly in $x$,
-\begin{align}
- u^+_\eps-u&=\eps A_\eta q(t,x,K)+O(\eps^2),\label{eq:areas}\\
- u-u^-_\eps&=\eps(1-A_\eta)q(t,x,K)+O(\eps^2).\nonumber
-\end{align}
-The same expansions hold after any fixed number of $x$ derivatives. If $\eps=\eps(t)=o(\sqrt t)$, then $\norm{u^\pm_{\eps(t)}-u}_\infty\to0$ and
+\subsection{Strong continuity at integer orders through $k+3$}
+For integer $0\leq s\leq k+1$, Lemma~\ref{lem:energy} immediately gives
 \[
- t^{j/2}\norm{D^j(u^\pm_{\eps(t)}-u)}_\infty\to0.
+u_0\in H^s_{\loc}\quad\Longrightarrow\quad
+u\in C([0,T);H^s_{\loc}).
 \]
-Absolute convergence of the $j$th derivative error follows, in particular, from $\eps(t)=o(t^{(j+1)/2})$.
+Now take an integer $2\leq s\leq k+3$ and write $q=s-2$. Then $0\leq q\leq k+1$ and, if $u_0\in H^s_{\loc}$, Lemma~\ref{lem:time} gives
+\begin{equation}\label{eq:ut-limit}
+u_t(t)\longrightarrow-Pu_0
+\quad\text{in }H^{s-2}_{\loc}\quad(t\downarrow0).
+\end{equation}
+Set $z(t)=u(t)-u_0$. From the equation,
+\[
+Pz(t)=-u_t(t)-Pu_0.
+\]
+The finite-regularity version of the local elliptic estimate discussed in \cite{Taylor2023} gives, for $U\Subset V\Subset M^\circ$,
+\begin{equation}\label{eq:ellipticestimate}
+\norm{z(t)}_{H^s(U)}
+\leq C\br{\norm{Pz(t)}_{H^{s-2}(V)}+\norm{z(t)}_{L^2(V)}}.
+\end{equation}
+Both terms tend to zero: the first by \eqref{eq:ut-limit}, the second by initial $L^2$ continuity. Thus
+\[
+u(t)\longrightarrow u_0\quad\text{in }H^s(U).
+\]
+This reaches $s=k+3$ at integer orders. The final two spatial derivatives come from \emph{elliptic regularity}, rather than further differentiating the parabolic energy identity.
+
+\section{Positive-time smoothing}\label{sec:smoothing}
+
+Fix $0<\delta<T'<T$. Let $\eta(t)$ vanish near $\delta/2$ and equal one on $[\delta,T']$. Applying the positive-time version of the energy argument to $\eta u$ and iterating through the orders $0,1,\ldots,k+1$ gives
+\begin{equation}\label{eq:pos1}
+u\in C([\delta,T'];H^{k+1}_{\loc}).
+\end{equation}
+The temporal cutoff produces a source $\eta'(t)u$ supported away from $t=0$, and successive estimates use nested space-time cylinders.
+
+Testing by localized $u_t$, now with a temporal cutoff, yields $u_t\in L^2_{\loc}(M^\circ\times(0,T))$. Time difference quotients show that $w=u_t$ is a local energy solution of the same homogeneous equation on positive-time cylinders. Applying the positive-time estimate to $w$ gives
+\begin{equation}\label{eq:pos-ut}
+u_t\in C((0,T);H^{k+1}_{\loc}).
+\end{equation}
+Since $Pu=-u_t$, the local elliptic estimate yields
+\begin{equation}\label{eq:pos-elliptic}
+\norm{u(t)}_{H^{k+3}(U)}
+\leq C\br{\norm{u_t(t)}_{H^{k+1}(V)}+\norm{u(t)}_{L^2(V)}}.
+\end{equation}
+Therefore $u(t)\in H^{k+3}_{\loc}$ for every $t>0$. To see continuity in that space, fix $t_0>0$ and apply the elliptic estimate to $u(t)-u(t_0)$:
+\begin{equation}\label{eq:pos-cont}
+\begin{aligned}
+\norm{u(t)-u(t_0)}_{H^{k+3}(U)}
+\leq C\bigl(&\norm{u_t(t)-u_t(t_0)}_{H^{k+1}(V)}\\
+&+\norm{u(t)-u(t_0)}_{L^2(V)}\bigr).
+\end{aligned}
+\end{equation}
+Both terms tend to zero. Hence
+\begin{equation}\label{eq:smoothingconclusion}
+\boxed{u\in C((0,T);H^{k+3}_{\loc}(M^\circ)).}
+\end{equation}
+The mechanism is
+\bluebox{$\underbrace{u_t\in H^{k+1}_{\loc}}_{\text{parabolic estimate}}
+\quad\Longrightarrow\quad
+\underbrace{u\in H^{k+3}_{\loc}}_{\text{elliptic estimate}}$.}
+
+\section{Real, noninteger Sobolev exponents}\label{sec:fractional}
+
+The preceding calculations show the result explicitly at integer orders. For real $0\leq s\leq k+3$, one uses fractional Sobolev estimates or a localized parabolic parametrix. In Euclidean coordinates define
+\[
+\Lambda^q=(I-\Delta)^{q/2}.
+\]
+For $0<q\leq k+1$, the commutator appearing in the equation for $\Lambda^qv$ is
+\[
+[\Lambda^q,a^{ij}]\partial_i\partial_jv.
+\]
+The relevant fractional commutator bound, for functions localized in nested coordinate neighborhoods, takes the schematic form
+\begin{equation}\label{eq:fractionalcomm}
+\norm{[\Lambda^q,a^{ij}]\partial_i\partial_jv}_{L^2}
+\leq C\norm{v}_{H^{q+1}},
+\end{equation}
+with analogous bounds for lower-order coefficients. The crucial derivative count is again one derivative less than the principal term. The nonlocality of $\Lambda^q$ means that commutators with spatial cutoffs must also be treated; they are controlled on slightly larger regions and have lower-order or smoothing contributions.
+
+The fractional localized energy estimate yields
+\begin{equation}\label{eq:fractionalenergy}
+L^2_tH^{q+1}_x\cap H^1_tH^{q-1}_x
+\hookrightarrow C_tH^q_x,
+\end{equation}
+where all spaces are understood on nested interior space-time cylinders. This covers $0\leq q\leq k+1$; orders $q+2\leq k+3$ follow from the equation for $u_t$ and the corresponding fractional elliptic estimate. When $k=0$, the gap between $H^1$ and $H^2$ is handled by interpolation of the appropriate \emph{linear solution estimates}, not merely by interpolating an already unknown solution norm.
+
+These are standard parts of the $L^2$ parabolic Sobolev theory, treated in greater detail in \cite{Krylov2008}. With this analytic input, the integer-order conclusions extend to all real $0\leq s\leq k+3$.
+
+\begin{caution}[Why simple interpolation is not enough]
+Suppose the datum lies only in $H^s$ for a noninteger $s$. Estimates proved for data in a strictly higher integer-order space cannot simply be interpolated for that particular datum: the higher norm might be infinite. One interpolates the solution maps or proves a fractional-order energy estimate and then uses density in the correct $H^s$ topology. This is precisely the additional step needed for the real-exponent formulation of Theorem~\ref{thm:main}.
+\end{caution}
+
+\section{Norm convergence and divergence}\label{sec:dichotomy}
+
+\subsection{Finite limit when regularity holds beyond $\overline U$}
+If $u_0\in H^r(V)$ for some $U\Subset V\Subset M^\circ$, initial-time continuity at order $r$ gives $u(t)\to u_0$ in $H^r(U)$. By the reverse triangle inequality,
+\[
+\abs{\norm{u(t)}_{H^r(U)}-\norm{u_0}_{H^r(U)}}
+\leq\norm{u(t)-u_0}_{H^r(U)}\longrightarrow0.
+\]
+Therefore
+\begin{equation}\label{eq:dich-finite}
+\boxed{\lim_{t\downarrow0}\norm{u(t)}_{H^r(U)}=\norm{u_0}_{H^r(U)}.}
+\end{equation}
+
+\subsection{Infinite limit when the initial datum is not in $H^r(U)$}
+Suppose $u_0\notin H^r(U)$. We know that $u(t)\to u_0$ in $\cD'(U)$ and that $u(t)\in H^r(U)$ for $t>0$. If $\norm{u(t)}_{H^r(U)}$ did not tend to infinity, there would exist $t_j\downarrow0$ with
+\[
+\sup_j\norm{u(t_j)}_{H^r(U)}<\infty.
+\]
+By weak compactness in the Hilbert space $H^r(U)$, a subsequence would converge weakly to some $v\in H^r(U)$. Weak $H^r$ convergence implies distributional convergence. Uniqueness of distributional limits then forces $v=u_0$, contradicting $u_0\notin H^r(U)$. Hence
+\begin{equation}\label{eq:dich-inf}
+\boxed{\lim_{t\downarrow0}\norm{u(t)}_{H^r(U)}=+\infty.}
+\end{equation}
+This argument is abstract: it applies to any family of $H^r(U)$ functions converging to $u_0$ in distributions, not only to the heat equation.
+
+\section{Examples and counterexamples}\label{sec:examples}
+
+\subsection{A boundary layer inside the chosen interior region}
+\begin{example}[Regularity on $U$ alone does not give a finite limit]
+Consider the classical heat equation on $\R$ with
+\[
+u_0(x)=\mathbf1_{(0,\infty)}(x).
+\]
+The solution is
+\[
+u(t,x)=\frac12\left(1+\operatorname{erf}\br{\frac{x}{2\sqrt t}}\right).
+\]
+Choose $U=(0,1)$. There $u_0\equiv1$, so $u_0|_U\in H^r(U)$ for every $r\geq0$. However,
+\[
+\partial_xu(t,x)=\frac1{\sqrt{4\pi t}}e^{-x^2/(4t)},
+\]
+and hence
+\begin{equation}\label{eq:layer}
+\begin{aligned}
+\norm{\partial_xu(t)}_{L^2(0,1)}^2
+&=\frac1{4\pi t}\int_0^1e^{-x^2/(2t)}\,\dd x\\
+&\sim\frac1{4\sqrt{2\pi}}t^{-1/2}
+\qquad(t\downarrow0).
+\end{aligned}
+\end{equation}
+Consequently,
+\[
+\norm{u(t)}_{H^1(0,1)}\sim Ct^{-1/4}\longrightarrow+\infty.
+\]
+The initial jump lies at $x=0$, on the boundary of $U$; its diffusive layer extends a distance $O(\sqrt t)$ inside $U$. No neighborhood $V$ of $\overline U$ carries $H^1$ regularity of $u_0$. On every $U_\varepsilon=(\varepsilon,1-\varepsilon)$, by contrast, $u(t)\to1$ in $H^r(U_\varepsilon)$ for each fixed $r$.
+\end{example}
+
+\subsection{Sharpness of $H^{k+3}$ for $C^{k,1}$ coefficients}
+\begin{example}[A persistent coefficient-induced singularity]
+Let $\Omega=(-1,1)$ and
+\[
+a(x)=1+(x_+)^{k+1},\qquad x_+=\max\{x,0\}.
+\]
+Then $a>0$ and $a\in C^{k,1}(\Omega)$, but its $(k+1)$st derivative has a jump at $0$. Let
+\[
+P=-a(x)\frac{\dd^2}{\dd x^2}.
+\]
+Choose a positive first Dirichlet eigenfunction $\phi$:
+\[
+-a(x)\phi''(x)=\lambda\phi(x),\qquad
+\phi(-1)=\phi(1)=0.
+\]
+In particular, $\phi(0)>0$. The eigenfunction equation reads
+\begin{equation}\label{eq:eigen}
+\phi''=-\lambda a^{-1}\phi.
+\end{equation}
+Since $a^{-1}\in C^{k,1}$, one-dimensional elliptic/ODE regularity gives $\phi\in H^{k+3}_{\loc}$. Differentiating \eqref{eq:eigen} $(k+1)$ times on either side of $0$ shows that the jump in the $(k+1)$st derivative of $a^{-1}$ produces a nonzero jump in $\phi^{(k+3)}$. Therefore $\phi\notin H^{k+4}_{\loc}$ near $0$.
+
+Set
+\[
+u(t,x)=e^{-\lambda t}\phi(x).
+\]
+Then $u_t+Pu=0$, but for every $t>0$,
+\[
+u(t)\in H^{k+3}_{\loc}\setminus H^{k+4}_{\loc}.
+\]
+Hence $R=k+3$ cannot be raised to $k+4$ uniformly over $C^{k,1}$ coefficients. This does not assert that every such operator or every datum has precisely this regularity.
+\end{example}
+
+\begin{remark}[Fractional sharpness]
+The simple jump example establishes sharpness against one \emph{full} extra derivative. To rule out a uniform gain of any prescribed fractional $\varepsilon>0$, one can choose rougher, oscillatory coefficients in $C^{k,1}$ whose top bounded weak derivative has inadequate fractional Sobolev regularity. This refinement is distinct from the explicit example above.
+\end{remark}
+
+\section{Corollaries for spatial derivatives}
+
+\begin{corollary}[Strong convergence of weak derivatives]
+If $u_0\in H^s_{\loc}$, $0\leq s\leq k+3$, then for every multi-index $\alpha$ with $\abs\alpha\leq s$,
+\begin{equation}\label{eq:derivweak}
+D^\alpha u(t)\longrightarrow D^\alpha u_0
+\quad\text{in }H^{s-\abs\alpha}_{\loc}.
+\end{equation}
+In particular, $D^\alpha u(t)\to D^\alpha u_0$ strongly in $L^2(U)$ on each $U\Subset M^\circ$ whenever $\abs\alpha\leq s$.
 \end{corollary}
 \begin{proof}
-The upper error profile is $\eta$ on $[0,1]$, the lower is $1-\eta$ on the translated interval. Lemma~\ref{lem:localerror} gives \eqref{eq:areas} and its derivatives. For the joint limits use \eqref{eq:greekerror} with $\eps/\sqrt t\to0$.
+Differentiation is bounded $H^s\to H^{s-\abs\alpha}$ on each coordinate neighborhood. Apply this map to initial-time strong convergence.
 \end{proof}
-The last condition exposes a limitation: asymptotically negligible relative Greek error does not imply small absolute Greek error near maturity. A fixed positive smoothing width controls Greeks but leaves an order-one price discrepancy at suitably chosen points within its transition as $t\downarrow0$.
 
-\begin{proposition}[Two-scale transition profile]\label{prop:twoscale}
-Suppose $\eps(t)/\sqrt t\to\theta\in(0,\infty)$. Then, locally uniformly in $\xi$, for every $j\ge0$,
-\begin{align}\label{eq:twoscale}
- t^{j/2}D^jP_tH^+_{\eps(t)}(K+\sqrt t\,\xi)
- &\longrightarrow\int_\R \partial_\xi^jg_{a(K)}(\xi-v)\eta(v/\theta)\dd v,\\
- t^{j/2}D^jP_tH^-_{\eps(t)}(K+\sqrt t\,\xi)
- &\longrightarrow\int_\R \partial_\xi^jg_{a(K)}(\xi-v)\eta(1+v/\theta)\dd v.\nonumber
-\end{align}
-\end{proposition}
+\begin{corollary}[Uniform convergence of classical derivatives]
+If $s>m+n/2$, where $m$ is a nonnegative integer, then for all $\abs\alpha\leq m$,
+\begin{equation}\label{eq:derivstrong}
+D^\alpha u(t)\longrightarrow D^\alpha u_0
+\quad\text{uniformly on compact subsets as }t\downarrow0.
+\end{equation}
+At positive times one may guarantee continuous spatial derivatives of every integer order $m<k+3-n/2$ by Sobolev embedding alone.
+\end{corollary}
 \begin{proof}
-Change variables $y=K+\sqrt t\,v$ in the kernel formula. The payoff converges pointwise to the indicated profile and remains between zero and one. Equations~\eqref{eq:rescaledkernel} and \eqref{eq:gauss} give compact convergence and uniform Gaussian domination, respectively. Truncation of the $v$ integral proves the result, including local uniformity in $\xi$.
+On a slightly enlarged coordinate region the Sobolev embedding $H^s\hookrightarrow C^m$ is continuous if $s>m+n/2$. Apply it to $u(t)-u_0$, then use a finite coordinate cover.
 \end{proof}
 
-\section{Black--Scholes and continuous piecewise affine payoffs}\label{sec:BS}
-\subsection{Exact digital formulas and spot Greeks}
-Under geometric Brownian motion with volatility $\sigma>0$, rate $r\ge0$, and dividend yield $q_d$, set $x=\log s$, $k=\log K$, $a=\sigma^2/2$, and $\mu=r-q_d-\sigma^2/2$. The logarithmic pricing operator is $aD_x^2+\mu D_x-r$. Thus, with $\Phi$ the standard normal distribution function,
-\begin{equation}\label{eq:BSdigital}
- U(t,x)=e^{-rt}\Phi\!\left(\frac{k-x-\mu t}{\sigma\sqrt t}\right),\qquad
- V(t,s)=U(t,\log s).
+\section{What the qualitative theorem does not say}
+
+\subsection{No universal blow-up rate}
+If $u_0\in H^s_{\loc}\setminus H^r_{\loc}$, the theorem forces the $H^r(U)$ norm to diverge on each region where $u_0\notin H^r(U)$, but gives no universal power-law asymptotic. For the constant-coefficient heat equation, the Fourier multiplier gives, for $r\geq s$,
+\begin{equation}\label{eq:rate}
+\norm{e^{t\Delta}u_0}_{H^r(\R^n)}
+\lesssim t^{-(r-s)/2}\norm{u_0}_{H^s(\R^n)},\qquad0<t\leq T,
 \end{equation}
-Differentiation gives
-\begin{equation}\label{eq:spot}
- \Delta=\frac{U_x}{s},\qquad \Gamma=\frac{U_{xx}-U_x}{s^2},\qquad
- \partial_s^jV=s^{-j}\prod_{\ell=0}^{j-1}(D_x-\ell)U.
-\end{equation}
-The last identity follows by induction, differentiating $s^{-j}$ and using $s\partial_s=D_x$. On a compact spot interval contained in $(0,\infty)$ the log-derivative bounds therefore imply the corresponding spot bounds, with constants depending on that interval. We do not assert a uniform spot-Greek estimate down to $s=0$ merely from a logarithmic estimate.
+with constants allowed to depend on $T$. Variable-coefficient local analogues require a \emph{quantitative} parabolic smoothing theorem and typically a lower-order space-time norm on a larger region. The factor $t^{-(r-s)/2}$ is an upper bound, not a generic asymptotic equivalence. Additional initial regularity can give corresponding convergence rates by integrating $u_t=-Pu$.
 
-A log-window $\eps$ corresponds to an upper spot-window $[K,Ke^\eps]$ and a lower one $[Ke^{-\eps},K]$. If a desk specifies a width directly in spot, apply the profile to $s$ itself. Its logarithmic transform is still smooth and constant outside a compact log-window, so the preceding theory applies; the numerical conversion of derivative caps is made with \eqref{eq:spot}.
+\subsection{Regularity versus global well-posedness}
+Interior regularity of a solution that already exists does not require specifying its boundary condition; existence, uniqueness, and quantitative control of that solution may require global hypotheses. Different Dirichlet, Neumann, Robin, or other admissible realizations can produce different interior solutions. They nevertheless obey the \emph{same local regularity estimates} provided they belong to the required local energy class.
 
-For the linear ramp, which is only Lipschitz, convolution nevertheless gives the exact log-delta norm
-\begin{equation}\label{eq:erf}
- \norm{D_xP_tR^\pm_\eps}_\infty
- =\frac{e^{-rt}}{\eps}\erf\!\left(\frac{\eps}{4\sqrt{at}}\right).
-\end{equation}
-Here $R^\pm_\eps$ means the ramp in the $x$ variable. Indeed its derivative is $-\eps^{-1}$ times the indicator of its transition interval, so the convolved derivative is a Gaussian mass over a length-$\eps$ interval. The maximum occurs at its midpoint by symmetry and monotonicity of the Gaussian. Integrating there gives \eqref{eq:erf}. Its limits are $e^{-rt}(4\pi at)^{-1/2}$ when $\eps/\sqrt t\to0$, and $e^{-rt}/\eps$ when that ratio tends to infinity. In contrast, the ramp's second distributional derivative is a signed pair of Dirac masses, so its gamma still diverges as $t\downarrow0$ for fixed $\eps$.
+\section{Proof strategy and comparison with elliptic regularity}
 
-\subsection{Calls, puts, and straddles in an additive model}
-The following construction handles continuous kinks and unbounded affine growth without pretending such payoffs are bounded digitals. In this subsection $A=aD^2+bD-r$ has constant coefficients on $\R$; Gaussian moments define $P_tf$ for functions of at most linear growth.
-
-\begin{proposition}[Local smooth bounds for a hinge]\label{prop:hinge}
-Let $h(x)=(x-K)^+$ and let $\zeta\in C_c^\infty((-1,1))$ be nonnegative, even, of integral one. Put $\zeta_\eps(y)=\eps^{-1}\zeta(y/\eps)$ and
-$h^+_\eps=\zeta_\eps*h$.
-Choose $\vartheta\in C_c^\infty((-2,2))$, $0\le\vartheta\le1$, with $\vartheta=1$ on $[-1,1]$, and set
-\[
- h^-_\eps=h^+_\eps-c_\zeta\eps\vartheta((x-K)/\eps),\qquad c_\zeta=\int|z|\zeta(z)\dd z.
-\]
-Then $h^-_\eps\le h\le h^+_\eps$, both regularizations agree with $h$ for $|x-K|\ge2\eps$, and for $j\ge1$,
-\begin{equation}\label{eq:hingecaps}
- \norm{D^jh^\pm_\eps}_\infty\le C_j\eps^{1-j}\quad(0<\eps\le1).
-\end{equation}
-For $0<t\le T$,
-\begin{equation}\label{eq:hingebias}
- 0\le\pm(P_th^\pm_\eps-P_th)\le C\eps\min\{1,\eps/\sqrt t\},
-\end{equation}
-and, for $j\ge2$,
-\begin{equation}\label{eq:hingegreek}
- \norm{D^jP_th^\pm_\eps}_\infty\le C_j\min\{t^{-(j-1)/2},\eps^{1-j}\}.
-\end{equation}
-These statements extend by signed linear combinations to every continuous piecewise affine payoff with finitely many knots, choosing upper or lower components according to the coefficient signs.
-\end{proposition}
-\begin{proof}
-Convexity and the zero first moment of $\zeta$ give $h^+_\eps\ge h$. Since $h$ is 1-Lipschitz, $0\le h^+_\eps-h\le c_\zeta\eps$. If $|x-K|\ge\eps$, convolution sees a single affine branch and equals $h$ exactly. On $|x-K|\le\eps$ the subtracted buffer dominates the convolution error; outside that interval the error is zero and the buffer is nonnegative. Hence $h^-_\eps\le h$. Its support and smoothness properties follow from those of the cutoff.
-
-We have $(h^+_\eps)'=\zeta_\eps*\1_{(K,\infty)}$ and $(h^+_\eps)''=\zeta_\eps(\cdot-K)$. Differentiation and the buffer scaling give \eqref{eq:hingecaps}. Each price error has amplitude at most $C\eps$ and support of length at most $4\eps$, so Lemma~\ref{lem:localerror}, valid here by the explicit constant kernel, gives \eqref{eq:hingebias}. Derivatives commute with the constant-coefficient semigroup. The terminal second derivatives have uniformly bounded $L^1$ norm, including the buffer because its second derivative has size $O(\eps^{-1})$ on length $O(\eps)$. Thus for $j\ge2$,
-\[
- \norm{D^jP_th^\pm_\eps}_\infty
- \le e^{-rt}\norm{D^{j-2}G_{at}}_\infty\norm{D^2h^\pm_\eps}_{L^1}
- \le C_j t^{-(j-1)/2}.
-\]
-Convolving the bounded terminal $j$th derivative gives the alternative bound $C_j\eps^{1-j}$. Finally any continuous piecewise affine function is an affine function plus a finite sum of signed hinges. Positive coefficients use the corresponding upper/lower hinge, and negative coefficients reverse them. Linearity and positivity finish the proof.
-\end{proof}
-A put is $h(x)-(x-K)$ and a straddle is $2h(x)-(x-K)$. Hence their regularity and bias orders follow immediately. The $O(\eps^2/\sqrt t)$ small-window bias of a continuous kink is one order better than the digital's $O(\eps/\sqrt t)$ bias. For geometric Black--Scholes, one can use the same spot-payoff construction and the positive lognormal kernel; on a compact neighborhood of a positive strike the localized price-error argument again yields this bias order. Formula~\eqref{eq:hingegreek} as stated is the additive constant-coefficient result, not an assertion that spot derivatives commute with the Black--Scholes operator.
-
-\section{Local conservative smoothing of general continuation values}\label{sec:general}
-A jump subtraction $f=g+J\1_{(K,\infty)}$ does not by itself make $g$ smooth: derivative mismatches remain. The following construction avoids that gap.
-
-\begin{theorem}[Local envelope construction]\label{thm:general}
-Let $\Sigma=\{K_1,\ldots,K_N\}$ be finite. Suppose $f$ is bounded, smooth on each component of $\R\setminus\Sigma$, and all one-sided derivatives of every order are bounded up to the endpoints. Assign each $f(K_i)$ between its two one-sided limits. For sufficiently small $\eps>0$ there exist $S^-_\eps f,S^+_\eps f\in C_b^\infty$ such that
-\begin{equation}\label{eq:generalorder}
- S^-_\eps f\le f\le S^+_\eps f,\qquad S^\pm_\eps f=f\quad\text{if }\dist(x,\Sigma)\ge3\eps.
-\end{equation}
-For every $j\ge1$,
-\begin{equation}\label{eq:generalcap}
- \norm{D^jS^\pm_\eps f}_\infty\le C_{f,j}\eps^{-j},\qquad
- \norm{S^\pm_\eps f-f}_{L^p}\le C_f\eps^{1/p}\quad(1\le p<\infty).
-\end{equation}
-Under \eqref{eq:smooth} their prices preserve the bracket, satisfy the derivative cap $C\min(t^{-j/2},\eps^{-j})$, and have error bounded by the sum of $N$ terms of the form \eqref{eq:mainbias} with windows $[K_i-3\eps,K_i+3\eps]$.
-If $f$ is continuous and globally Lipschitz, the payoff error is $O(\eps)$ in supremum norm and the price error is $O(\eps\min(1,\eps/\sqrt t))$. For this continuous case and $j\ge1$, the terminal derivative bound improves to $C_{f,j}\eps^{1-j}$.
-\end{theorem}
-\begin{proof}
-Choose a nonnegative smooth mollifier $\zeta_\eps$ supported in $[-\eps,\eps]$, of integral one, and define the measurable envelopes
-\[
- M_\eps f(x)=\sup_{|z-x|\le2\eps}f(z),\qquad
- m_\eps f(x)=\inf_{|z-x|\le2\eps}f(z).
-\]
-For the present finite-piece class these functions are measurable (the supremum can be computed from a countable dense subset on each smooth branch and the finitely many jump values). Put
-$U_\eps=\zeta_\eps*M_\eps f$ and $L_\eps=\zeta_\eps*m_\eps f$.
-For $|y-x|\le\eps$, the interval centered at $y$ of radius $2\eps$ contains $x$. Hence $M_\eps f(y)\ge f(x)$ and $m_\eps f(y)\le f(x)$, and integration proves
-$L_\eps(x)\le f(x)\le U_\eps(x)$ pointwise.
-
-Take disjoint windows of radius $3\eps$ about the $K_i$ and a smooth $0\le\theta_\eps\le1$ which equals one when $\dist(x,\Sigma)\le\eps$ and zero when the distance is at least $3\eps$, with $\norm{D^j\theta_\eps}_\infty\le C_j\eps^{-j}$. Define
-\[
- S^+_\eps f=\theta_\eps U_\eps+(1-\theta_\eps)f,\qquad
- S^-_\eps f=\theta_\eps L_\eps+(1-\theta_\eps)f.
-\]
-The nonsmooth part of $f$ is multiplied by a function identically zero in a neighborhood of every jump. Therefore these are smooth; the convex combination preserves order and gives exact locality. Differentiating the mollifier gives $\norm{D^jU_\eps}_\infty+\norm{D^jL_\eps}_\infty\le C_j\eps^{-j}\norm f_\infty$. The product rule, bounded branch derivatives, and the cutoff estimates prove \eqref{eq:generalcap}. The error has bounded amplitude and support of total length at most $6N\eps$, giving the $L^p$ estimate. Apply positivity, Lemma~\ref{lem:Cm}, and Lemma~\ref{lem:localerror} to obtain all asserted price estimates.
-
-If $f$ is globally Lipschitz with constant $L_f$, every point used in the envelope-convolution lies within $3\eps$ of $x$. Consequently $|U_\eps(x)-f(x)|$ and $|L_\eps(x)-f(x)|$ are at most $3L_f\eps$. Both envelopes are $L_f$-Lipschitz: translate the intervals in their definition and use the Lipschitz bound on $f$. For $j\ge1$, cancellation of $D^j\zeta_\eps$ therefore gives a bound $C_jL_f\eps^{1-j}$ for their mollifications. On the cutoff annuli, differentiating $S^+_\eps f=f+\theta_\eps(U_\eps-f)$ uses the $O(\eps)$ bound for the undifferentiated difference and bounded branch derivatives for the other factors. Every term is bounded by $C_{f,j}\eps^{1-j}$; the lower case is identical. The localized error estimate with amplitude $O(\eps)$ gives the improved price bound.
-\end{proof}
-\begin{remark}
-These operators are nonlinear, and their purpose is order and locality rather than linearity or preservation of convexity. They match every derivative of the original branches outside the windows without an unspecified jet-interpolation correction. The theorem does not claim that higher Greeks keep their signs: price positivity does not imply derivative-order preservation.
-\end{remark}
-
-\section{Repeated observation dates and killed evolution}\label{sec:events}
-\subsection{Monotone observation maps}
-Let $P_i$ be positive contractions (whole-line or killed pricing semigroups over intervals $\Delta_i>0$). At observation date $i$ let
-\[
- F_i(v)(x)=c_i(x)+d_i(x)v(x),\qquad 0\le d_i\le1,
-\]
-where $c_i,d_i$ are bounded and may have finitely many jumps. This covers a conditional coupon and survival or knock-out indicator, with any fixed rebate absorbed into $c_i$. The exact backward recursion is
-$v_i=P_iF_i(v_{i+1})$ for $i=n-1,\ldots,0$, with terminal datum $v_n$.
-
-\begin{theorem}[Conservative recursion and error propagation]\label{thm:events}
-Start from $v_n^-\le v_n\le v_n^+$. At each step define
-\[
- v_i^+=P_iS_i^+F_i(v_{i+1}^+),\qquad
- v_i^-=P_iS_i^-F_i(v_{i+1}^-),
-\]
-where $S_i^-g\le g\le S_i^+g$ are order brackets for the actual input $g$ at that step. Then $v_i^-\le v_i\le v_i^+$ for every $i$. If
-\[
- h_i^+=S_i^+F_i(v_{i+1}^+)-F_i(v_{i+1}^+),\qquad
- h_i^-=F_i(v_{i+1}^-)-S_i^-F_i(v_{i+1}^-),
-\]
-then both are nonnegative and
-\begin{equation}\label{eq:recerror}
- \norm{v_i^\pm-v_i}_\infty\le\norm{v_n^\pm-v_n}_\infty+
- \sum_{j=i}^{n-1}\norm{P_jh_j^\pm}_\infty.
-\end{equation}
-For whole-line diffusions satisfying \eqref{eq:smooth}, if each residual has bounded amplitude $M_j$ and support in $N_j$ windows of width $O(\eps_j)$, its summand is at most
-$C_jN_jM_j\min(1,\eps_j/\sqrt{\Delta_j})$.
-\end{theorem}
-\begin{proof}
-Multiplication by $d_i\ge0$, addition of the same $c_i$, order bracketing, and positivity of $P_i$ preserve inequalities; backward induction proves the bracket. For the upper error there is the exact identity
-\[
- v_i^+-v_i=P_i\{d_i(v_{i+1}^+-v_{i+1})+h_i^+\}.
-\]
-The lower error has the same identity with $v_i-v_i^-$ and $h_i^-$. Since $0\le d_i\le1$ and $P_i$ is contractive, iteration gives \eqref{eq:recerror}. The final estimate is Lemma~\ref{lem:localerror} summed over the windows. No monotonicity of $S_i$ as an operator on different inputs is needed; its bracket property at each actual input suffices.
-\end{proof}
-With positive inter-observation times and smooth branch functions, the inputs to each new observation are piecewise smooth, so Theorem~\ref{thm:general} applies. Constants must be recalculated or bounded for these inputs; the theorem does not assume they remain independent of the number or spacing of observations. Between dates, Theorem~\ref{thm:main} or Lemma~\ref{lem:Cm} controls the newly regularized value. Observation indicators can recreate a jump, so regularity is restarted at each observation.
-
-\subsection{Dirichlet boundaries: what transfers and what does not}
-\begin{proposition}[Killed price brackets and a boundary obstruction]\label{prop:boundary}
-Let $I$ be bounded and assume the coefficients extend to \eqref{eq:smooth} on $\R$. If $f^-\le f\le f^+$ on $I$, then $P_t^If^-\le P_t^If\le P_t^If^+$. If a signed payoff error is nonnegative and supported in interior windows, its killed price is bounded by the whole-line localized price bound after extending that error by zero.
-However, smoothness of $f$ on $\overline I$ alone does not imply a derivative bound uniform as $t\downarrow0$ for $P_t^If$. Such bounds require boundary compatibility or restriction to an interior region.
-\end{proposition}
-\begin{proof}
-The bracket follows from \eqref{eq:killed}. For $h\ge0$, extend by zero outside $I$; dropping the survival indicator gives $0\le P_t^Ih\le P_th$, proving the price bound. This argument does not compare derivatives.
-
-For the obstruction take the heat operator $D^2$ on $(0,\infty)$, killed at zero, with $f\equiv1$. The reflection kernel is $G_t(x-y)-G_t(x+y)$ for $x,y>0$. Integrating in $y$ yields
-\[
- P_t^{(0,\infty)}1(x)=\erf(x/(2\sqrt t)),\qquad
- D P_t^{(0,\infty)}1(0+)=\frac1{\sqrt{\pi t}}.
-\]
-Thus even constant smooth data create a boundary delta layer when they fail the Dirichlet trace condition. The same phenomenon occurs on a bounded interval $(0,L)$: odd periodic extension of $1$ has jumps at $0$ and $L$, and Gaussian convolution gives a derivative at zero equal to $1/\sqrt{\pi t}+O(t^{-1/2}e^{-L^2/(ct)})$. This follows directly by summing the reflected Gaussians; all image points other than zero have distance at least $L$. Hence the obstruction also holds in the bounded spectral setting.
-\end{proof}
-This distinction is also central to Taylor's treatment of boundary layers \cite[Ch.~6, \S8]{TaylorI}. For smooth compatible data one useful sufficient statement follows from Section~\ref{sec:spectral}: if $f\in\mathcal D(L^N)$, $2N>j+\tfrac12$, then
-\[
- \sup_{t\ge0}\norm{D^je^{-tL}f}_\infty\le C\norm f_{\mathcal H_L^{2N}}.
-\]
-Indeed the semigroup contracts that spectral norm and elliptic embedding applies. This bound makes the required compatibility explicit. It is not the same as a bound by an arbitrary $C^j$ terminal norm. Interior singular profiles and boundary profiles should not be identified without checking the geometry and monitoring rule.
-
-\section{Finite coefficient regularity}\label{sec:finite}
-The full derivative hierarchy above deliberately uses smooth coefficients. We give two precise finite-regularity statements instead of an unspecified assertion that the same estimates hold for every Greek under Lipschitz coefficients.
-
-\begin{proposition}[Finite-regularity versions]\label{prop:finite}
-\leavevmode
+The argument is best understood as three consecutive mechanisms:
 \begin{enumerate}
-\item On a bounded interval, let $a,b,r\in C^{k,1}(\overline I)$, $k\ge0$, with $a\ge\lambda>0$, $r\ge0$. The form construction, domain identity, spectral-scale estimate, positivity, and weak uniqueness in Theorem~\ref{thm:spectral} remain valid. For every $f\in L^2(I,\rho\dd x)$ and $t>0$, $e^{-tL}f\in C^{k+2,1}(\overline I)$. This is a one-dimensional conclusion, not a general-dimensional endpoint Schauder assertion.
-\item Fix an integer $m\ge2$. On $\R$, it suffices to assume bounded uniformly elliptic $a,b,r\in C_b^{m+3}$, $r\ge0$, for Theorem~\ref{thm:profile} through derivative order $m$ and Theorem~\ref{thm:main} through order $m$ (including the derivative-error estimates through $m$). The constants depend on finitely many of these norms. In particular $C_b^{m+3,1}$ is a sufficient, nonminimal finite-regularity hypothesis.
+\item \textbf{Localized parabolic energy estimates:} cut off in space, differentiate (or use difference quotients), absorb commutators, and obtain $H^q$ estimates and strong time continuity for $q\leq k+1$.
+\item \textbf{Time differentiation:} because $[\partial_t,P]=0$, the function $u_t$ solves the same parabolic equation. Its initial trace is $-Pu_0$ when the datum has two more derivatives.
+\item \textbf{Localized elliptic bootstrapping:} the identity $Pu=-u_t$ and the local elliptic estimate yield the remaining two spatial derivatives, reaching $H^{k+3}_{\loc}$.
 \end{enumerate}
-\end{proposition}
-\begin{proof}
-For assertion 1, the weights in \eqref{eq:weight} are positive Lipschitz functions, bounded above and below. The form and compact-resolvent arguments are unchanged. From $(pu')'\in L^2$ and Lipschitz $p^{-1}$ we again get $u\in H^2$, proving the domain identity. Spectral damping gives $u_j=L^je^{-tL}f\in\mathcal D(L)$ for all $j$. Hence every $u_j$ is $H^2$, in particular $C^1$ in one dimension. The differential identity
-\begin{equation}\label{eq:finiteode}
- u_j''=a^{-1}(-u_{j+1}-bu_j'+ru_j)
-\end{equation}
-has a continuous right-hand side, so each $u_j$ is $C^2$. On the compact interval $u_j,u_j'$ are now Lipschitz, and the coefficients and $u_{j+1}$ are Lipschitz. Thus \eqref{eq:finiteode} is Lipschitz, giving $u_j\in C^{2,1}$ for every $j$. Inductively, if all $u_j\in C^{\ell+1,1}$ and the coefficients are $C^{\ell,1}$, the right-hand side of \eqref{eq:finiteode} is $C^{\ell,1}$ and therefore $u_j\in C^{\ell+2,1}$. Induction for $\ell\le k$ proves the claim. All statements concern fixed positive $t$; their norms need not stay bounded at $t=0$.
-
-For assertion 2, the flattening and gauge formulas use one derivative of $a$ in $\beta$ and one additional derivative in $V$. Derivatives of $V$ through $m+1$ are bounded under the stated assumption. The bridge proof therefore supplies kernel derivatives through total order $m+1$, sufficient for all asserted order-$m$ estimates and the first terminal-space derivative used in the bias expansions. The triangular equations in Lemma~\ref{lem:Cm} through $m$ require no more derivatives. The proofs of the profile and regularization theorems can consequently be read verbatim up to order $m$. Smooth approximation, with common coefficient bounds and ellipticity, removes any unused higher smoothness in the intermediate classical calculations; alternatively the bridge construction itself already has the required finite differentiability.
-\end{proof}
-For $k=0$, positive-time $C^{2,1}$ in the bounded one-dimensional problem does not provide the entire hierarchy of sharp Gaussian derivative estimates, nor does it imply a maturity-uniform gamma cap for arbitrary boundary data. These are distinct assertions. In several dimensions there is also no universal speed density making an arbitrary drift symmetric: an integrability condition is needed. No multidimensional version is claimed here.
-
-\section{Bias versus derivative caps}\label{sec:optimization}
-The construction makes the price cost explicit. For a fixed profile,
+The elementary ingredient behind the cutoff procedure is the commutator formula
 \[
- \text{upper bias}\sim\eps A_\eta q(t,x,K),\qquad
- \norm{D^jH^+_\eps}_\infty=\eps^{-j}\norm{\eta^{(j)}}_\infty.
+P(\chi v)=\chi Pv+[P,\chi]v,
+\qquad\operatorname{ord}[P,\chi]\leq1.
 \]
-The next bound shows that a first-derivative cap forces a nonzero error area, independently of the chosen profile.
+This is exactly the localization mechanism in the elliptic regularity results discussed in \cite{Taylor2023}. Taylor's development of elliptic a priori estimates, difference quotients, and localization supplies the elliptic half of the argument; for the fractional and initial-trace parabolic machinery, see \cite{Krylov2008}. The discussion here is a synthesis of those standard methods rather than a verbatim quotation or a separately named theorem from either book.
 
-\begin{proposition}[Sharp area bound under a delta cap]\label{prop:optimal}
-Let $v:\R\to[0,1]$ be Lipschitz, $v(x)=1$ for $x\le K$, $v(x)\to0$ as $x\to\infty$, and $\Lip(v)\le L$ with $L>0$. Then
-\begin{equation}\label{eq:arealower}
- \int_K^\infty v(x)\dd x\ge\frac1{2L}.
-\end{equation}
-Equality holds for the ramp $v(x)=(1-L(x-K))^+$ on $x\ge K$. Among $C^1$ functions with the same left constant branch, equality is impossible, but the infimum remains $1/(2L)$, even when restricting to $C^\infty$ nonincreasing profiles eventually equal to zero.
-For the positive pricing kernel,
-\begin{equation}\label{eq:pricelower}
- P_t(v-H_K)(x)\ge\int_0^{1/L}q(t,x,K+s)(1-Ls)\dd s.
-\end{equation}
-At fixed $t>0$, as $L\to\infty$, the right-hand side is
-$q(t,x,K)/(2L)+O_{t,x}(L^{-2})$.
-\end{proposition}
-\begin{proof}
-Since $v(K)=1$, Lipschitz continuity implies $v(K+s)\ge\max(1-Ls,0)$. Integrating gives \eqref{eq:arealower}. Equality of the integrals of these nonnegative functions forces equality everywhere by continuity, hence the ramp, which is not $C^1$ at $K$ or $K+1/L$.
+\section{Final consolidated conclusions}
 
-For smooth approximations, choose a smooth function $w_\delta$ supported in $(0,1/L+2\delta)$, with $0\le w_\delta\le L$, integral one, and tending in $L^1$ to $L\1_{(0,1/L)}$ as $\delta\downarrow0$. Such a function is obtained by convolving $L\1_{(\delta,\delta+1/L)}$ with a nonnegative smooth kernel of radius less than $\delta$. Define $v_\delta(K+s)=\int_s^\infty w_\delta(y)\dd y$ for $s\ge0$, with the left constant branch. It is smooth, nonincreasing, has derivative bound $L$, and its area equals $\int_0^\infty y w_\delta(y)\dd y\to1/(2L)$. This proves the infimum statement. Multiply the pointwise ramp lower bound by $q\ge0$ and integrate to obtain \eqref{eq:pricelower}. Taylor expansion in $s$ gives the asymptotic, since $\int_0^{1/L}(1-Ls)\dd s=1/(2L)$ and $\int_0^{1/L}s(1-Ls)\dd s=1/(6L^2)$.
-\end{proof}
-For the quintic, a terminal delta cap $D_*$ and gamma cap $G_*$ are satisfied whenever
-\begin{equation}\label{eq:widthchoice}
- \eps\ge\max\left\{\frac{15}{8D_*},\sqrt{\frac{10}{\sqrt3\,G_*}}\right\}.
-\end{equation}
-This is an exact terminal statement in the chosen coordinate. In a constant-coefficient model, convolution preserves these caps (with discount factor at most one). For variable coefficients the sufficient finite-horizon caps include the propagation constants of Lemma~\ref{lem:Cm}; for spot Greeks use \eqref{eq:spot}. Choosing a feasible width by \eqref{eq:widthchoice} is not an optimization theorem under simultaneous delta and gamma constraints. Proposition~\ref{prop:optimal} solves only the stated delta-area problem.
-
-\section{Discussion and precise scope}
-The results separate three operations. Positivity transfers a terminal order bracket to a price bracket. Heat regularity explains the positive-time smoothing of a singular payoff and the blow-up needed to recover its distributional derivatives. A deterministic local smoothing then replaces that singular terminal structure by controlled classical derivatives. Neither positivity nor regularity implies preservation of every Greek's sign.
-
-The sharp rates $t^{-j/2}$ for a digital and $t^{-(j-1)/2}$ for a continuous affine kink reflect whether the singular measure first appears in the first or the second terminal derivative. For a digital, the dimensionless ratio $\eps/\sqrt t$ controls both price bias and the transition from heat-scale to payoff-scale Greeks. The two-scale theorem describes the intermediate regime, while the area lower bound shows why stability cannot be obtained at zero conservative price cost under a finite delta cap.
-
-For discrete contractual events the same order argument iterates, with explicit accumulation of local errors. For continuous killing the price argument remains valid, but boundary derivative layers require compatibility. Finally, low coefficient regularity still permits a rigorous spectral construction and one-dimensional elliptic bootstrap, while sharp high-order Gaussian estimates require additional derivatives. These distinctions are necessary parts of the mathematical statement, rather than technical exceptions to a universal smoothing claim.
-
-\clearpage
-\appendix
-\section{Source guide and proof dependencies}\label{app:sources}
-References below refer to the editions supplied with this project. Chapter/section identifiers are preferred over PDF viewer page numbers; Taylor's printed pages are included where verified. Evans's supplied PDF is a scan; the section titles were checked from its contents pages.
-
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.39\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}@{}}
+For the time-independent, strongly elliptic, non-divergence-form operator \eqref{eq:operator} with $C^{k,1}_{\loc}$ coefficients and a local energy solution with initial trace $u_0$, one has:
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{}>{\bfseries}p{0.26\linewidth}X@{}}
 \toprule
-Topic & Preferred reference & Use in this paper \\\midrule
-\endhead
-Weak elliptic realization & Taylor I, Ch.~5, \S1; Appendix A, \S8 (Friedrichs construction) & Section~\ref{sec:spectral} supplies the weighted one-dimensional proof.\\[5pt]
-Spectral Sobolev scales & Taylor I, Ch.~5, Appendix A; Ch.~6, \S1, pp.~482--485 & Spectral multipliers and compatibility are retained explicitly.\\[5pt]
-Heat versus wave evolution & Taylor I, Ch.~6, \S\S1--2, starting pp.~482 and 490 & Exponential heat damping versus wave energy propagation.\\[5pt]
-Local heat parametrix & Taylor II, Ch.~7, \S13, pp.~56--66; especially the kernel scaling in (13.33)--(13.34) & Section~\ref{sec:kernel} proves a convergent one-dimensional Gaussian construction and all remainder bounds used.\\[5pt]
-Spectral operator theory & Taylor II, Ch.~8, \S\S1--2 & Background for the self-adjoint viewpoint.\\[5pt]
-Weak solutions and elliptic regularity & Evans, \S\S6.2, 6.3, 6.5 & Alternative proofs of the standard weak/spectral foundations.\\[5pt]
-Parabolic evolution & Evans, \S\S7.1, 7.4; heat equation \S2.3 & Alternative energy and semigroup background.\\[5pt]
-Elliptic estimates & Gilbarg--Trudinger, Ch.~6 (Schauder); Ch.~8 (generalized solutions and regularity) & Background only; endpoint finite-regularity claims here are proved directly in one dimension.\\\bottomrule
-\end{longtable}
+Question & Conclusion\\
+\midrule
+Initial-time convergence & If $0\leq s\leq k+3$ and $u_0\in H^s_{\loc}$, then $u(t)\to u_0$ strongly in $H^s_{\loc}$.\\
+Positive-time spatial smoothing & $u(t)\in H^{k+3}_{\loc}$ for every $t>0$, with continuity in that space on positive-time intervals; $k+3$ is the sharp general integer ceiling.\\
+$H^r$-norm limit & For $0\leq r\leq k+3$, the norm on $U$ converges to the datum's norm if the datum is $H^r$ on a neighborhood of $\overline U$; it diverges if the datum is not in $H^r(U)$.\\
+Boundary dependence & The local estimates do not involve the boundary condition, but global existence and bounds for the particular solution may.\\
+\bottomrule
+\end{tabularx}
+\end{center}
 
-The pricing brackets, profile calculations, envelope construction, observation recursion and delta-area optimization are derived explicitly in the main text. The paper does not attribute those exact statements to a textbook theorem whose hypotheses have not been checked. The parametrix is a specialization of a classical method, not a claim to reproduce Taylor's full pseudodifferential construction on manifolds. A publication submission would also require a separate, comprehensive comparison with the financial payoff-smoothing and numerical-analysis literature before making any novelty claim.
+\bluebox{$\displaystyle
+u_t\in H^{k+1}_{\loc}
+\quad\xRightarrow{\;Pu=-u_t\;}
+\quad u\in H^{k+3}_{\loc},
+\qquad
+u_t(t)\to-Pu_0\ \Rightarrow\ u(t)\to u_0.
+$}
 
+\section*{References}
+\addcontentsline{toc}{section}{References}
 \begin{thebibliography}{9}
-\bibitem{TaylorI} M. E. Taylor, \emph{Partial Differential Equations I: Basic Theory}, second edition, Applied Mathematical Sciences 115, Springer, 2011.
-\bibitem{TaylorII} M. E. Taylor, \emph{Partial Differential Equations II: Qualitative Studies of Linear Equations}, second edition, Applied Mathematical Sciences 116, Springer, 2011.
-\bibitem{Evans} L. C. Evans, \emph{Partial Differential Equations}, second edition, Graduate Studies in Mathematics 19, American Mathematical Society, 2010.
-\bibitem{GT} D. Gilbarg and N. S. Trudinger, \emph{Elliptic Partial Differential Equations of Second Order}, Classics in Mathematics, Springer, 2001, reprint of the 1998 edition.
+\bibitem{Taylor2023}
+Michael E. Taylor, \emph{Partial Differential Equations I: Basic Theory}, third edition, Applied Mathematical Sciences, vol.~115, Springer, Cham, 2023. DOI: \href{https://doi.org/10.1007/978-3-031-33859-5}{10.1007/978-3-031-33859-5}. See especially the treatments of Sobolev spaces, linear elliptic equations, localized elliptic estimates, and difference quotients.
+\bibitem{Krylov2008}
+N. V. Krylov, \emph{Lectures on Elliptic and Parabolic Equations in Sobolev Spaces}, Graduate Studies in Mathematics, vol.~96, American Mathematical Society, Providence, RI, 2008. \href{https://doi.org/10.1090/gsm/096}{DOI: 10.1090/gsm/096}. Standard background for parabolic Sobolev estimates and initial-value regularity.
 \end{thebibliography}
+
 \end{document}
