@@ -1,391 +1,812 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{lmodern}
-\usepackage{microtype}
+\usepackage{lmodern,microtype}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
-\usepackage{geometry}
-\usepackage{enumitem}
-\usepackage{booktabs,tabularx,array}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\usepackage{fancyhdr}
-\usepackage{titlesec}
-\usepackage{needspace}
-\geometry{left=29mm,right=27mm,top=28mm,bottom=28mm}
-\definecolor{accent}{RGB}{24,58,91}
-\definecolor{muted}{RGB}{85,98,113}
-\hypersetup{colorlinks=true,linkcolor=accent,citecolor=accent,urlcolor=accent,pdftitle={Multidimensional diffusion pricing: from stochastic semigroups to local energy solutions},pdfauthor={Revised mathematical notes}}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\small\textcolor{muted}{MULTIDIMENSIONAL DIFFUSION PRICING}}
-\fancyhead[R]{\small\textcolor{muted}{PROBABILITY--ANALYSIS BRIDGE}}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.35pt}
-\setlength{\headheight}{14pt}
-\setcounter{secnumdepth}{3}
-\setcounter{section}{4}
-\titleformat{\section}{\Large\bfseries\color{accent}}{\thesection}{0.75em}{}
-\titleformat{\subsection}{\large\bfseries\color{accent}}{\thesubsection}{0.6em}{}
-\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.55em}{}
-\titlespacing*{\section}{0pt}{6pt}{13pt}
-\titlespacing*{\subsection}{0pt}{19pt}{8pt}
-\titlespacing*{\subsubsection}{0pt}{12pt}{5pt}
+\usepackage{geometry,enumitem,booktabs,tabularx}
+\usepackage{xcolor,hyperref,fancyhdr,titlesec,needspace}
+\geometry{left=29mm,right=28mm,top=27mm,bottom=26mm}
+\definecolor{navy}{RGB}{27,57,89}
+\definecolor{slate}{RGB}{86,100,113}
+\hypersetup{colorlinks=true,linkcolor=navy,citecolor=navy,urlcolor=navy,
+ pdfauthor={Mathematical research notes},pdfsubject={Diffusion pricing, analytic semigroups, and interior Sobolev regularity},
+ pdftitle={Sections 5 and 6: Pricing semigroups and interior parabolic regularity}}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small\textcolor{slate}{DIFFUSION PRICING}}\fancyhead[R]{\small\textcolor{slate}{SEMIGROUPS AND PARABOLIC REGULARITY}}\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.35pt}\setlength{\headheight}{14pt}
+\emergencystretch=1em
+\setcounter{section}{4}\setcounter{secnumdepth}{3}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{0.72em}{}
+\titleformat{\subsection}{\large\bfseries\color{navy}}{\thesubsection}{0.63em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{3pt}{12pt}
+\titlespacing*{\subsection}{0pt}{16pt}{6pt}
+\titlespacing*{\subsubsection}{0pt}{10pt}{5pt}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
-\theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-\theoremstyle{remark}
-\newtheorem{remark}[theorem]{Remark}
-\newcommand{\Rd}{\mathbb{R}^{d}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\E}{\mathbb{E}}
-\newcommand{\PP}{\mathbb{P}}
-\newcommand{\cC}{C_c^\infty}
-\newcommand{\cP}{\mathsf{P}}
+\theoremstyle{definition}\newtheorem{definition}{Definition}[section]\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}\newtheorem{remark}[theorem]{Remark}\newtheorem{remarkSix}{Remark}[section]
+\newcommand{\Rd}{\mathbb R^d}
+\newcommand{\R}{\mathbb R}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Cc}{C_c^\infty}
 \newcommand{\loc}{\mathrm{loc}}
-\newcommand{\dd}{\,\mathrm{d}}
-\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
-\newcommand{\abs}[1]{\left\lvert #1\right\rvert}
-\newcommand{\inner}[2]{\left\langle #1,#2\right\rangle}
+\newcommand{\dd}{\,\mathrm d}
+\newcommand{\norm}[1]{\lVert #1\rVert}
+\newcommand{\abs}[1]{\lvert #1\rvert}
 \newcommand{\supp}{\operatorname{supp}}
-\newcommand{\dom}{\operatorname{D}}
-\newcommand{\ind}{\mathbf 1}
+\newcommand{\D}{\mathcal D}
+\newcommand{\cA}{\mathcal A}
+\newcommand{\pair}[2]{\langle #1,#2\rangle}
+\newcommand{\wt}{w_q}
+\newcommand{\HH}{\mathsf H_q}
+\newcommand{\VV}{\mathsf V_q}
 \begin{document}
-\section{The multidimensional diffusion and its pricing semigroup}
-\label{sec:diffusion}
-\noindent\textbf{Aim of this section.}
-In log-spot coordinates, the Black--Scholes model is the constant-coefficient diffusion
-\begin{equation}\label{eq:BS}
-  \dd X_t=\left(r-q_d-\frac{\sigma^2}{2}\right)\dd t+\sigma\dd W_t.
-\end{equation}
-Its explicit Gaussian kernel explains why pricing and smoothing can be studied by direct differentiation. The goal here is to retain the \emph{probabilistically selected} price for variable-coefficient, multidimensional models and then justify the analytic objects needed for interior parabolic estimates. We distinguish four steps:
-\begin{equation*}
+\section{From a diffusion pricing semigroup to interior Sobolev regularity}
+\label{sec:Bsemigroup}
+
+\noindent\textbf{Aim.}
+A prescribed diffusion model determines a family of discounted expectations, initially on bounded Borel payoffs. We want to understand why the resulting pricing functions satisfy a parabolic differential equation in a sense strong enough for \emph{local} Sobolev estimates, without requiring the payoff or the price to lie in unweighted $L^2(\Rd)$. The organizing principle is the semigroup route of Taylor \cite[Vol.~II, Ch.~11, \S10]{taylorII}, with an abstract Banach space $B$ left unspecified until the concrete realization at the end of this section:
+\begin{equation}\label{eq:routeB}
 \boxed{\begin{gathered}
- \text{weighted pricing expectations}\ \Longrightarrow\
- \text{strongly continuous realizations}\\[2pt]
- \Downarrow\\[-1pt]
- \text{closed differential generator}\ \Longrightarrow\
- \text{local energy solution and strong trace}.
+\text{financial SDE and algebraic pricing semigroup}\\
+\Downarrow\\[-2pt]
+\text{strongly continuous analytic realization on }B\hookrightarrow L^2_{\loc}\\
+\Downarrow\\[-2pt]
+\text{closed generator and classical abstract evolution at }t>0\\
+\Downarrow\\[-2pt]
+\text{elliptic graph estimate: }D(G_B)\hookrightarrow H^2_{\loc}\\
+\Downarrow\\[-2pt]
+\text{local parabolic equation; energy and initial trace when available}\\
+\Downarrow\\[-2pt]
+\text{interior parabolic Sobolev estimates (Section~6).}
 \end{gathered}}
-\end{equation*}
-The final arrow is proved, rather than inferred from It\^o's formula. See Ethier--Kurtz \cite[Chs.~1, 4]{ethier-kurtz} for the semigroup/martingale perspective, Ouhabaz \cite[Chs.~1, 4, 6]{ouhabaz} for form realizations and kernels, and Evans \cite[\S 7.1]{evans} for parabolic energy solutions.
-
-\subsection{Standing whole-space model and algebraic pricing maps}
-\label{subsec:model}
-Fix a state dimension $d\ge1$, Brownian dimension $m\ge d$, and a finite horizon $T>0$. Under a \emph{specified} pricing measure, let $W$ be an $m$-dimensional Brownian motion and consider
-\begin{equation}\label{eq:SDE}
- \dd X_t^x=b(X_t^x)\dd t+\sigma(X_t^x)\dd W_t,\qquad X_0^x=x\in\Rd.
 \end{equation}
-Write $b:\Rd\to\Rd$, $\sigma:\Rd\to\R^{d\times m}$, and $r:\Rd\to\R$ for the drift, volatility, and short rate. \emph{For the results proved in this section} we impose the base assumptions below; higher regularity, when needed later, can be added without changing the probability--energy argument.
+The abstract theorem below is conditional on properties of $B$; Proposition~\ref{prop:weighted} verifies them for a useful weighted $L^2$ space, and Appendix~\ref{app:weightedproof} gives a proof based on coercive forms, sectoriality, and Feynman--Kac identification. \emph{No Gaussian heat-kernel bound is assumed or used.}
 
-\begin{definition}[Standing assumptions $(\mathrm H_0)$]\label{def:H0}
-The coefficients $b,\sigma,r$ are bounded and globally Lipschitz, $r\ge0$, and the symmetric matrix
-\begin{equation}\label{eq:a}
- a(x)=\frac12\sigma(x)\sigma(x)^\top,\qquad
- a^{ij}(x)=\frac12\sum_{\ell=1}^m\sigma^{i\ell}(x)\sigma^{j\ell}(x),
+\subsection{The stochastic model and the Ito differential expression}
+\label{subsec:modelB}
+Fix $d\ge1$, a Brownian dimension $m\ge d$, and a horizon $T>0$. Under a \emph{specified} pricing measure, consider
+\begin{equation}\label{eq:sdeB}
+\dd X_t^x=b(X_t^x)\dd t+\sigma(X_t^x)\dd W_t,
+\qquad X_0^x=x\in\Rd.
 \end{equation}
-satisfies, for constants $0<\lambda\le\Lambda<\infty$,
-\begin{equation}\label{eq:ellip}
- \lambda|\xi|^2\le\xi^\top a(x)\xi\le\Lambda|\xi|^2
- \qquad (x,\xi\in\Rd).
+The drift $b:\Rd\to\Rd$, volatility $\sigma:\Rd\to\R^{d\times m}$, and short rate $r:\Rd\to\R$ do not depend on time. For an integer $k\ge0$ assume
+\begin{equation}\label{eq:coeffB}
+ b,\sigma,r\in C_b^{k,1}(\Rd),\qquad r\ge0,
+ \qquad a:=\tfrac12\sigma\sigma^\top,
+ \quad \lambda|\xi|^2\le\xi^\top a(x)\xi\le\Lambda|\xi|^2,
 \end{equation}
-For subsequent high-order statements one may strengthen $(\mathrm H_0)$ to $b,\sigma,r\in C_b^{k,1}$ with $k\ge1$. No such strengthening is used in the bridge theorem below.
-\end{definition}
+with $0<\lambda\le\Lambda$, for every $x,\xi\in\Rd$. Here $C_b^{0,1}$ means bounded globally Lipschitz functions; for $k>0$ the derivatives through order $k$ are bounded and the derivatives of order $k$ are globally Lipschitz. The case $k=0$ is sufficient throughout this section; the parameter $k$ controls the higher-order arguments reserved for Section~6.
 
-The globally Lipschitz coefficients ensure a unique nonexplosive strong solution for every $x$. Ellipticity is a separate analytic hypothesis: it controls all state directions. Because $a$ has full rank, the assumed Brownian dimension necessarily satisfies $m\ge d$. Conversely, a bounded Lipschitz uniformly positive definite $a$ can be modeled with $m=d$ and $\sigma=(2a)^{1/2}$, since the matrix square-root map is Lipschitz on uniformly positive definite matrices with bounded spectrum.
-
-For bounded Borel $f$ define the \emph{discounted pricing family}
-\begin{equation}\label{eq:P}
+Global Lipschitz continuity gives a unique nonexplosive strong solution. Define, for a bounded Borel payoff $f$,
+\begin{equation}\label{eq:PdefB}
  (P_tf)(x)=\E_x\!\left[
-   \exp\left(-\int_0^t r(X_s)\dd s\right)f(X_t)
+ \exp\!\left(-\int_0^t r(X_s)\dd s\right)f(X_t)
  \right],\qquad 0\le t\le T.
 \end{equation}
-The Markov property and multiplicativity of the discount factor give $P_{t+s}=P_tP_s$ whenever $t+s\le T$. Positivity and $r\ge0$ imply
-\begin{equation}\label{eq:submarkov}
- P_t f\ge0\ \text{if }f\ge0,\qquad
- P_t\mathbf1\le\mathbf1,\qquad
+The variable $t$ denotes time \emph{to payoff evaluation}; in the PDE it is measured forward from the payoff datum. The pricing measure is an input, not a consequence of \eqref{eq:coeffB}; no market-completeness or replication assertion is intended.
+
+The Markov property and multiplicativity of the discount factor imply
+\begin{equation}\label{eq:algB}
+ P_0=I,\qquad P_{t+s}=P_tP_s,\qquad
+ f\ge0\Longrightarrow P_tf\ge0,\qquad
  \norm{P_tf}_\infty\le\norm f_\infty.
 \end{equation}
-Thus $(P_t)$ is initially a \emph{sub-Markov algebraic semigroup} on bounded Borel functions. It need not be conservative ($P_t\mathbf1=1$) because of discounting. The chosen measure does not, by itself, establish market completeness, its uniqueness, or replication.
+These facts involve no Banach-space continuity. Indeed, strong continuity in the supremum norm fails on all bounded Borel functions even for Brownian motion (take $f=\mathbf1_{\{0\}}$).
 
-\begin{remark}[State coordinate and time convention]
-Constant nonsingular covariance in a vector of log-prices recovers correlated multidimensional Black--Scholes. The general coefficients in $(\mathrm H_0)$ may depend on the state. Here $t$ is \emph{time elapsed since payoff evaluation}: a financial terminal payoff therefore appears as the initial datum $u(0)=f$ of the backward \emph{state-variable} equation.
-\end{remark}
-
-\subsection{From pricing expectations to a local parabolic energy solution}
-\label{subsec:prob-analytic}
-The four subsections below make the successive analytic structures explicit: a weighted operator bound, a strongly continuous realization, a closed generator with a precise domain, and finally a weak PDE realization for the original payoff class.
-\subsubsection{Step I: kernels, exponential payoffs, and the scope of the semigroup}
-\label{subsec:weights}
-Uniform ellipticity and bounded Lipschitz coefficients yield a transition density $p(t,x,y)$ satisfying a finite-horizon Aronson upper bound; see \cite{aronson1967,aronson1968} and the parabolic kernel discussion in \cite[Ch.~6]{ouhabaz}. The discounted measure has a density $q(t,x,y)$ such that $0\le q\le p$ (disintegrate the discount factor conditional on $X_t=y$). Consequently, for $0<t\le T$,
-\begin{equation}\label{eq:gaussian}
- (P_tf)(x)=\int_{\Rd}q(t,x,y)f(y)\dd y,\qquad
- 0\le q(t,x,y)\le \frac{C_T}{t^{d/2}}
- \exp\!\left(-\frac{|x-y|^2}{c_Tt}\right).
-\end{equation}
-The density identity first holds for nonnegative Borel $f$, then for signed $f$ when the integral of $|f|$ is finite. The estimate is a \emph{low-order analytic input}; it does not presuppose the interior smoothing theorem to be proved later.
-
-For $\theta\ge0$ set $w_\theta(x)=e^{\theta|x|}$ and
-\begin{equation}\label{eq:Btheta}
- \mathcal B_\theta
- =\left\{f:\Rd\to\R\text{ Borel}:\norm f_\theta<\infty\right\},
- \qquad\norm f_\theta=\sup_{x\in\Rd}\frac{|f(x)|}{w_\theta(x)}.
-\end{equation}
-These are spaces of \emph{functions}, not equivalence classes modulo Lebesgue-null sets.
-
-\begin{proposition}[Admissible exponential payoffs]\label{prop:weights}
-Under $(\mathrm H_0)$, for each $\theta\ge0$ and $T>0$ there exists $M_{\theta,T}<\infty$ such that
-\begin{equation}\label{eq:weightbound}
- P_tw_\theta(x)\le M_{\theta,T}w_\theta(x),\qquad
- \norm{P_tf}_\theta\le M_{\theta,T}\norm f_\theta,
- \qquad 0\le t\le T.
-\end{equation}
-The expectations in \eqref{eq:P} are absolutely finite for $f\in\mathcal B_\theta$, and the semigroup identity extends to every $\mathcal B_\theta$.
-\end{proposition}
-\begin{proof}
-From $|y|\le|x|+|y-x|$ and \eqref{eq:gaussian}, change variables $z=(y-x)/\sqrt t$ to find
-\[
- P_tw_\theta(x)\le C_Te^{\theta|x|}
- \int_{\Rd}e^{-|z|^2/c_T+\theta\sqrt T|z|}\dd z.
-\]
-The Gaussian integral is finite. The estimate for $f$ follows from positivity; conditioning and Tonelli first applied to $|f|$ prove the extended composition law. The assertion at $t=0$ is immediate.
-\end{proof}
-
-In particular, every polynomial-growth payoff lies in $\mathcal B_\theta$ for any $\theta>0$, while a vanilla payoff growing like $e^{x_i}$ lies in $\mathcal B_1$. The upper bound on the \emph{transition density} is essential here. Pointwise existence of $\E_x|f(X_t)|$ alone would not show that $P_t$ preserves a fixed weighted norm. Global Lipschitz coefficients without boundedness also do \emph{not} guarantee exponential moments: for $\dd X_t=X_t\dd W_t$ and $x>0$, $X_t$ is lognormal and $\E_xe^{\theta X_t}=\infty$ for $t,\theta>0$.
-
-\subsubsection{Step II: a topology with strong continuity}
-\label{subsec:continuity}
-The algebraic identity $P_{t+s}=P_tP_s$ says nothing about convergence in a norm as $t\downarrow0$. Even for Brownian motion and $f=\ind_{\{0\}}$, $P_tf\equiv0$ for every $t>0$ while $f(0)=1$. Hence there is no strong continuity in the supremum norm on $B_b$, and similarly none on all of $\mathcal B_\theta$ with \eqref{eq:Btheta}.
-
-There are several meaningful, but \emph{different}, choices of topology.
-\begin{enumerate}[label=\textup{(\alph*)},leftmargin=7mm,itemsep=5pt]
-\item \textbf{The Feller space.} Under $(\mathrm H_0)$, $P_t$ preserves $C_0(\Rd)$ and
-\begin{equation}\label{eq:C0}
- \lim_{t\downarrow0}\norm{P_tf-f}_\infty=0
- \qquad(f\in C_0(\Rd)).
-\end{equation}
-The proof combines continuity of the SDE in its initial state with uniform small-time control on compact sets and control of visits from spatial infinity. This is a strongly continuous, positive contraction semigroup; compare \cite[Ch.~4, \S 2]{ethier-kurtz}.
-
-\item \textbf{Weighted continuous data.} Define
-\begin{equation}\label{eq:C0theta}
- C_{0,\theta}=\{f:\ f/w_\theta\in C_0(\Rd)\}
-\end{equation}
-with norm $\norm\cdot_\theta$. The Gaussian estimate and the Feller property imply $P_t(C_{0,\theta})\subset C_{0,\theta}$ and strong continuity there, by approximation with compactly supported continuous functions and \eqref{eq:weightbound}. A continuous function bounded by $Ce^{\theta|x|}$ belongs to $C_{0,\eta}$ whenever $\eta>\theta$. Discontinuous digitals need not belong to these spaces.
-
-\item \textbf{Lebesgue space.} The kernel bound supplies a separate, strongly continuous semigroup on $L^2(\Rd)$, as proved next. The equality of an $L^2$ orbit with the pricing expectation is an almost-everywhere statement. Nonzero constants and ordinary exponential spot payoffs are not in global $L^2$.
-\end{enumerate}
-An invariant probability measure, when available, also gives contractive $L^p$ realizations by Jensen's inequality, but no such invariant measure is assumed here. Nor does sub-Markovian contractivity on $B_b$ imply $L^2(\dd x)$ contractivity: Lebesgue measure need not be invariant.
-
-\begin{proposition}[Strong $L^2$ realization]\label{prop:L2}
-Under $(\mathrm H_0)$, the pricing maps restricted to $L^2(\Rd)\cap B_b(\Rd)$ extend uniquely to a strongly continuous semigroup $(S_2(t))_{t\ge0}$ of bounded operators on $L^2(\Rd)$. For $0\le t\le T$,
-\begin{equation}\label{eq:L2bound}
- \norm{S_2(t)}_{L^2\to L^2}\le C_T.
-\end{equation}
-On bounded, square-integrable payoffs $S_2(t)f=P_tf$ almost everywhere.
-\end{proposition}
-\begin{proof}
-Schur's test applies to \eqref{eq:gaussian}: $\sup_x\int q(t,x,y)\dd y\le1$ and $\sup_y\int q(t,x,y)\dd x\le C_T$. These bounds yield \eqref{eq:L2bound}. For $\phi\in C_c^\infty$, SDE stochastic continuity gives $P_t\phi\to\phi$ uniformly on compact sets, while Gaussian tails give an $L^2$-integrable dominating tail away from $\supp\phi$. Hence $\norm{P_t\phi-\phi}_2\to0$. Density of $C_c^\infty$ in $L^2$ and uniform boundedness for small $t$ give the assertion. Composition follows first for bounded functions and then by approximation.
-\end{proof}
-
-\subsubsection{Step III: the closed generator and its differential realizations}
-\label{subsec:generator}
-For smooth test functions, It\^o's formula identifies the \emph{formal} discounted Kolmogorov operator
-\begin{equation}\label{eq:A}
- L\phi=a^{ij}\partial_{ij}\phi+b^j\partial_j\phi,
- \qquad A\phi=L\phi-r\phi.
-\end{equation}
-Repeated spatial indices are summed from $1$ to $d$. Applied to the discounted process, It\^o's formula and Fubini give Dynkin's identity
-\begin{equation}\label{eq:dynkin}
- P_t\phi-\phi=\int_0^tP_s(A\phi)\dd s,
- \qquad\phi\in C_c^\infty(\Rd).
-\end{equation}
-This alone does \emph{not} assert that $u(t,x)=P_t\phi(x)$ is $C^{1,2}$; classical spatial regularity requires further PDE input.
-
-Let $G_2$ be the generator of $S_2$:
-\begin{equation}\label{eq:G2}
- \dom(G_2)=\left\{g\in L^2:\lim_{t\downarrow0}
- \frac{S_2(t)g-g}{t}\text{ exists in }L^2\right\},\quad
- G_2g=\lim_{t\downarrow0}\frac{S_2(t)g-g}{t}.
-\end{equation}
-The operator $G_2$ is closed and densely defined. By \eqref{eq:dynkin} and strong $L^2$ continuity, $C_c^\infty\subset\dom(G_2)$ and $G_2\phi=A\phi$ on that class. This is an \emph{extension statement}, not yet a core theorem.
-
-\begin{proposition}[Identification of the whole-space $L^2$ generator]\label{prop:H2}
-Under $(\mathrm H_0)$,
-\begin{equation}\label{eq:H2}
- \boxed{\dom(G_2)=H^2(\Rd),\qquad G_2g=Ag,\qquad
- \norm g_2+\norm{G_2g}_2\asymp\norm g_{H^2}.}
-\end{equation}
-In particular, $C_c^\infty(\Rd)$ is a \emph{core} for $G_2$, meaning it is dense in $\dom(G_2)$ for the graph norm $\norm g_2+\norm{G_2g}_2$.
-\end{proposition}
-\begin{proof}[Proof sketch, with analytic input made explicit]
-Uniform ellipticity, bounded Lipschitz $a$, and bounded lower-order terms give the global elliptic estimate
-\begin{equation}\label{eq:elliptic-est}
- \norm g_{H^2}\le C\big(\norm{Ag}_2+\norm g_2\big)
- \qquad(g\in H^2(\Rd)),
-\end{equation}
-and for all sufficiently large real $\mu$, the map $\mu-A:H^2(\Rd)\to L^2(\Rd)$ is an isomorphism. These are standard whole-space $W^2_2$ results; see Krylov \cite[Ch.~1]{krylov} (the nondivergence formulation, using that $a$ is Lipschitz). The reverse graph estimate follows immediately from boundedness of the coefficients.
-
-Since $C_c^\infty$ is dense in $H^2$ and $G_2$ is closed, \eqref{eq:dynkin} implies $A:H^2\to L^2$ is contained in $G_2$. Choose $\mu$ larger than the growth bound of $S_2$ and large enough for the elliptic resolvent result. Then $\mu-G_2$ and $\mu-A|_{H^2}$ are both onto $L^2$, and $\mu-G_2$ is injective. Their inclusion forces equality of the two operators, proving \eqref{eq:H2}. Density in $H^2$ now yields the asserted core property.
-\end{proof}
-
-\begin{remark}[Unboundedness and abstract evolution]
-The generator is not a bounded map $L^2\to L^2$. The \emph{continuous} extension is $A:H^2\to L^2$, or equivalently $G_2:(\dom G_2,\norm\cdot_{G_2})\to L^2$. For $f\in L^2$, $u(t)=S_2(t)f$ is the mild solution of $u'=G_2u$ and $u(0)=f$. If $f\in H^2$, it is a classical \emph{$L^2$-valued} solution. Neither phrase means automatically that $u$ is a classical $C^{1,2}$ solution in $(t,x)$; see \cite[Ch.~1, \S\S 1--3]{ethier-kurtz}.
-\end{remark}
-
-\subsubsection{Step IV: a local weak realization and its initial trace}
-\label{subsec:weak}
-The preceding $L^2$ realization is useful but excludes many financial payoffs. Its role will be to construct \emph{compactly truncated} solutions; local energy bounds will then permit removal of the truncation without requiring $f\in L^2(\Rd)$.
-
-Because $a$ is globally Lipschitz, $\partial_i a^{ij}$ exists almost everywhere and is bounded. Define
-\begin{equation}\label{eq:beta}
- \beta^j=b^j-\partial_i a^{ij}.
-\end{equation}
-In the sense of distributions,
-\begin{equation}\label{eq:divA}
- Av=\partial_i(a^{ij}\partial_jv)+\beta^j\partial_jv-rv.
-\end{equation}
-Let $B\subset\Rd$ be a bounded ball. For $v\in H^1(B)$ and $\varphi\in H_0^1(B)$ define
+Set
 \begin{equation}\label{eq:AB}
- \inner{A_Bv}{\varphi}
- =-\int_B a^{ij}\partial_jv\,\partial_i\varphi\dd x
- +\int_B\beta^j\partial_jv\,\varphi\dd x
- -\int_Brv\varphi\dd x.
+ \cA\varphi=a^{ij}\partial_{ij}\varphi+b^j\partial_j\varphi-r\varphi,
+ \qquad \varphi\in\Cc(\Rd),
 \end{equation}
-Then
-\begin{equation}\label{eq:ABbound}
- A_B:H^1(B)\longrightarrow H^{-1}(B)=(H_0^1(B))^*,\qquad
- \norm{A_Bv}_{H^{-1}(B)}\le C_B\norm v_{H^1(B)}
+using summation over repeated indices. Ito's formula, applied to the discounted process, gives
+\begin{equation}\label{eq:dynkinB}
+ P_t\varphi-\varphi=\int_0^tP_s(\cA\varphi)\dd s.
 \end{equation}
-is a bounded \emph{weak differential realization}. It is \emph{not} being declared the generator of a boundary-value semigroup on $B$, and it imposes no boundary trace on $v$.
+This identifies the \emph{formal} infinitesimal pricing operator on smooth tests. It does not yet show that $P_tf$ is a classical PDE solution for discontinuous $f$.
 
-\begin{definition}[Local energy solution with payoff trace]\label{def:energy}
-Let $\Omega\subset\Rd$ be open, $f\in L^2_{\loc}(\Omega)$, and $u:(0,T)\times\Omega\to\R$ be measurable. We say that $u$ solves $\partial_tu=Au$ locally with initial trace $f$ if, for every $B\Subset\Omega$ that is a ball, every $\chi\in C_c^\infty(B)$, and every $T'<T$,
-\begin{equation}\label{eq:localclass}
- \chi u\in L^2(0,T';H_0^1(B)),\qquad
- \partial_t(\chi u)\in L^2(0,T';H^{-1}(B)),
+\subsection{An abstract \texorpdfstring{$B$}{B}-semigroup realization}
+\label{subsec:abstractB}
+Let $B$ be a Banach space of functions (identified up to the appropriate notion of equality), continuously embedded in $L^2_{\loc}(\Rd)$: for each bounded open $U\Subset\Rd$,
+\begin{equation}\label{eq:embeddingB}
+ \norm{h}_{L^2(U)}\le C_U\norm h_B,\qquad h\in B.
 \end{equation}
-and $u$ satisfies
-\begin{align}\label{eq:weakid}
- &-\int_0^{T'}\!\int_\Omega u\,\partial_t\varphi\dd x\dd t
- +\int_0^{T'}\!\int_\Omega a^{ij}\partial_ju\,\partial_i\varphi\dd x\dd t\notag\\
- &\quad-\int_0^{T'}\!\int_\Omega\beta^j\partial_ju\,\varphi\dd x\dd t
- +\int_0^{T'}\!\int_\Omega ru\varphi\dd x\dd t
- =\int_\Omega f(x)\varphi(0,x)\dd x
-\end{align}
-for all $\varphi\in C_c^\infty([0,T')\times\Omega)$. The integrals involving $\nabla u$ are interpreted locally on the support of $\varphi$. The Lions--Magenes Hilbert-triple lemma implies $\chi u\in C([0,T'];L^2(B))$; we require $(\chi u)(0)=\chi f$ in $L^2(B)$.
+For the next theorem we impose the following \emph{analytic realization hypotheses}, not consequences of the algebraic law \eqref{eq:algB}:
+\begin{description}[font=\normalfont\bfseries,leftmargin=12mm,labelwidth=10mm,itemsep=4pt]
+\item[(B1)] $\Cc(\Rd)\subset B$ is dense and $\cA_0=\cA|_{\Cc}:\Cc\subset B\to B$ is well defined.
+\item[(B2)] The operators \eqref{eq:PdefB} admit a strongly continuous semigroup extension $S_B(t)$ on $B$, agreeing with the stochastic expectation whenever that expectation is considered on a bounded Borel payoff in $B$ (as an $L^2_{\loc}$ equivalence class).
+\item[(B3)] Its generator $G_B$ equals the \emph{graph closure} of $\cA_0$ in $B$. In particular, $\Cc$ is a core: $G_B=\overline{\cA_0}^{\,B}$.
+\item[(B4)] $S_B$ is analytic; hence for every $h\in B$ and $t>0$ one has $S_B(t)h\in D(G_B^j)$ for all integers $j\ge1$.
+\end{description}
+No assertion is made that every conceivable $B$ satisfies (B1)--(B4). Also, although $S_B(t)h$ is defined for general $h\in B$, a pointwise expectation need not be defined at every $x$ for every such $h$; equality with \eqref{eq:PdefB} is asserted for bounded Borel payoffs as specified in (B2).
+
+\begin{lemma}[Elliptic graph closure is local]\label{lem:graphB}
+Assume \eqref{eq:coeffB}, \eqref{eq:embeddingB}, and (B1)--(B3). Then, for every $U_0\Subset U_1\Subset\Rd$,
+\begin{equation}\label{eq:graphboundB}
+\boxed{\quad\norm v_{H^2(U_0)}\le C_{U_0,U_1,B}
+\bigl(\norm v_B+\norm{G_Bv}_B\bigr),\qquad v\in D(G_B).\quad}
+\end{equation}
+Moreover, $v\in H^2_{\loc}(\Rd)$ and $\cA v=G_Bv$ in $L^2_{\loc}$, with the differential expression interpreted almost everywhere.
+\end{lemma}
+\begin{proof}
+The standard interior $H^2$ estimate for uniformly elliptic nondivergence operators with Lipschitz principal coefficients and bounded lower-order terms gives, for $h\in\Cc$,
+\begin{equation}\label{eq:ellH2B}
+ \norm h_{H^2(U_0)}\le C_{U_0,U_1}
+ \bigl(\norm{\cA h}_{L^2(U_1)}+\norm h_{L^2(U_1)}\bigr).
+\end{equation}
+Such estimates follow by freezing coefficients, localizing, and absorbing the coefficient perturbation; compare Taylor's elliptic localization argument \cite[Vol.~I, Ch.~5, \S11]{taylorI} and the $L^2$ theory in \cite[Ch.~9]{gilbarg}.
+Let $v\in D(G_B)$. By (B3), choose $v_n\in\Cc$ with $v_n\to v$ and $\cA v_n\to G_Bv$ in $B$. Applying \eqref{eq:ellH2B} to $v_n-v_m$ and then \eqref{eq:embeddingB}, we find that $(v_n)$ is Cauchy in $H^2(U_0)$. Its limit must be $v$, since it also converges in $L^2(U_0)$. The estimate passes to the limit, giving \eqref{eq:graphboundB}. On $H^2(U_0)$, the expression \eqref{eq:AB} acts continuously into $L^2(U_0)$; therefore $\cA v_n\to\cA v$ locally in $L^2$. But $\cA v_n\to G_Bv$ locally in $L^2$ by \eqref{eq:embeddingB}; the limits agree.
+\end{proof}
+
+\begin{theorem}[Abstract evolution implies interior $H^2$ regularity]\label{thm:classicalB}
+Assume \eqref{eq:coeffB}, \eqref{eq:embeddingB}, and (B1)--(B4). Given $f\in B$, put $u(t)=S_B(t)f$. Then
+\begin{equation}\label{eq:regB}
+\boxed{\ u\in C((0,T];H^2_{\loc}(\Rd))\cap C^1((0,T];L^2_{\loc}(\Rd)),
+\qquad \partial_tu=\cA u\quad\text{in }L^2_{\loc},\ t>0.\ }
+\end{equation}
+Also,
+\begin{equation}\label{eq:traceB}
+ u(t)\to f\quad\text{in }B\text{ and in }L^2_{\loc}(\Rd)\quad(t\downarrow0).
+\end{equation}
+For $U_0\Subset U_1\Subset\Rd$ and $0<t\le T$,
+\begin{equation}\label{eq:tboundB}
+\norm{u(t)}_{H^2(U_0)}
+\le C_{U_0,U_1,B,T}(1+t^{-1})\norm f_B.
+\end{equation}
+If $f$ is bounded Borel and belongs to $B$, all conclusions apply to the stochastic price \eqref{eq:PdefB}, viewed as an $L^2_{\loc}$ class.
+\end{theorem}
+\begin{proof}
+Analytic semigroup theory gives $u(t)\in D(G_B)$, $u'(t)=G_Bu(t)$ for $t>0$, and estimates $\norm{S_B(t)}\le M_T$, $\norm{G_BS_B(t)}\le C_Tt^{-1}$ on $(0,T]$; see \cite[Chs.~1--2]{lunardi}. Lemma~\ref{lem:graphB} yields \eqref{eq:tboundB} and $\cA u=G_Bu=u'$ locally. Moreover $t\mapsto u(t)$ is continuous in the graph norm of $G_B$ on every compact positive-time interval; applying \eqref{eq:graphboundB} to $u(t)-u(s)$ gives local $H^2$ continuity. The embedding \eqref{eq:embeddingB} transfers $B$-valued $C^1$ time regularity to local $L^2$. Finally, strong continuity of $S_B$ at zero gives \eqref{eq:traceB}.
+\end{proof}
+
+\begin{remark}[The time-zero energy issue]\label{rem:energygapB}
+Theorem~\ref{thm:classicalB} yields \emph{positive-time} $H^2$ regularity and a strong local $L^2$ trace. It does \emph{not}, by itself, establish
+\begin{equation}\label{eq:energytargetB}
+ u\in L^2(0,T;H^1_{\loc}),\qquad
+ \partial_tu\in L^2(0,T;H^{-1}_{\loc}).
+\end{equation}
+Indeed, the bound $\norm{G_BS_B(t)}\lesssim t^{-1}$ is too singular to integrate in $L^2$ near zero. A separate energy inequality is needed for the full initial-time energy class. Proposition~\ref{prop:weighted} supplies one for the weighted realization used below. In particular, we do not conceal an assumption of local energy regularity inside the abstract semigroup hypothesis.
+\end{remark}
+
+\subsection{Localization and a bounded-domain semigroup}
+\label{subsec:localduhamelB}
+Let $\Omega\Subset\Rd$ be smooth and bounded, choose $\chi\in\Cc(\Omega)$, and write $v(t)=\chi u(t)|_\Omega$. With $a$ Lipschitz, let
+\begin{equation}\label{eq:betaB}
+ \beta^j=b^j-\partial_i a^{ij}\in L^\infty(\Rd),\qquad
+ \cA h=\partial_i(a^{ij}\partial_jh)+\beta^j\partial_jh-rh.
+\end{equation}
+The local Dirichlet realization $\cA_{\Omega,D}$ is the closed realization of \eqref{eq:AB} in $L^2(\Omega)$ with domain $H^2(\Omega)\cap H^1_0(\Omega)$; for bounded Lipschitz coefficients and a smooth domain it generates an analytic semigroup $S_{\Omega,D}(t)$. This is \emph{only a localization device}: no killed boundary model has been imposed on the original whole-space diffusion.
+
+\begin{proposition}[Cutoff evolution and Duhamel formula]\label{prop:duhamelB}
+Under the hypotheses of Theorem~\ref{thm:classicalB}, for $0<s<t\le T$,
+\begin{equation}\label{eq:duhamelB}
+\boxed{\quad
+\chi u(t)=S_{\Omega,D}(t-s)(\chi u(s))
+-\int_s^t S_{\Omega,D}(t-\tau)[\cA,\chi]u(\tau)\dd\tau,
+\quad}
+\end{equation}
+where $[\cA,\chi]h=\cA(\chi h)-\chi\cA h$ and the identity holds in $L^2(\Omega)$. For the nondivergence expression,
+\begin{equation}\label{eq:commB}
+ [\cA,\chi]h=2a^{ij}(\partial_i\chi)(\partial_jh)
+ +\bigl(a^{ij}\partial_{ij}\chi+b^j\partial_j\chi\bigr)h.
+\end{equation}
+\end{proposition}
+\begin{proof}
+Lemma~\ref{lem:graphB} gives $v(t)\in H^2(\Omega)\cap H_0^1(\Omega)$, since $\chi$ vanishes near $\partial\Omega$. For $t>0$, $v$ is $C^1$ in $L^2(\Omega)$ and
+$\partial_t v=\chi\cA u=\cA_{\Omega,D}v-[\cA,\chi]u$.
+The forcing term is continuous in $L^2(\Omega)$ by local $H^2$ continuity. The standard variation-of-constants formula gives \eqref{eq:duhamelB}. The commutator, supported where $\chi$ varies, is the correction that prevents the restriction from being mistaken for a homogeneous Dirichlet evolution.
+\end{proof}
+
+\subsection{A weighted realization for bounded financial payoffs}
+\label{subsec:weightedB}
+The hypotheses (B1)--(B4) are meaningful only if they can be verified for the given diffusion rather than postulated. For bounded Borel payoffs, a convenient choice is a polynomially \emph{decaying} weighted $L^2$ space. This is already sufficient for digital options and other bounded claims; exponentially growing payoffs are outside the scope of the present section.
+
+For $q>d/2$, let
+\begin{equation}\label{eq:weightB}
+ w_q(x)=(1+|x|^2)^{-q},\quad
+ \HH=L^2(\Rd,w_q(x)\dd x),\quad
+ \VV=H^1(\Rd,w_q(x)\dd x).
+\end{equation}
+The weight has finite mass, is smooth and strictly positive, and its logarithmic first and second derivatives are bounded. In particular,
+\begin{equation}\label{eq:boundedpayoffB}
+ L^\infty(\Rd)\subset\HH\hookrightarrow L^2_{\loc}(\Rd),
+ \quad \norm f_{\HH}\le\norm f_\infty\Big(\int_\Rd w_q\dd x\Big)^{1/2}.
+\end{equation}
+Here $L^\infty$ means equivalence classes. The pointwise expectation for a bounded Borel representative will agree with the corresponding $\HH$ element almost everywhere; see Appendix~\ref{app:weightedproof}.
+
+\begin{proposition}[Weighted realization of the pricing semigroup]\label{prop:weighted}
+Under \eqref{eq:coeffB}, already for $k=0$, and for every $q>d/2$, the following assertions hold.
+\begin{enumerate}[label=\textup{(\roman*)},leftmargin=9mm,itemsep=3pt]
+\item The stochastic pricing operators on bounded Borel functions agree, in $\HH$, with a positive, strongly continuous \emph{analytic} semigroup $S_q(t)$ on $\HH$. Its generator $G_q$ is the closure of $\cA|_{\Cc}$, and
+\begin{equation}\label{eq:weightedgenB}
+ D(G_q)=H^2(\Rd,w_q\dd x),\qquad G_qh=\cA h,
+\end{equation}
+with equivalence of the graph and weighted $H^2$ norms.
+\item If $f$ is bounded Borel, $u(t,x)=P_tf(x)$ is the $\HH$-valued orbit $S_q(t)f$ (equality almost everywhere in $x$ for each $t$). In particular, it satisfies the positive-time regularity and strong local trace of Theorem~\ref{thm:classicalB}.
+\item The same orbit satisfies, for each $T>0$,
+\begin{equation}\label{eq:weightenergyB}
+\boxed{\quad \sup_{0\le t\le T}\norm{u(t)}_{\HH}^2
+ +\int_0^T\norm{u(t)}_{\VV}^2\dd t
+ +\int_0^T\norm{\partial_tu(t)}_{\VV^*}^2\dd t
+ \le C_{T,q}\norm f_{\HH}^2.\quad}
+\end{equation}
+Hence $u\in C([0,T];L^2_{\loc})\cap L^2(0,T;H^1_{\loc})$ and $\partial_tu\in L^2(0,T;H^{-1}_{\loc})$, where the final assertion is understood after spatial cutoffs. The initial trace equals $f$ strongly in local $L^2$.
+\end{enumerate}
+\end{proposition}
+\noindent The complete proof is deferred to Appendix~\ref{app:weightedproof}. Its ingredients are \emph{coercive sectorial forms}, global $H^2$ elliptic realization after a unitary change of weight, a smooth-coefficient approximation of the \emph{SDE}, and an independent Feynman--Kac identification. It neither assumes a transition density nor invokes Gaussian kernel estimates.
+
+\begin{corollary}[Handoff to the interior parabolic theory]\label{cor:handoffB}
+Let $f$ be any bounded Borel payoff, and assume \eqref{eq:coeffB}. The financially selected price $u=P_\cdot f$ is a local energy solution of
+\begin{equation}\label{eq:KolB}
+ \partial_tu=a^{ij}\partial_{ij}u+b^j\partial_ju-ru,
+ \qquad u(0,\cdot)=f\quad\text{strongly in }L^2_{\loc},
+\end{equation}
+with the identity holding almost everywhere at positive times and in the localized weak formulation on $[0,T]$. For every pair of positive-time cylinders $Q'\Subset Q\Subset(0,T)\times\Rd$, standard interior parabolic $L^2$ theory gives
+\begin{equation}\label{eq:parabB}
+ \norm u_{W^{1,2}_2(Q')}\le C_{Q',Q}\norm u_{L^2(Q)},\qquad
+ W^{1,2}_2=\{u,\partial_tu,D_xu,D_x^2u\in L^2\}.
+\end{equation}
+The refinement to higher spatial derivatives, with the finite $C^{k,1}$ regularity carefully tracked, is the subject of Section~6. The conclusion initially identifies the Sobolev representative with $P_tf$ almost everywhere in $x$; a separate pointwise-continuity statement is needed before replacing it by a pointwise representative at every starting state.
+\end{corollary}
+\begin{proof}
+Proposition~\ref{prop:weighted} gives the strong trace and the local energy statement, while Theorem~\ref{thm:classicalB} gives the positive-time differential identity. The localized formulation follows by testing the equation in $\VV^*$ against compactly supported functions and using \eqref{eq:weightenergyB}. The last assertion is the standard interior parabolic $L^2$ estimate for uniformly elliptic Lipschitz principal coefficients; see, e.g., \cite[Ch.~2]{krylov}.
+\end{proof}
+
+\begin{remark}[Division of labor between Sections 5 and 6]
+Section 5 selects the price by the financial stochastic model and verifies the analytic class in which parabolic theory applies. In particular, the initial-time $H^1$ energy bound is obtained independently of positive-time $H^2$ smoothing. Section 6 may now work \emph{locally} with a solution in that class, without choosing a boundary realization for the financial diffusion. Sharp powers of $t$ in short-maturity Greeks require additional estimates and do not follow solely from \eqref{eq:parabB}.
+\end{remark}
+
+\clearpage
+\section{Interior parabolic regularity, initial traces, and financial sensitivities}
+\label{sec:interior6}
+
+Section~\ref{sec:Bsemigroup} selects a discounted price from a \emph{specified} diffusion. For an abstract Banach-space realization satisfying (B1)--(B4), Theorem~\ref{thm:classicalB} yields classical $B$-valued evolution at positive times and the strong $L^2_{\loc}$ trace. For the concrete weighted $L^2$ realization, Proposition~\ref{prop:weighted} additionally proves the \emph{energy estimates at time zero}. These are distinct assertions: analyticity by itself does not yield an integrated $H^1$ bound at the initial face.
+
+In the present section we set aside the stochastic construction and prove local statements about \emph{any} solution satisfying the same energy and trace hypotheses. This keeps the interior regularity mechanism separate from the choice of pricing measure, payoff space, and behavior at spatial infinity. The financial price is recovered by Corollary~\ref{cor:handoffB}. Unlike the preceding section, the local coefficients need not be globally bounded, and no boundary realization is chosen. We use $\cA$ for the differential operator (\ref{eq:AB}); $P_t$ continues to denote the stochastic pricing maps, not a differential operator.
+
+\subsection{Local energy hypotheses and three regularity conclusions}
+\label{subsec:three6}
+Let $\Omega\subset\Rd$ be open, and let
+\begin{equation}\label{eq:localoperator6}
+ \cA v=a^{ij}(x)\partial_{ij}v+b^j(x)\partial_jv-r(x)v,
+ \qquad a=a^\top,\quad
+ a,b,r\in C^{k,1}_{\loc}(\Omega),\quad k\in\mathbb N_0,
+\end{equation}
+where $a$ is locally uniformly positive definite. The coefficients are autonomous. Put $\beta^j=b^j-\partial_i a^{ij}$; since $a$ is locally Lipschitz, $\beta\in L^\infty_{\loc}$ and
+\begin{equation}\label{eq:div6}
+ \cA v=\partial_i(a^{ij}\partial_jv)+\beta^j\partial_jv-rv
+\end{equation}
+in the weak sense for $v\in H^1_{\loc}$. Throughout, $U\Subset V$ denotes compact inclusion with a nonempty buffer region.
+
+\begin{definition}[Local energy solution with strong payoff trace]\label{def:energy6}
+For $f\in L^2_{\loc}(\Omega)$ and $T>0$, a local energy solution of
+$u_t=\cA u$ with trace $f$ is a distributional solution such that, for each coordinate ball $B\Subset\Omega$, each $\chi\in\Cc(B)$, and every $0<T'<T$,
+\begin{equation}\label{eq:energy6}
+ \chi u\in L^2(0,T';H^1_0(B)),\qquad
+ \partial_t(\chi u)\in L^2(0,T';H^{-1}(B)),\qquad
+ (\chi u)(0)=\chi f\ \text{in }L^2(B).
+\end{equation}
+The trace uses the continuous $L^2(B)$ representative supplied by the Gelfand triple $H^1_0(B)\hookrightarrow L^2(B)\hookrightarrow H^{-1}(B)$. Equivalently, $u(t)\to f$ strongly in $L^2(U)$ on each $U\Subset\Omega$, together with the localized energy bounds. No boundary trace of $u$ on $\partial\Omega$ is prescribed.
 \end{definition}
 
-The weak identity encodes the PDE and its trace but should not be confused with a statement that a pointwise Borel payoff is recovered pointwise at every initial state. For discontinuous $f$, convergence at $t=0$ is in local $L^2$; for $t>0$ the Gaussian kernel selects a continuous representative under the present hypotheses. For the time-continuity/energy framework see \cite[\S 7.1]{evans} and \cite[Ch.~III, \S\S 1--4]{ladyzhenskaya}.
+For a bounded Borel payoff, Proposition~\ref{prop:weighted} and Corollary~\ref{cor:handoffB} verify Definition~\ref{def:energy6} for $u(t,x)=P_tf(x)$, as an almost-everywhere spatial representative, under the standing whole-space model. In particular, the time-zero trace here is \emph{not} an additional assumption imposed on the selected financial price.
 
-\begin{theorem}[Expectation-to-energy bridge]\label{thm:bridge}
-Assume $(\mathrm H_0)$. Let $f$ be a Borel payoff satisfying
-\begin{equation}\label{eq:payoffgrowth}
- |f(x)|\le K e^{\theta|x|}
- \qquad(x\in\Rd),\qquad K<\infty,\ \theta\ge0.
+\begin{theorem}[Local Sobolev traces, positive-time smoothing, and norm divergence]\label{thm:three6}
+Suppose \eqref{eq:localoperator6} is locally uniformly elliptic and $u$ satisfies Definition~\ref{def:energy6}. Set $R=k+3$.
+\begin{enumerate}[label=\textup{(\roman*)},leftmargin=9mm,itemsep=4pt]
+\item \textbf{Regular payoff traces.} If $0\le s\le R$ is real and $f\in H^s_{\loc}(\Omega)$, then
+\begin{equation}\label{eq:traceHs6}
+ u\in C([0,T);H^s_{\loc}(\Omega)),\qquad
+ u(t)\longrightarrow f\quad\text{in }H^s(U)
+ \ \text{for every }U\Subset\Omega.
 \end{equation}
-Let $u(t,x)=P_tf(x)$ for $0\le t\le T$, with $u(0,x)=f(x)$. Then, on \emph{every} open $\Omega\subset\Rd$, $u$ is a local energy solution with payoff trace in the sense of Definition~\ref{def:energy}. In particular, for every $U\Subset\Rd$ and $T'<T$,
-\begin{equation}\label{eq:bridgeconc}
- u\in C([0,T'];L^2(U))\cap L^2(0,T';H^1(U)),
- \qquad \partial_tu\in L^2(0,T';H^{-1}(U)),
+More locally, $f\in H^s(V)$ suffices for convergence in $H^s(U)$ whenever $U\Subset V\Subset\Omega$.
+\item \textbf{Smoothing without payoff regularity.} For arbitrary $f\in L^2_{\loc}(\Omega)$,
+\begin{equation}\label{eq:smooth6}
+ u\in C((0,T);H^R_{\loc}(\Omega)).
 \end{equation}
-The $H^{-1}(U)$ derivative is understood by testing against $H_0^1(U)$. The initial trace is strong:
-\[
-  \lim_{t\downarrow0}\norm{u(t)-f}_{L^2(U)}=0.
-\]
+For nested positive-time cylinders $Q'\Subset Q\Subset(0,T)\times\Omega$,
+\begin{equation}\label{eq:quant6}
+ \sup_{t\in I'}\norm{u(t)}_{H^R(U')}
+ \le C_{Q',Q}\norm u_{L^2(Q)},
+ \quad Q'=I'\times U',
+\end{equation}
+with the usual choice of a slightly larger cylinder $Q$ and time interval $I'$ compactly contained in its time projection.
+\item \textbf{Norm divergence at an irregular trace.} Let $0\le\rho\le R$ and let $U\Subset\Omega$ be a smooth relatively compact region. If $f\in H^\rho(V)$ for a neighborhood $V$ of $\overline U$, then
+$\norm{u(t)}_{H^\rho(U)}\to\norm f_{H^\rho(U)}$ as $t\downarrow0$.
+If $f\notin H^\rho(U)$, then instead
+\begin{equation}\label{eq:diverge6}
+ \norm{u(t)}_{H^\rho(U)}\longrightarrow+\infty\qquad(t\downarrow0).
+\end{equation}
+No universal rate of divergence is asserted.
+\end{enumerate}
+These are properties of the \emph{given local energy solution}; the theorem is neither an existence theorem nor a uniqueness claim for an unspecified boundary problem.
 \end{theorem}
 
-\begin{proof}[Proof in four steps]
-\textbf{1. The compact-payoff $L^2$ energy problem.}
-Let $f_R=f\,\ind_{\{|x|\le R\}}$. Then $f_R\in L^2(\Rd)\cap L^\infty(\Rd)$, and $u_R(t)=S_2(t)f_R=P_tf_R$ a.e. on $\Rd$. Consider the bounded, uniformly coercive-up-to-a-shift bilinear form on $H^1(\Rd)$,
-\begin{equation}\label{eq:form}
- \mathfrak a(v,\psi)=\int_{\Rd}a^{ij}\partial_jv\,\partial_i\psi
- -\int_{\Rd}\beta^j\partial_jv\,\psi
- +\int_{\Rd}rv\psi.
-\end{equation}
-It satisfies a G\r{a}rding inequality $\mathfrak a(v,v)+\omega\norm v_2^2\ge c\norm v_{H^1}^2$ for suitable $\omega,c>0$. Form evolution theory provides a unique
-\begin{equation}\label{eq:globalenergy}
- v_R\in L^2(0,T;H^1(\Rd))\cap
- H^1(0,T;H^{-1}(\Rd))\cap C([0,T];L^2(\Rd))
-\end{equation}
-with $v_R(0)=f_R$ and $\partial_tv_R=Av_R$ in $H^{-1}$. The corresponding form semigroup agrees with $S_2$: both generators extend $A$ on $C_c^\infty$, and the $H^2$ resolvent identification in Proposition~\ref{prop:H2} makes the realization unique. Hence $v_R=u_R$. For form semigroups and weak Cauchy problems see \cite[Chs.~1, 4]{ouhabaz} and \cite[\S 7.1]{evans}. This step avoids assuming differentiability of $P_tf_R$.
+\begin{proof}[Proof outline, with the estimates proved in Appendix~\ref{app:interiorproof}]
+For (ii), the localized integer-energy estimates in Lemma~\ref{lem:energyhier6} control derivatives through order $k+1$ on cylinders separated from $t=0$. Time difference quotients, using autonomy, then show that $u_t$ itself satisfies the homogeneous equation as a local energy solution on smaller positive-time cylinders. Apply the integer estimates to $u_t$, obtaining local $H^{k+1}$ continuity in space. The elliptic estimate of Lemma~\ref{lem:elliptic6}, applied to $\cA u=u_t$, gives local $H^{k+3}$ continuity for $u$. Nested cutoffs and the same estimates yield \eqref{eq:quant6}.
 
-\smallskip\noindent\textbf{2. A uniform local price bound and payoff truncation.}
-By Proposition~\ref{prop:weights}, for every bounded $V\subset\Rd$,
-\begin{equation}\label{eq:localL2bound}
- \sup_{R>0}\ \sup_{0\le t\le T}\norm{u_R(t)}_{L^2(V)}
- \le K M_{\theta,T}\norm{w_\theta}_{L^2(V)}<\infty.
-\end{equation}
-For every $M>0$, the Gaussian bound moreover gives
-\begin{equation}\label{eq:tail}
- \lim_{R\to\infty}\ 
- \sup_{\substack{0\le t\le T\\ |x|\le M}}
- |P_t(f-f_R)(x)|=0.
-\end{equation}
-Indeed, in \eqref{eq:gaussian} use $|y|\le M+|y-x|$ and complete the square in $-{|y-x|^2}/(c_Tt)+\theta|y-x|$. A Gaussian tail outside $|y-x|>R-M$, uniformly for $0<t\le T$, tends to zero. At $t=0$, $f_R=f$ on $B_M$ once $R>M$. Thus $u_R\to u$ uniformly on $[0,T]\times B_M$ \emph{as a truncation statement}, regardless of whether $f$ is continuous. In particular the convergence is strong in $L^2((0,T)\times V)$ for every bounded $V$.
+For (i), choose a cutoff of $f$ inside $V$ and a single auxiliary \emph{whole-space} solution with globally extended coefficients. Its semigroup is bounded and strongly continuous on $H^s(\Rd)$ for $0\le s\le R$ (Lemma~\ref{lem:aux6}). Subtract it from $u$ on a region where data and coefficients coincide. The difference has zero local $L^2$ trace; extension by zero to negative time introduces no Dirac mass. The positive-time argument applied across this artificial interior time yields convergence to zero in $H^R$ on smaller regions, and the auxiliary solution converges to the localized payoff in $H^s$. Details are given in Appendix~\ref{subsec:zerotrace6}.
 
-\smallskip\noindent\textbf{3. Uniform Caccioppoli estimate down to the initial time.}
-Fix concentric (or simply nested) balls $U\Subset V$ and choose $\eta\in C_c^\infty(V)$ with $\eta=1$ on $U$. Test the $H^{-1}$ evolution for $u_R$ against $\eta^2u_R$ (justified by time regularization and \eqref{eq:globalenergy}). Ellipticity, boundedness of $a,\beta,r$, and Young's inequality yield
-\begin{equation}\label{eq:caccioppoli}
- \sup_{0\le s\le T'}\int_U|u_R(s)|^2\dd x
- +\int_0^{T'}\!\int_U|\nabla u_R|^2\dd x\dd t
- \le C_{U,V,T'}\!\left(
- \int_V|f_R|^2\dd x+
- \int_0^{T'}\!\int_V|u_R|^2\dd x\dd t\right).
-\end{equation}
-By \eqref{eq:localL2bound} the right-hand side is independent of $R$. This estimate starts at $t=0$ and is crucial: a pointwise smoothing bound $|\nabla u(t)|\lesssim t^{-1/2}$ cannot simply be squared and integrated at zero. The estimate is a standard local form of the energy inequality in \cite[\S 7.1]{evans} and \cite[Ch.~III, \S 2]{ladyzhenskaya}.
-
-Using \eqref{eq:divA}, the same bounds show, for each $\chi\in C_c^\infty(U)$,
-\begin{equation}\label{eq:timebound}
- \sup_R\norm{\partial_t(\chi u_R)}_{L^2(0,T';H^{-1}(U))}<\infty.
-\end{equation}
-The product $\chi u_R$ has zero trace on $\partial U$; commutator terms involving $\nabla\chi$ are bounded by the local $L^2$ and $H^1$ estimates. They are \emph{not} an imposed Dirichlet condition on $u_R$.
-
-\smallskip\noindent\textbf{4. Weak compactness, PDE identity, and strong trace.}
-For each pair $U\Subset V$, \eqref{eq:caccioppoli} bounds $u_R$ in $L^2(0,T';H^1(U))$. Along a subsequence its gradients converge weakly in $L^2((0,T')\times U)$. Since $u_R\to u$ strongly in local $L^2$, the weak gradient limit is $\nabla u$. Equation \eqref{eq:timebound} gives the corresponding local $H^{-1}$ derivative. The coefficients are fixed as $R\to\infty$, so passing to the limit in the weak formulation of the $u_R$ equation yields \eqref{eq:weakid} for $u$, including the initial term: $f_R=f$ on $\supp\varphi(0,\cdot)$ for large $R$.
-
-Finally, each cutoff $\chi u_R$ is continuous $[0,T']\to L^2(U)$ by \eqref{eq:globalenergy}. The uniform-on-compact estimate \eqref{eq:tail} gives $\chi u_R\to\chi u$ in $C([0,T'];L^2(U))$, so the limit is continuous there with $(\chi u)(0)=\chi f$. Taking a cutoff equal to one on an arbitrary smaller set proves the asserted local strong trace. A covering argument establishes the result on every open $\Omega$.
+For (iii), the first assertion is immediate from (i). If the norms in \eqref{eq:diverge6} did not diverge, a sequence $t_n\downarrow0$ would have $\{u(t_n)\}$ bounded in the Hilbert space $H^\rho(U)$. Weak compactness would give an $H^\rho(U)$ limit, while the strong local $L^2$ trace identifies its distributional limit with $f|_U$, contradicting $f\notin H^\rho(U)$.
 \end{proof}
 
-\begin{remark}[Precisely what has, and has not, been proved]
-The theorem identifies the \emph{selected pricing expectation} with a weak parabolic solution having locally square-integrable gradients, an $H^{-1}$ time derivative, and a strong local $L^2$ initial trace. It does \emph{not} assert uniqueness among all local weak solutions on an unbounded domain without growth restrictions. Nor does it impose a spatial boundary condition or claim that every pointwise-finite expectation has these properties. Exponential growth is one sufficient global admissibility condition, not the largest possible class.
-\end{remark}
+\begin{remarkSix}[Coefficient budget and sharpness]\label{rem:budget6}
+The number $R=k+3$ is a general \emph{integer ceiling} for this method under nondivergence-form $C^{k,1}$ coefficients, not a claim that every solution fails to have higher regularity. Appendix~\ref{subsec:sharp6} gives a one-dimensional example ruling out a universal $H^{k+4}_{\loc}$ conclusion. The coefficients are assumed $C^{k,1}$ in the \emph{nondivergence} expression \eqref{eq:localoperator6}; rewriting in divergence form consumes one derivative of $a$ in the drift $\beta$ and does not enlarge the budget.
+\end{remarkSix}
 
-\subsubsection{Boundary realizations and subsequent regularity theory}
-\label{subsec:boundary}
-The diffusion in \eqref{eq:SDE} lives on all of $\Rd$. If instead a process is killed on leaving a domain, reflected, or given boundary cash flows, the \emph{global} semigroup and the domain of its generator change. The local bilinear operator $A_B$ in \eqref{eq:AB} is deliberately not a boundary generator; it describes the same interior differential expression after spatial localization. In particular, multiplying by a cutoff produces a commutator $[A,\chi]u=A(\chi u)-\chi Au$: the cutoff problem is not a homogeneous Dirichlet pricing problem.
+\subsection{Spatial Greeks and terminal payoff regularity}
+\label{subsec:greeks6}
+For a multi-index $\alpha$, $D^\alpha u$ denotes a spatial derivative of the price with respect to its state variables. It includes mixed spatial Greeks, but not derivatives with respect to model parameters such as volatility. Corollary~\ref{cor:greeks6} is an application of the Sobolev embedding theorem, so its dimension dependence is essential.
 
-Once the local energy property is established, interior parabolic regularity can be applied on cylinders strictly inside $(0,T)\times\Omega$. Divergence-form energy and H\"older estimates are treated in \cite[Ch.~III]{ladyzhenskaya}; nondivergence-form Sobolev estimates in \cite[Chs.~2, 4--5]{krylov}; probabilistic motivations and further elliptic/parabolic smoothing in \cite{bass,stroock}. Under additional coefficient regularity, one may obtain $W^{1,2}_p$ or $C^{1+\alpha/2,2+\alpha}$ regularity for positive time, but \emph{none of those higher-order conclusions was used to prove Theorem~\ref{thm:bridge}}.
+\begin{corollary}[Weak and classical spatial Greek traces]\label{cor:greeks6}
+Under Theorem~\ref{thm:three6}, if $f\in H^s_{\loc}(\Omega)$ for some $0\le s\le R$, then, for $|\alpha|\le s$,
+\begin{equation}\label{eq:weakGreek6}
+ D^\alpha u(t)\to D^\alpha f\quad
+ \text{in }H^{s-|\alpha|}_{\loc}(\Omega)\quad(t\downarrow0).
+\end{equation}
+If $s>j+d/2$, all spatial derivatives of order at most $j$ converge uniformly on compact subsets as $t\downarrow0$. At positive times, continuous spatial derivatives through each integer $j<R-d/2$ follow from \eqref{eq:smooth6}.
+\end{corollary}
+\begin{proof}
+Distributional differentiation is bounded from $H^s$ to $H^{s-|\alpha|}$ for $|\alpha|\le s$. The uniform conclusions follow from strict Sobolev embedding on a slightly larger interior region.
+\end{proof}
 
-\medskip
-\noindent\textbf{Conclusion of the bridge.} The whole-space diffusion and an admissible payoff determine $P_tf$. Gaussian bounds first enlarge the payoff class and provide an $L^2$ realization on truncated data. The closed $H^2\to L^2$ generator explains the abstract evolution, while the separate $H^1\to H^{-1}$ realization and local Caccioppoli estimates extend the PDE to exponential-growth Borel payoffs. The resulting strong local $L^2$ trace and energy regularity are exactly the hypotheses needed to start an \emph{independent} interior regularity argument. This preserves the distinction between the global pricing rule and the local PDE mechanism.
+Thus, for a fixed payoff replacement $f_\varepsilon^\pm$ and $U\Subset V$, a sufficient condition for terminal Greek stability through order $j$ is
+\begin{equation}\label{eq:margin6}
+ f_\varepsilon^\pm\in H^s(V),\qquad
+ j+\frac d2<s\le k+3.
+\end{equation}
+This is a \emph{fixed-replacement} assertion; its constants and norm bounds may depend on $\varepsilon$. It does not provide a derivative cap uniform over all replacements as $\varepsilon\to0$, and differentiating an inequality between prices does not produce an inequality between their Greeks.
 
-\subsection*{Guide to the references and scope of each cited input}
-\renewcommand{\arraystretch}{1.18}
-\noindent\begin{tabularx}{\textwidth}{@{}p{0.30\textwidth}X@{}}
-\toprule
-\textbf{Analytic input} & \textbf{Reference / location}\\
-\midrule
-Markov generators, strongly continuous semigroups, cores & Ethier--Kurtz \cite[Ch.~1, \S\S 1--3; Ch.~4, \S\S 1--2]{ethier-kurtz}.\\
-Form realization of elliptic operators, weak evolution, heat kernels & Ouhabaz \cite[Chs.~1, 4, 6]{ouhabaz}.\\
-Gaussian upper bounds for uniformly parabolic kernels & Aronson \cite{aronson1967,aronson1968}.\\
-Whole-space $H^2$ elliptic resolvent estimates; parabolic Sobolev theory & Krylov \cite[Chs.~1--2, 4--5]{krylov}.\\
-Local energy inequalities, weak initial traces, interior PDE arguments & Evans \cite[\S 7.1]{evans}; Ladyzhenskaya--Solonnikov--Ural'tseva \cite[Ch.~III]{ladyzhenskaya}.\\
-Stochastic representations and deeper regularity & Bass \cite{bass}; Stroock \cite{stroock}.\\
-\bottomrule
-\end{tabularx}
+For example, in one dimension with $k=0$ we have $R=3$, and $H^3$ data give continuous terminal delta and gamma, because $3>2+1/2$. In two dimensions the same argument does not establish a continuous second-derivative trace: the required strict inequality $3>2+2/2$ fails. This is a limitation of the stated Sobolev guarantee, not a claim that gamma continuity must fail in a particular model.
 
-\begin{thebibliography}{99}\setlength{\itemsep}{3pt}
-\bibitem{aronson1967} D.~G. Aronson, ``Bounds for the fundamental solution of a parabolic equation,'' \emph{Bulletin of the American Mathematical Society} \textbf{73} (1967), 890--896. \url{https://doi.org/10.1090/S0002-9904-1967-11830-5}.
-\bibitem{aronson1968} D.~G. Aronson, ``Non-negative solutions of linear parabolic equations,'' \emph{Annali della Scuola Normale Superiore di Pisa}, Serie III, \textbf{22} (1968), no.~4, 607--694. \url{https://www.numdam.org/item/ASNSP_1968_3_22_4_607_0/}.
-\bibitem{bass} R.~F. Bass, \emph{Diffusions and Elliptic Operators}, Probability and Its Applications, Springer, 1998. \url{https://doi.org/10.1007/b97611}.
-\bibitem{ethier-kurtz} S.~N. Ethier and T.~G. Kurtz, \emph{Markov Processes: Characterization and Convergence}, Wiley, 1986. \url{https://doi.org/10.1002/9780470316658}.
-\bibitem{evans} L.~C. Evans, \emph{Partial Differential Equations}, 2nd ed., Graduate Studies in Mathematics 19, American Mathematical Society, 2010, \S 7.1.
-\bibitem{krylov} N.~V. Krylov, \emph{Lectures on Elliptic and Parabolic Equations in Sobolev Spaces}, Graduate Studies in Mathematics 96, American Mathematical Society, 2008. \url{https://doi.org/10.1090/gsm/096}.
-\bibitem{ladyzhenskaya} O.~A. Ladyzhenskaya, V.~A. Solonnikov, and N.~N. Ural'tseva, \emph{Linear and Quasi-linear Equations of Parabolic Type}, Translations of Mathematical Monographs 23, American Mathematical Society, 1968. \url{https://doi.org/10.1090/MMONO/023}.
-\bibitem{ouhabaz} E.~M. Ouhabaz, \emph{Analysis of Heat Equations on Domains}, London Mathematical Society Monographs 31, Princeton University Press, 2005. \url{https://doi.org/10.1515/9781400826483}.
-\bibitem{stroock} D.~W. Stroock, \emph{Partial Differential Equations for Probabilists}, Cambridge Studies in Advanced Mathematics 112, Cambridge University Press, 2008.
+\subsubsection{Singularities and observation regions}
+\label{subsubsec:sing6}
+In one spatial dimension, a digital with a jump at its strike is locally in $H^s$ precisely for $s<1/2$ near the jump. A continuous payoff with a genuine affine kink is locally in $H^s$ for $s<3/2$, but not in $H^{3/2}$ across the kink. Smooth cutoffs and the Fourier behavior of a Heaviside step and a positive-part function give these thresholds. Theorem~\ref{thm:three6}(iii) therefore forces the relevant local $H^1$ norm of a digital price and the local $H^2$ norm of a kink-price to diverge as $t\downarrow0$ on observation regions containing the singularity. It does not give a rate or assert divergence at every fixed state.
+
+Under $u_t=u_{xx}$ on $\R$, the digital $f=\mathbf1_{(0,\infty)}$ has, on a fixed interval $U$ containing $0$,
+\begin{equation}\label{eq:heatlayer6}
+ \norm{u_x(t)}_{L^2(U)}\asymp t^{-1/4},
+ \qquad \norm{u_x(t)}_{L^\infty(U)}\asymp t^{-1/2}.
+\end{equation}
+These explicit powers follow from the Gaussian \emph{profile of this constant-coefficient example}; they are not consequences of qualitative norm divergence alone.
+
+\begin{example}[Why the neighborhood matters]\label{ex:neighbor6}
+The neighborhood qualification in Theorem~\ref{thm:three6}(i) is necessary. For the same digital, take $U=(0,1)$. Although $f|_U=1\in H^s(U)$ for every $s$, one has
+\begin{equation}\label{eq:boundarylayer6}
+ \norm{u_x(t)}_{L^2(0,1)}^2
+ =\frac{1}{4\pi t}\int_0^1e^{-x^2/(2t)}\dd x
+ \sim\frac1{4\sqrt{2\pi}}\,t^{-1/2}.
+\end{equation}
+The jump lies on the \emph{boundary of the observation region}, not on a physical boundary of the diffusion. On smaller regions compactly contained in $(0,1)$, the smooth terminal trace is recovered. Regularity must therefore hold on a neighborhood of the observation region where Greek stability is requested.
+\end{example}
+
+\subsection{Localized conservative payoff modifications: estimates without a kernel}
+\label{subsec:modifications6}
+We now return to the whole-space financial diffusion of Section~\ref{sec:Bsemigroup} and use the concrete weighted realization in Proposition~\ref{prop:weighted}. \emph{No transition-density or Gaussian estimate is used in Theorem~\ref{thm:errors6}.} Fix $q>d/2$, let $w=w_q$ and $\HH=L^2(w\dd x)$. Given a bounded Borel payoff $f$, choose bounded Borel replacements $f_\varepsilon^-\le f\le f_\varepsilon^+$ and put
+\begin{equation}\label{eq:mods6}
+ h_\varepsilon^\pm=f_\varepsilon^\pm-f,
+ \quad h_\varepsilon^-\le0\le h_\varepsilon^+,
+ \quad \abs{h_\varepsilon^\pm}\le M_\varepsilon\mathbf1_{E_\varepsilon},
+ \quad \nu_\varepsilon=|E_\varepsilon|<\infty,
+ \quad\nu_{q,\varepsilon}=\int_{E_\varepsilon}w(x)\dd x.
+\end{equation}
+The set $E_\varepsilon$ is measurable and need not have any particular geometry. Put $u=P_\cdot f$ and $u_\varepsilon^\pm=P_\cdot f_\varepsilon^\pm$.
+
+\begin{theorem}[Conservative prices and local Greek-error consistency]\label{thm:errors6}
+Under \eqref{eq:coeffB}, for $k\ge0$ and $R=k+3$, the following conclusions hold.
+\begin{enumerate}[label=\textup{(\roman*)},leftmargin=9mm,itemsep=5pt]
+\item \textbf{Selection and order.} All three prices are well-defined, are local energy solutions, and
+\begin{equation}\label{eq:order6}
+ u_\varepsilon^\pm=u+P_\cdot h_\varepsilon^\pm,
+ \qquad u_\varepsilon^-\le u\le u_\varepsilon^+
+\end{equation}
+pointwise for every starting state and time, with Sobolev statements understood through their spatial representatives.
+\item \textbf{Weighted and local $L^2$ errors, including time zero.} For every finite $T'>0$,
+\begin{equation}\label{eq:weightederror6}
+ \sup_{0\le t\le T'}\norm{u_\varepsilon^\pm(t)-u(t)}_{\HH}
+ \le C_{q,T'}M_\varepsilon\nu_{q,\varepsilon}^{1/2}
+ \le C_{q,T'}M_\varepsilon\nu_\varepsilon^{1/2}.
+\end{equation}
+In particular, for $U\Subset\Rd$ the same estimate holds in $L^2(U)$ with a constant depending also on $U$.
+\item \textbf{Interior positive-time Sobolev and Greek errors.} For $U\Subset\Rd$ and $0<\delta<T'<T$,
+\begin{equation}\label{eq:higherror6}
+ \sup_{\delta\le t\le T'}
+ \norm{u_\varepsilon^\pm(t)-u(t)}_{H^R(U)}
+ \le C_{\delta,T',U,q}M_\varepsilon\nu_{q,\varepsilon}^{1/2}.
+\end{equation}
+Consequently, if $M_\varepsilon\nu_{q,\varepsilon}^{1/2}\to0$, all classical error derivatives through any integer $j<R-d/2$ tend to zero uniformly on compact positive-time cylinders.
+\item \textbf{Distance-sensitive pointwise localization.}
+Define the drift and volatility bounds by
+\[
+ B_0=\norm{b}_{\infty},\qquad
+ \Sigma_0=\sup_{x\in\Rd}\norm{\sigma(x)}_{\mathrm{op}}.
+\]
+Then, for $t>0$,
+\begin{equation}\label{eq:SDEtail6}
+ \abs{u_\varepsilon^\pm(t,x)-u(t,x)}
+ \le M_\varepsilon\min\!\left\{1,\,2d
+ \exp\!\left[-\frac{(\operatorname{dist}(x,E_\varepsilon)-B_0t)_+^2}{2d\Sigma_0^2t}\right]\right\}.
+\end{equation}
+This uses only the SDE and does \emph{not} produce a support-volume factor.
+\end{enumerate}
+These are not uniform derivative caps as $t\downarrow0$; the constant in \eqref{eq:higherror6} generally deteriorates with $\delta$.
+\end{theorem}
+\begin{proof}
+Linearity and positivity in \eqref{eq:algB} give (i). From $0<w\le1$ and \eqref{eq:mods6}, $\norm{h_\varepsilon^\pm}_{\HH}\le M_\varepsilon\nu_{q,\varepsilon}^{1/2}$. The weighted semigroup bound of Proposition~\ref{prop:weighted} gives (ii). For (iii), first bound $\norm{P_\cdot h}_{L^2(Q)}$ on a larger positive-time cylinder $Q$ by the weighted semigroup bound and the local embedding $\HH\hookrightarrow L^2(V)$; then apply \eqref{eq:quant6}. Strict Sobolev embedding yields the derivative conclusion. For (iv), note that $X_t^x\in E_\varepsilon$ implies $|X_t^x-x|\ge\operatorname{dist}(x,E_\varepsilon)$. Since
+\[
+ |X_t^x-x|\le B_0t+\left|\int_0^t\sigma(X_s^x)\dd W_s\right|,
+\]
+the scalar exponential-martingale inequality applied to each of the $d$ coordinates, followed by the union bound, gives
+$\mathbb P_x(|X_t^x-x|\ge R)\le2d\exp[-(R-B_0t)_+^2/(2d\Sigma_0^2t)]$. Since $r\ge0$, the discounted expectation of $|h|$ is bounded by $M_\varepsilon\mathbb P_x(X_t^x\in E_\varepsilon)$, proving \eqref{eq:SDEtail6}. No transition density enters the argument.
+\end{proof}
+
+\begin{remarkSix}[Independent optional Gaussian refinement]\label{rem:optionalG6}
+The main results of Sections 5--6 do not depend on a heat-kernel bound. If one \emph{additionally} invokes a classical low-order Gaussian upper bound for the discounted kernel,
+\begin{equation}\label{eq:optionalG6}
+ 0\le q(t,x,y)\le Ct^{-d/2}\exp\!\left(-\frac{|x-y|^2}{ct}\right),
+ \qquad 0<t\le T,
+\end{equation}
+then the stronger, support-volume-sensitive estimates from the earlier draft follow:
+\begin{align}
+ \abs{P_th_\varepsilon^\pm(x)}
+ &\le CM_\varepsilon\min\{1,\nu_\varepsilon t^{-d/2}\}
+ \exp\!\left(-\frac{\operatorname{dist}(x,E_\varepsilon)^2}{ct}\right),
+ \label{eq:optionalpoint6}\\
+ \sup_{0\le t\le T}\norm{P_th_\varepsilon^\pm}_{L^p(\Rd)}
+ &\le C_{p,T}M_\varepsilon\nu_\varepsilon^{1/p},
+ \qquad 1\le p<\infty.\label{eq:optionalLp6}
+\end{align}
+Here \eqref{eq:optionalG6} is an \emph{external, independent hypothesis}, obtainable for bounded Lipschitz uniformly elliptic coefficients from classical fundamental-solution theory; it is not a premise of Section~\ref{sec:Bsemigroup}, of Theorem~\ref{thm:three6}, or of Theorem~\ref{thm:errors6}. Formula \eqref{eq:optionalpoint6} follows by splitting the Gaussian exponential and integrating over $E_\varepsilon$; \eqref{eq:optionalLp6} follows from the two Schur kernel integrals and interpolation. See Aronson \cite{aronson67,aronson68}. The resulting constants need not be sharp as $t\downarrow0$.
+\end{remarkSix}
+
+\begin{corollary}[One-dimensional support-width estimates]\label{cor:width6}
+In $d=1$, if $\nu_\varepsilon\le C\varepsilon$, Theorem~\ref{thm:errors6} implies
+\begin{equation}\label{eq:oneD6}
+ \sup_{0\le t\le T'}\norm{u_\varepsilon^\pm(t)-u(t)}_{L^2(U)}
+ +\sup_{\delta\le t\le T'}\norm{u_\varepsilon^\pm(t)-u(t)}_{H^{k+3}(U)}
+ \le C_{\delta,T',U} M_\varepsilon\sqrt\varepsilon.
+\end{equation}
+If the independent kernel estimate \eqref{eq:optionalG6} is also available, then
+\begin{equation}\label{eq:oneDG6}
+ \abs{u_\varepsilon^\pm(t,x)-u(t,x)}
+ \le CM_\varepsilon\min\{1,\varepsilon/\sqrt t\}
+ \exp\!\left(-\frac{\operatorname{dist}(x,E_\varepsilon)^2}{ct}\right).
+\end{equation}
+For a digital replacement typically $M_\varepsilon=O(1)$; for a kink replacement of width $\varepsilon$ one often has $M_\varepsilon=O(\varepsilon)$. These lead respectively to $O(\sqrt\varepsilon)$ and $O(\varepsilon^{3/2})$ positive-time $H^{k+3}$ errors, while the optional Gaussian price-error estimates at fixed positive time have orders $O(\varepsilon)$ and $O(\varepsilon^2)$. The rate statements depend on the actual width/amplitude of the chosen replacement.
+\end{corollary}
+
+\subsection{Scope of the conclusions}
+\label{subsec:scope6}
+The financially specified diffusion fixes a single price $P_tf$ and preserves payoff order. The weighted $B$-realization of Section~\ref{sec:Bsemigroup} gives the abstract generator, the strong local $L^2$ trace, and the local energy bound. Theorem~\ref{thm:three6} then gives positive-time $H^{k+3}$ regularity and, for appropriately regularized payoffs, strong higher-order terminal traces. Theorem~\ref{thm:errors6} gives a quantitative \emph{weighted} stability statement for localized modifications without any kernel assumption. Gaussian refinement is explicitly optional and independent.
+
+Neither positive-time smoothing nor price order alone supplies a universal inequality between price Greeks. No sharp maturity-dependent pointwise Greek bound, global derivative cap, or differentiable off-diagonal kernel estimate is asserted. Locally elliptic models with physical boundaries require independent choices of boundary dynamics; the interior statements apply once their solutions satisfy Definition~\ref{def:energy6}. Time-dependent coefficients require a separate argument for time differentiation, since $\partial_t(\cA(t)u)$ contains $(\partial_t\cA(t))u$.
+
+\clearpage
+\appendix
+\section{Weighted sectorial realization and Feynman--Kac identification}
+\label{app:weightedproof}
+\noindent\textbf{Scope.} We prove Proposition~\ref{prop:weighted} without heat-kernel hypotheses. The proof first constructs an analytic semigroup from a coercive form, then identifies that semigroup with the \emph{given} SDE pricing expectation. This separation avoids using the desired stochastic/PDE identification as a premise.
+
+\subsection{The closed weighted form and its analytic semigroup}
+\label{app:form}
+Fix $q>d/2$ and abbreviate $w=w_q$, $H=\HH$, $V=\VV$. Then $V\hookrightarrow H\hookrightarrow V^*$ is a dense Hilbert triple. With
+\begin{equation}\label{eq:betaw}
+ \beta^j=b^j-\partial_i a^{ij},\qquad
+ \eta=a\nabla\log w-\beta,
+\end{equation}
+all coefficients $a,\beta,\eta,r$ belong to $L^\infty$. Define, initially on $C_c^\infty\times C_c^\infty$ and then on $V\times V$,
+\begin{equation}\label{eq:weightedform}
+ \mathfrak a_q(u,v)=\int_\Rd w\,a\nabla u\cdot\nabla\overline v\dd x
+ +\int_\Rd w\,(\eta\cdot\nabla u)\overline v\dd x
+ +\int_\Rd w\,r u\overline v\dd x.
+\end{equation}
+(The complexified Hilbert spaces are used when discussing holomorphic semigroups.) Weighted integration by parts gives
+\begin{equation}\label{eq:formmatch}
+ \mathfrak a_q(u,v)=-(\cA u,v)_H
+ \qquad(u,v\in\Cc(\Rd)).
+\end{equation}
+The boundedness of $a,\eta,r$ yields
+\begin{equation}\label{eq:formbound}
+ |\mathfrak a_q(u,v)|\le C\norm u_V\norm v_V.
+\end{equation}
+By uniform ellipticity and Young's inequality,
+\begin{equation}\label{eq:gardingw}
+ \operatorname{Re}\mathfrak a_q(u,u)+\omega\norm u_H^2
+ \ge c\norm u_V^2
+ \qquad (u\in V)
+\end{equation}
+for suitable $\omega,c>0$. Thus $\mathfrak a_q+\omega(\cdot,\cdot)_H$ is a densely defined, closed, coercive sectorial form. The first representation theorem for sectorial forms gives an $m$-sectorial operator $-G_q$ associated with $\mathfrak a_q$, where
+\begin{equation}\label{eq:Gdef}
+ u\in D(G_q),\ G_qu=g
+ \quad\Longleftrightarrow\quad
+ u\in V,\quad\mathfrak a_q(u,v)=-(g,v)_H\ \text{for all }v\in V.
+\end{equation}
+Consequently $G_q$ generates a strongly continuous analytic semigroup $S_q(t)$ on $H$, with $\norm{S_q(t)}\le Me^{\omega t}$. See \cite[Ch.~1, \S\S1.2--1.5]{ouhabaz} for form--operator--semigroup theory.
+
+Taking $u\in C_c^\infty$ in \eqref{eq:formmatch} shows $\Cc\subset D(G_q)$ and $G_qu=\cA u$. Notice that no probabilistic representation or kernel assertion was used.
+
+\subsection{Generator domain and the test-function core}
+\label{app:domain}
+We identify the operator associated with the form. The unitary map
+\begin{equation}\label{eq:unitary}
+ U:H\to L^2(\Rd),\qquad Uf=w^{1/2}f,
+\end{equation}
+transforms weighted Sobolev norms into equivalent unweighted norms, because the first and second derivatives of $\log w$ are bounded. In particular
+\begin{equation}\label{eq:unweight}
+ U(H^j(\Rd,w\dd x))=H^j(\Rd),\qquad j=0,1,2,
+\end{equation}
+with equivalent norms. On smooth functions, $UG_qU^{-1}$ agrees with a uniformly elliptic nondivergence operator whose leading coefficient is $a$ and whose first- and zeroth-order coefficients are bounded. Indeed, writing $h=\tfrac12\log w$,
+\begin{equation}\label{eq:conjugate}
+ U\cA U^{-1}v=
+ a^{ij}\partial_{ij}v+(b^j-2a^{ij}\partial_i h)\partial_jv
+ +\bigl(a^{ij}(\partial_i h\partial_jh-\partial_{ij}h)-b^i\partial_i h-r\bigr)v.
+\end{equation}
+The whole-space $L^2$ elliptic estimate for uniformly elliptic operators with bounded Lipschitz leading coefficients (obtainable by freezing coefficients and difference quotients) implies that for each sufficiently large real $\lambda$ and each weak solution of $(\lambda-G_q)u=g\in H$,
+\begin{equation}\label{eq:globalH2w}
+ \norm u_{H^2(w)}\le C_\lambda\bigl(\norm{G_qu}_H+\norm u_H\bigr).
+\end{equation}
+For completeness, an exhaustion argument applies the usual $H^2$ estimates to cutoffs of $Uu$, with commutator terms controlled by the $H^1$ estimate from \eqref{eq:gardingw}; the uniform whole-space coefficients allow the cutoff radii to tend to infinity. Conversely $u\in H^2(w)$ implies $\cA u\in H$, and integration by parts gives \eqref{eq:Gdef}. Hence
+\begin{equation}\label{eq:domainresult}
+ D(G_q)=H^2(\Rd,w\dd x),\qquad G_qu=\cA u,
+ \qquad\norm u_{D(G_q)}\asymp\norm u_{H^2(w)}.
+\end{equation}
+Since $C_c^\infty(\Rd)$ is dense in $H^2(w)$, it is a graph-norm core for $G_q$. This establishes $G_q=\overline{\cA|_{\Cc}}$ and proves the analytic parts of Proposition~\ref{prop:weighted} without knowing anything about $P_t$.
+
+\subsection{Weighted energy estimate and the strong trace}
+\label{app:energy}
+For $f\in H$, define $u(t)=S_q(t)f$. Standard form evolution theory implies
+\begin{equation}\label{eq:varw}
+ u\in L^2(0,T;V)\cap H^1(0,T;V^*)\cap C([0,T];H),
+ \qquad \partial_tu=\cA u\ \text{in }V^*,\quad u(0)=f.
+\end{equation}
+More explicitly, take initially $f\in D(G_q)$, pair the equation with $u(t)$ in $H$, use \eqref{eq:gardingw}, and obtain
+\begin{equation}\label{eq:energyder}
+ \tfrac12\frac{\dd}{\dd t}\norm{u(t)}_H^2
+ +c\norm{u(t)}_V^2\le\omega\norm{u(t)}_H^2.
+\end{equation}
+Gronwall's inequality and integration yield
+\begin{equation}\label{eq:energyapp}
+ \sup_{0\le t\le T}\norm{u(t)}_H^2
+ +\int_0^T\norm{u(t)}_V^2\dd t\le C_T\norm f_H^2.
+\end{equation}
+The boundedness of the form operator $\cA:V\to V^*$ then gives
+\begin{equation}\label{eq:timeapp}
+ \int_0^T\norm{\partial_tu(t)}_{V^*}^2\dd t
+ \le C_T\norm f_H^2.
+\end{equation}
+Density of $D(G_q)$ in $H$ and the energy inequality extend these conclusions to every $f\in H$, and the Hilbert-triple trace theorem gives continuity into $H$. Since $w$ is bounded above and below on any bounded domain, spatial localization transfers \eqref{eq:varw} to the local energy formulation. In particular the trace is strongly local $L^2$, without integrating a nonintegrable pointwise derivative bound at $t=0$.
+
+\subsection{Identification with the prescribed stochastic expectation}
+\label{app:FK}
+It remains to prove that $S_q$ is not merely an analytic solution operator with the \emph{same formal differential expression}, but is \emph{the} pricing semigroup chosen by the SDE. This is an independent identification; we do not invoke a Gaussian kernel or use Proposition~\ref{prop:weighted} to prove itself.
+
+\paragraph{Step 1: smooth coefficients and smooth payoffs.}
+Choose mollifications $(b_n,\sigma_n,r_n)$ converging uniformly to $(b,\sigma,r)$, whose supremum and global Lipschitz constants are bounded independently of $n$. Set $a_n=\sigma_n\sigma_n^\top/2$; for large $n$, ellipticity is preserved with a common constant. Each triple is smooth, with bounded derivatives of every order (bounds above first order may depend on $n$). Let $S_{q,n}$ denote its variational form semigroup and $X^{n,x}$ the corresponding strong diffusion.
+
+For $\varphi\in\Cc(\Rd)$, the smooth stochastic-flow differentiation theorem, Ito's formula, and the backward Kolmogorov identity show that
+\begin{equation}\label{eq:smFK}
+ u_n(t,x)=\E_x\left[
+ e^{-\int_0^t r_n(X_s^{n,x})\dd s}\,\varphi(X_t^{n,x})\right]
+\end{equation}
+is a bounded classical solution of $\partial_tu_n=\cA_nu_n$, $u_n(0)=\varphi$. Its first spatial derivatives are bounded on finite time intervals (differentiate the smooth stochastic flow); thus, because $w\in L^1$, $u_n$ lies in the weighted variational class and has the strong weighted $L^2$ initial trace. Variational uniqueness from \eqref{eq:gardingw} gives
+\begin{equation}\label{eq:identn}
+ u_n(t)=S_{q,n}(t)\varphi\quad\text{in }H.
+\end{equation}
+This step uses classical smooth SDE calculus, not a fundamental-solution theorem or an assumed kernel bound; compare the smooth SDE-to-PDE passage in \cite[Vol.~II, Ch.~11, \S10]{taylorII}.
+
+\paragraph{Step 2: pass to Lipschitz coefficients.}
+Write $u(t)=S_q(t)\varphi$. The coefficients $a_n,b_n,r_n$ converge uniformly. Their weak first derivatives converge almost everywhere along the standard mollifying sequence; hence $\beta_n=b_n-\operatorname{div}a_n\to\beta$ almost everywhere, with uniform $L^\infty$ bounds. In particular, for every fixed $v\in V$,
+\begin{equation}\label{eq:formconvergence}
+ \norm{(\cA_n-\cA)v}_{V^*}\longrightarrow0,
+\end{equation}
+as follows from the weighted form formulas and dominated convergence. Applying the energy estimate to $z_n=S_{q,n}(\cdot)\varphi-S_q(\cdot)\varphi$, which satisfies
+\begin{equation}\label{eq:stabilityeq}
+ \partial_tz_n=\cA_n z_n+(\cA_n-\cA)u,\qquad z_n(0)=0,
+\end{equation}
+we obtain
+\begin{equation}\label{eq:stableH}
+ \sup_{0\le t\le T}\norm{S_{q,n}(t)\varphi-S_q(t)\varphi}_H\longrightarrow0.
+\end{equation}
+Indeed $u\in L^2(0,T;V)$, and dominated convergence applied to the form coefficients gives $(\cA_n-\cA)u\to0$ in $L^2(0,T;V^*)$; the coercivity constants are uniform in $n$.
+
+On the other hand, SDE stability gives, uniformly for $x$ in each compact set,
+\begin{equation}\label{eq:stabsde}
+ \E\sup_{s\le T}|X_s^{n,x}-X_s^x|^2\longrightarrow0.
+\end{equation}
+As $\varphi$ and $r$ are bounded Lipschitz, \eqref{eq:stabsde} and uniform convergence $r_n\to r$ imply local uniform convergence of the stochastic expectations in \eqref{eq:smFK} to $P_t\varphi(x)$, uniformly for $t\in[0,T]$. Comparing with \eqref{eq:stableH} yields
+\begin{equation}\label{eq:FKsmooth}
+ S_q(t)\varphi=P_t\varphi\quad\text{in }H,
+ \qquad \varphi\in\Cc(\Rd),\quad t\ge0.
+\end{equation}
+
+\paragraph{Step 3: extend the identification to \emph{bounded Borel} payoffs.}
+This step should not be bypassed by asserting a priori that $P_t$ acts boundedly on $H$; that is part of the conclusion. Fix $t>0$ and a nonnegative $g\in\Cc(\Rd)$. Define a finite positive Borel measure in the terminal variable by
+\begin{equation}\label{eq:measuremu}
+ \mu^g_t(E):=\int_\Rd g(x)w(x)\E_x\left[
+ e^{-\int_0^t r(X_s)\dd s}\,\mathbf1_{\{X_t\in E\}}
+ \right]\dd x.
+\end{equation}
+By \eqref{eq:FKsmooth}, for every $\varphi\in\Cc$,
+\begin{equation}\label{eq:measureid}
+ \int_\Rd\varphi(y)\,\mu_t^g(\dd y)
+ =(S_q(t)\varphi,g)_H
+ =(\varphi,S_q(t)^*g)_H.
+\end{equation}
+The right-hand side is integration against the \emph{finite signed measure} $w(y)(S_q(t)^*g)(y)\dd y$: it has finite total variation by Cauchy--Schwarz and $\int w<\infty$. Since $C_c^\infty$ determines finite Borel measures, equality \eqref{eq:measureid} holds for every bounded Borel test payoff $f$. Thus
+\begin{equation}\label{eq:weakid}
+ \int_\Rd g(x)w(x)P_tf(x)\dd x
+ =(S_q(t)f,g)_H
+\end{equation}
+for every nonnegative $g\in\Cc$. As $r\ge0$ implies $|P_tf(x)|\le\norm f_\infty$ and $w$ is integrable, the left side is a bounded weighted $L^2$ function of $x$. Equality for test $g$ implies
+\begin{equation}\label{eq:FKall}
+ \boxed{\quad P_tf=S_q(t)f\quad\text{in }H
+ \text{ for every bounded Borel }f.\quad}
+\end{equation}
+At $t=0$ equality is immediate. This also proves independence of the $H$ element from the chosen Borel representative, even though the pointwise value at $t=0$ retains that representative. By approximating any nonnegative $H$-function in $H$ by bounded nonnegative Borel functions, the positivity of $P_t$ passes to $S_q(t)$ on all of $H$. No pointwise transition-density assertion has been invoked.
+
+\paragraph{Conclusion.}
+Equations \eqref{eq:domainresult}, \eqref{eq:energyapp}--\eqref{eq:timeapp}, and \eqref{eq:FKall} prove all statements of Proposition~\ref{prop:weighted}. In particular, for a bounded Borel payoff the strong continuity, positive-time classical evolution, and energy/trace estimates are now \emph{theorems about its stochastic price}, not merely properties of a separately constructed analytic solution.
+
+
+\clearpage
+\section{Proof of the interior regularity mechanism}
+\label{app:interiorproof}
+This appendix proves Theorem~\ref{thm:three6}, including the endpoint $H^{k+3}_{\loc}$ and real-order traces. It supplements, rather than repeats, Appendix~\ref{app:weightedproof}: Appendix~\ref{app:weightedproof} constructs the \emph{financial pricing semigroup} and its energy class; the present appendix starts with an arbitrary local energy solution. A single auxiliary whole-space evolution will be used for the higher-order initial trace. It imposes no boundary condition on the given solution, and no fractional-power identification of a physical boundary operator is assumed.
+
+\subsection{Finite-coefficient elliptic regularity}
+\label{subsec:ellipticB}
+Work in relatively compact coordinate regions and write $\mathsf P=-\cA=-a^{ij}\partial_{ij}-b^j\partial_j+r$. Its principal matrix is symmetric and uniformly positive definite on each relatively compact set. The coefficients belong to $W^{k+1,\infty}_{\loc}$; the $k+1$ weak derivatives need not be continuous.
+
+\begin{lemma}[Finite-order interior elliptic estimate]\label{lem:elliptic6}
+Let $0\le\ell\le k+1$ be an integer and $U\Subset V\Subset\Omega$. If $v\in H^1_{\loc}(\Omega)$ and $\mathsf Pv\in H^\ell_{\loc}(\Omega)$ in the weak sense, then $v\in H^{\ell+2}_{\loc}(\Omega)$ and
+\begin{equation}\label{eq:ellipticB6}
+ \norm v_{H^{\ell+2}(U)}\le C_{U,V}
+ \bigl(\norm{\mathsf Pv}_{H^\ell(V)}+\norm v_{L^2(V)}\bigr).
+\end{equation}
+For globally bounded $C^{k,1}$ coefficients and uniform ellipticity on $\Rd$, the analogous whole-space estimate holds with $U=V=\Rd$, whenever the right side is finite.
+\end{lemma}
+\begin{proof}
+For $\ell=0$, write the operator in divergence form. The local energy estimate first bounds $\nabla v$ by $\norm{\mathsf Pv}_{L^2}$ and $\norm v_{L^2}$ on a larger region. Spatial difference quotients of the equation, tested against difference quotients of a cutoff times $v$, then give a uniform bound for the second derivatives. Terms containing difference quotients of $a$ are controlled by $\norm{\nabla a}_{L^\infty}$; drift and cutoff terms are absorbed by Young's inequality. No derivative of the datum is required in this base step.
+
+For induction suppose $v\in H^{\ell+1}_{\loc}$ and $\mathsf Pv\in H^\ell_{\loc}$. For $|\alpha|=\ell$, the differentiated equation for $D^\alpha v$ has principal operator $\mathsf P$ and source $D^\alpha\mathsf Pv+[\mathsf P,D^\alpha]v$. In the nondivergence expression, each principal commutator summand has the form
+\begin{equation}\label{eq:ellcomm6}
+ (D^\gamma a^{ij})\,\partial_{ij}D^{\alpha-\gamma}v,
+ \qquad 0<|\gamma|\le |\alpha|,
+\end{equation}
+and hence contains at most $\ell$ coefficient derivatives and $\ell+1$ already controlled solution derivatives. Lower-order commutators are no worse. The $\ell=0$ estimate, applied to derivatives on nested regions, gives $H^{\ell+2}_{\loc}$. Regularization and difference quotients justify these steps before the differentiated equation is known classically; $W^{k+1,\infty}$ bounds suffice at the endpoint $\ell=k+1$. The lower-order interior norms are removed by successive cutoffs and interpolation. For global coefficients, use uniform localization and cutoffs tending to one.
+
+This is the finite-differentiability version of the localization/freezing-coefficient mechanism in Taylor \cite[Vol.~I, Ch.~5, \S11, Thm.~11.1]{taylorI}; the endpoint with only Lipschitz top derivatives follows from the difference-quotient argument, not directly from a smooth-coefficient theorem.
+\end{proof}
+
+\subsection{Localized energy hierarchy and positive-time time derivatives}
+\label{subsec:energyB}
+Write $Q=I\times V\Subset(0,T)\times\Omega$ for a cylinder and $Q'\Subset Q$ for a nested cylinder. The letter $\mathsf P$ remains $-\cA$, so the PDE is $v_t+\mathsf Pv=0$.
+
+\begin{lemma}[Integer-order local energy estimates]\label{lem:energyhier6}
+For each integer $0\le\ell\le k+1$, a local energy solution $v$ of $v_t+\mathsf Pv=0$ obeys on nested positive-time cylinders
+\begin{equation}\label{eq:hierB6}
+ \sup_{t\in I'}\norm{v(t)}_{H^\ell(U')}^2
+ +\int_{I'}\norm{v(t)}_{H^{\ell+1}(U')}^2\dd t
+ \le C_{Q',Q}\norm v_{L^2(Q)}^2.
+\end{equation}
+If the initial datum is locally in $H^\ell$ on a neighborhood of the observation region, the analogous estimates hold down to $t=0$ on smaller regions, with an additional initial $H^\ell$ norm on the right. In either case, $v$ has a representative continuous in local $H^\ell$ on the corresponding time interval.
+\end{lemma}
+\begin{proof}
+For $\ell=0$, test the weak equation against $\chi^2v$, with $\chi$ supported in a slightly larger ball. The divergence expression \eqref{eq:div6}, ellipticity and Young's inequality yield
+\begin{equation}\label{eq:baseenergyB6}
+ \frac{\dd}{\dd t}\norm{\chi v(t)}_2^2
+ +c\norm{\chi\nabla v(t)}_2^2
+ \le C\norm{v(t)}_{L^2(\supp\chi)}^2.
+\end{equation}
+Use Steklov time averages to justify the test for weak solutions. A time cutoff supported strictly inside $I$ eliminates the initial-face term, giving the positive-time claim; with a known initial $L^2$ trace it is retained instead.
+
+For $\ell\ge1$, differentiate spatially through order $\ell$ in a difference-quotient approximation. Testing the resulting equations against $\chi^2D^\alpha v$ and summing over $|\alpha|\le\ell$ absorbs the highest gradients by ellipticity. The principal commutators are as in \eqref{eq:ellcomm6}. Because $\ell\le k+1$, the coefficients have the necessary bounded weak derivatives; the remaining commutators use only lower solution norms on slightly larger regions. Iterate over nested regions to obtain \eqref{eq:hierB6}. Weak compactness removes the regularization.
+
+Each cutoff derivative $z=\chi D^\alpha v$ satisfies $z\in L^2_tH^1_0$ and $z_t\in L^2_tH^{-1}$ after the lower-order terms have been controlled. The Hilbert-triple trace theorem therefore supplies $z\in C_tL^2$, which yields the claimed $H^\ell$ continuity and identifies its trace by testing the equation in distributions. These are \emph{energy} conclusions, not interpolation of unproved norms.
+\end{proof}
+
+\begin{lemma}[Time differentiation and the last two spatial derivatives]\label{lem:timediff6}
+For a local energy solution of the autonomous equation, $v_t\in L^2_{\loc}((0,T)\times\Omega)$. On every positive-time cylinder $Q'\Subset Q$, it is itself a local energy solution of the \emph{same homogeneous equation} on a slightly smaller cylinder. Consequently,
+\begin{equation}\label{eq:lastB6}
+ v_t\in C((0,T);H^{k+1}_{\loc}(\Omega)),
+ \qquad v\in C((0,T);H^{k+3}_{\loc}(\Omega)),
+\end{equation}
+and the quantitative estimate \eqref{eq:quant6} holds.
+\end{lemma}
+\begin{proof}
+For smooth regularizations, test the equation on a positive-time cylinder with $\chi^2v_t$ and a temporal cutoff. The principal contribution is
+\[
+ \int a^{ij}\partial_{ij}v\,\chi^2v_t
+ =-\frac12\frac{\dd}{\dd t}\int\chi^2 a\nabla v\cdot\nabla v
+   +\text{terms involving }\nabla\chi\text{ and }\nabla a.
+\]
+The coefficients are time independent, so no derivative of $a$ in time occurs. The remaining drift, potential and cutoff terms are controlled by Young's inequality and the preceding $H^1$ energy bound. One obtains
+\begin{equation}\label{eq:vtboundB6}
+ \norm{v_t}_{L^2(Q')}^2\le C_{Q',Q}
+ \bigl(\norm v_{L^2(Q)}^2+\norm{\nabla v}_{L^2(Q)}^2\bigr).
+\end{equation}
+Time mollification and spatial difference quotients justify the calculation without presupposing $v_t\in L^2$.
+
+Now $v_h(t)=[v(t+h)-v(t)]/h$ solves the same homogeneous PDE because the coefficients are autonomous. The $L^2$ bounds just obtained control $v_h$ uniformly on smaller positive-time cylinders. Apply the $\ell=0$ energy estimate to $v_h$, pass to a weak limit, and identify the limit with $v_t$. Thus $v_t$ has the local energy structure, and Lemma~\ref{lem:energyhier6} applied through $\ell=k+1$ yields $v_t\in C_tH^{k+1}_{\loc}$ on positive times. Lemma~\ref{lem:elliptic6}, applied to $\mathsf Pv=-v_t$, gives $v(t)\in H^{k+3}_{\loc}$. Applying its estimate to $v(t)-v(s)$ proves continuity in this topology. The quantitative version follows by keeping the nested-cylinder constants in each of these estimates. This proves Theorem~\ref{thm:three6}(ii).
+\end{proof}
+
+\subsection{One auxiliary whole-space evolution with real-order continuity}
+\label{subsec:auxB}
+The following statement is \emph{analytic} and does not involve financial payoff expectations. It applies also to locally defined coefficients after the extension described below.
+
+\begin{lemma}[Whole-space Sobolev evolution for finite coefficient regularity]\label{lem:aux6}
+Assume that $a,b,r$ are globally bounded $C^{k,1}$ coefficients on $\Rd$, with uniformly positive definite $a$, and let $S(t)$ be the unweighted $L^2$ evolution generated by $\cA$. For each real $0\le s\le k+3$ and $0\le T'<\infty$,
+\begin{equation}\label{eq:auxB6}
+ \sup_{0\le t\le T'}\norm{S(t)g}_{H^s(\Rd)}
+ \le C_{s,T'}\norm g_{H^s(\Rd)},\qquad
+ S(t)g\longrightarrow g\quad\text{in }H^s(\Rd)\quad(t\downarrow0).
+\end{equation}
+No equality between a fractional generator-power domain and $H^s$ is asserted.
+\end{lemma}
+\begin{proof}
+The coercive-form argument of Appendix~\ref{app:weightedproof} also works with $w\equiv1$, producing an analytic $L^2$ semigroup. The whole-space elliptic estimate in Lemma~\ref{lem:elliptic6} identifies its operator domain as $H^2$. For integers $0\le\ell\le k+1$, the global version of Lemma~\ref{lem:energyhier6} yields $H^\ell$ boundedness and strong continuity when $g\in H^\ell$. If $g\in H^{\ell+2}$, then $\cA g\in H^\ell$ and the generator commutation identity
+\[
+ \cA S(t)g=S(t)\cA g
+\]
+combined with the global elliptic estimate implies
+\[
+ \norm{S(t)g-g}_{H^{\ell+2}}
+ \le C\Big(\norm{(S(t)-I)\cA g}_{H^\ell}
+             +\norm{(S(t)-I)g}_{L^2}\Big)\longrightarrow0.
+\]
+The same reasoning gives uniform $H^{\ell+2}$ bounds. Hence the assertions hold at every integer level $0,1,\ldots,k+3$. Interpolate the \emph{same linear operators} between adjacent integer Sobolev spaces and use density of the higher-order spaces to obtain all intermediate real orders. The interpolation is of established operator bounds, not of missing solution regularity.
+\end{proof}
+
+\subsection{Zero-trace subtraction and the initial $H^s$ trace}
+\label{subsec:zerotrace6}
+Fix nested coordinate regions $U\Subset W\Subset V\Subset\Omega$ and suppose $f\in H^s(V)$, $0\le s\le k+3$. Choose $\chi\in\Cc(V)$ equal to one near $\overline W$, and extend $g=\chi f$ by zero to $\Rd$. Extend the coefficients of $\cA$ from a neighborhood of $\overline W$ to bounded globally $C^{k,1}$ coefficients on $\Rd$. For the principal matrix, interpolate with a fixed positive matrix using a smooth cutoff; since both matrices are positive definite and the combination is convex, ellipticity is preserved. Extend lower-order coefficients by cutoffs. Denote the auxiliary global operator by $\widetilde{\cA}$ and its unweighted Sobolev semigroup by $S(t)$.
+
+Put $v(t)=S(t)g$. Lemma~\ref{lem:aux6} gives
+\begin{equation}\label{eq:vauxB6}
+ v\in C([0,T'];H^s(\Rd)),\qquad
+ v(t)\longrightarrow g=f\quad\text{in }H^s(U).
+\end{equation}
+On $W$, the functions $v$ and the given local energy solution $u$ solve the \emph{same} homogeneous equation and have the same local initial trace. Their difference $z=u-v$ is therefore a local energy solution with \emph{zero} $L^2$ trace in $W$. Define $\widetilde z(t)=0$ for $t<0$ and $\widetilde z(t)=z(t)$ for $t\ge0$. The weak equation and zero trace imply that integration by parts in time creates no Dirac source at $t=0$. Thus $\widetilde z$ is a local energy solution of the same autonomous equation on $(-\delta,T')\times W$ for every sufficiently small $\delta>0$.
+
+Time zero is now an \emph{interior time}. Lemma~\ref{lem:timediff6}, applied to a cylinder crossing zero, gives
+\begin{equation}\label{eq:zzeroB6}
+ \widetilde z\in C((-\delta,T');H^{k+3}(U)),\qquad
+ \norm{z(t)}_{H^{k+3}(U)}\longrightarrow0\quad(t\downarrow0).
+\end{equation}
+The limit is zero because $\widetilde z$ vanishes identically on negative times. Combining \eqref{eq:vauxB6} and \eqref{eq:zzeroB6}, and using $H^{k+3}(U)\hookrightarrow H^s(U)$, proves $u(t)\to f$ in $H^s(U)$. A finite coordinate cover proves the full local statement in Theorem~\ref{thm:three6}(i). No global boundary condition or identification of $u$ with $v$ outside $W$ has been used.
+
+\subsection{Integer sharpness of the coefficient ceiling}
+\label{subsec:sharp6}
+The endpoint $k+3$ is not an artifact of the proof. On $(-1,1)$ set
+\begin{equation}\label{eq:sharpcoefB6}
+ a(x)=1+(x_+)^{k+1},\qquad
+ \mathsf P=-a(x)\frac{\dd^2}{\dd x^2}.
+\end{equation}
+The coefficient is positive and belongs to $C^{k,1}$, but its $(k+1)$st weak derivative has a nonzero jump at $0$. Let $\phi$ be a positive principal Dirichlet eigenfunction, satisfying
+\[
+ -a(x)\phi''(x)=\lambda\phi(x),\qquad \phi(\pm1)=0,
+ \qquad\lambda>0,\quad\phi(0)>0.
+\]
+The ODE reads $\phi''=-\lambda a^{-1}\phi$. The $(k+1)$st derivative of $a^{-1}$ has a nonzero jump at zero, while the lower derivatives are continuous. Differentiating the ODE on either side shows that $\phi^{(k+3)}$ has a nonzero jump. Consequently $\phi\in H^{k+3}_{\loc}$ but $\phi\notin H^{k+4}_{\loc}$ near zero, since the next weak derivative contains a Dirac mass. The energy solution $e^{-\lambda t}\phi$ retains the obstruction for every $t>0$.
+
+This rules out a universal integer improvement from $H^{k+3}$ to $H^{k+4}$ under the coefficient assumptions alone. It does \emph{not} rule out fractional improvements in special circumstances, nor does it claim that a smooth particular payoff cannot yield greater regularity.
+
+\clearpage
+\section*{References}
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{99}\setlength{\itemsep}{4pt}
+\bibitem{taylorI} M.~E. Taylor, \emph{Partial Differential Equations I: Basic Theory}, 3rd ed., Springer, 2023, Chapter~5, \S11 and Appendix~A, Chapter~6, \S\S1--2. DOI: \href{https://doi.org/10.1007/978-3-031-33859-5}{10.1007/978-3-031-33859-5}.
+\bibitem{taylorII} M.~E. Taylor, \emph{Partial Differential Equations II: Qualitative Studies of Linear Equations}, 3rd ed., Springer, 2023, Chapter~11, \S10. DOI: \href{https://doi.org/10.1007/978-3-031-33700-0}{10.1007/978-3-031-33700-0}.
+\bibitem{ouhabaz} E.~M. Ouhabaz, \emph{Analysis of Heat Equations on Domains}, London Mathematical Society Monographs, vol.~31, Princeton University Press, 2005, Chapters~1--2.
+\bibitem{lunardi} A. Lunardi, \emph{Analytic Semigroups and Optimal Regularity in Parabolic Problems}, Birkh\"auser, 1995, Chapters~1--2 (reprint 2013).
+\bibitem{gilbarg} D. Gilbarg and N.~S. Trudinger, \emph{Elliptic Partial Differential Equations of Second Order}, Springer, 2nd ed., 1983, Chapter~9 (strong solutions and $W^{2,p}$ estimates).
+\bibitem{krylov} N.~V. Krylov, \emph{Lectures on Elliptic and Parabolic Equations in Sobolev Spaces}, Graduate Studies in Mathematics, vol.~96, American Mathematical Society, 2008, Chapter~2 (local parabolic estimates).
+\bibitem{aronson67} D.~G. Aronson, ``Bounds for the fundamental solution of a parabolic equation,'' \emph{Bull. Amer. Math. Soc.} \textbf{73} (1967), 890--896.
+\bibitem{aronson68} D.~G. Aronson, ``Non-negative solutions of linear parabolic equations,'' \emph{Ann. Scuola Norm. Sup. Pisa} (3) \textbf{22} (1968), 607--694.
+\bibitem{evans} L.~C. Evans, \emph{Partial Differential Equations}, 2nd ed., Graduate Studies in Mathematics, vol.~19, American Mathematical Society, 2010, Chapters~5--7.
+\bibitem{rozlot} B.~L. Rozovsky and S.~V. Lototsky, \emph{Stochastic Evolution Systems: Linear Theory and Applications to Non-Linear Filtering}, 2nd ed., Springer, 2018, Theorems~2.12, 3.1, and 4.1.
 \end{thebibliography}
 \end{document}
