@@ -9,7 +9,7 @@
 \definecolor{navy}{RGB}{27,57,89}
 \definecolor{slate}{RGB}{86,100,113}
 \hypersetup{colorlinks=true,linkcolor=navy,citecolor=navy,urlcolor=navy,
- pdfauthor={Mathematical research notes},pdfsubject={Diffusion pricing, analytic semigroups, and interior Sobolev regularity},
+ pdfauthor={Mathematical research notes},pdfsubject={Diffusion pricing, strongly continuous semigroups, and interior Sobolev regularity},
  pdftitle={Sections 5 and 6: Pricing semigroups and interior parabolic regularity}}
 \pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small\textcolor{slate}{DIFFUSION PRICING}}\fancyhead[R]{\small\textcolor{slate}{SEMIGROUPS AND PARABOLIC REGULARITY}}\fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.35pt}\setlength{\headheight}{14pt}
@@ -52,18 +52,18 @@ A prescribed diffusion model determines a family of discounted expectations, ini
 \boxed{\begin{gathered}
 \text{financial SDE and algebraic pricing semigroup}\\
 \Downarrow\\[-2pt]
-\text{strongly continuous analytic realization on }B\hookrightarrow L^2_{\loc}\\
+\text{strongly continuous realization on }B\hookrightarrow L^2_{\loc}\\
 \Downarrow\\[-2pt]
-\text{closed generator and classical abstract evolution at }t>0\\
+\text{closed generator, It\^o core, and local elliptic graph estimate}\\
 \Downarrow\\[-2pt]
-\text{elliptic graph estimate: }D(G_B)\hookrightarrow H^2_{\loc}\\
+\text{classical equations for generator-domain data}\\
 \Downarrow\\[-2pt]
-\text{local parabolic equation; energy and initial trace when available}\\
+\text{approximation, local energy bounds, and strong payoff trace}\\
 \Downarrow\\[-2pt]
 \text{interior parabolic Sobolev estimates (Section~6).}
 \end{gathered}}
 \end{equation}
-The abstract theorem below is conditional on properties of $B$; Proposition~\ref{prop:weighted} verifies them for a useful weighted $L^2$ space, and Appendix~\ref{app:weightedproof} gives a proof based on coercive forms, sectoriality, and Feynman--Kac identification. \emph{No Gaussian heat-kernel bound is assumed or used.}
+The bridge uses only strong continuity on $B$, local embedding, and compatibility of the closed generator with the differential operator. \emph{Global analyticity is not assumed.} Proposition~\ref{prop:weighted} verifies the assumptions for a weighted $L^2$ space; Appendix~\ref{app:weightedproof} proves its additional analytic and weighted-energy properties by coercive forms, sectoriality, and Feynman--Kac identification. No Gaussian heat-kernel estimate is used in Section~5.
 
 \subsection{The stochastic model and the Ito differential expression}
 \label{subsec:modelB}
@@ -107,20 +107,32 @@ using summation over repeated indices. Ito's formula, applied to the discounted 
 \end{equation}
 This identifies the \emph{formal} infinitesimal pricing operator on smooth tests. It does not yet show that $P_tf$ is a classical PDE solution for discontinuous $f$.
 
+
+\paragraph{Why a Banach space of payoffs?}
+The Banach space $B$ is not an additional ingredient of the stochastic model: it specifies a \emph{global class of admissible payoff functions and a topology} in which to study their prices.  Once the expectation operators extend to bounded operators on $B$, strong continuity means that, for each fixed payoff $f\in B$, the curve $t\mapsto S_B(t)f$ is continuous in the $B$-norm, including at maturity parameter $t=0$.  This is continuity of each \emph{orbit}, not necessarily continuity of $t\mapsto S_B(t)$ in operator norm.  The closed generator then realizes, in this chosen topology, the differential expression motivated on smooth tests by It\^o's formula.
+
+Different choices of $B$ impose different global behavior, for example vanishing at infinity or weighted integrability.  They need not contain exactly the same payoffs, and they may lead to different global operator domains.  Nevertheless, once the chosen realization is compatible with the \emph{same local elliptic differential expression} and $B\hookrightarrow L^2_{\loc}$, the local graph estimate and the ensuing interior regularity mechanism depend only on local coefficient bounds and local norms.  This distinction between \emph{global selection of the price} and \emph{local regularity of the selected price} is the reason for keeping $B$ abstract.
+
 \subsection{An abstract \texorpdfstring{$B$}{B}-semigroup realization}
 \label{subsec:abstractB}
 Let $B$ be a Banach space of functions (identified up to the appropriate notion of equality), continuously embedded in $L^2_{\loc}(\Rd)$: for each bounded open $U\Subset\Rd$,
 \begin{equation}\label{eq:embeddingB}
  \norm{h}_{L^2(U)}\le C_U\norm h_B,\qquad h\in B.
 \end{equation}
-For the next theorem we impose the following \emph{analytic realization hypotheses}, not consequences of the algebraic law \eqref{eq:algB}:
+We impose the following \emph{strongly continuous realization hypotheses}. They are additional properties to verify for a chosen $B$, not consequences of the algebraic Markov law \eqref{eq:algB}:
 \begin{description}[font=\normalfont\bfseries,leftmargin=12mm,labelwidth=10mm,itemsep=4pt]
-\item[(B1)] $\Cc(\Rd)\subset B$ is dense and $\cA_0=\cA|_{\Cc}:\Cc\subset B\to B$ is well defined.
-\item[(B2)] The operators \eqref{eq:PdefB} admit a strongly continuous semigroup extension $S_B(t)$ on $B$, agreeing with the stochastic expectation whenever that expectation is considered on a bounded Borel payoff in $B$ (as an $L^2_{\loc}$ equivalence class).
-\item[(B3)] Its generator $G_B$ equals the \emph{graph closure} of $\cA_0$ in $B$. In particular, $\Cc$ is a core: $G_B=\overline{\cA_0}^{\,B}$.
-\item[(B4)] $S_B$ is analytic; hence for every $h\in B$ and $t>0$ one has $S_B(t)h\in D(G_B^j)$ for all integers $j\ge1$.
+\item[(B1)] $\Cc(\Rd)\subset B$ is dense, and the test-function operator $\cA_0=\cA|_{\Cc}:\Cc\subset B\to B$ is well defined.
+\item[(B2)] The pricing operators have a strongly continuous semigroup realization $S_B(t)$ on $B$, agreeing with the stochastic expectation for bounded Borel payoffs belonging to $B$ (as $L^2_{\loc}$ equivalence classes).
+\item[(B3)] The generator $G_B$ is the graph closure of $\cA_0$ in $B$; thus $\Cc$ is a graph core and $G_B=\overline{\cA_0}^{\,B}$.
 \end{description}
-No assertion is made that every conceivable $B$ satisfies (B1)--(B4). Also, although $S_B(t)h$ is defined for general $h\in B$, a pointwise expectation need not be defined at every $x$ for every such $h$; equality with \eqref{eq:PdefB} is asserted for bounded Borel payoffs as specified in (B2).
+In particular, the algebraic identity does not establish (B2), and It\^o's formula by itself only proves $\cA_0\subset G_B$, not (B3). The latter is a genuine core assertion. For realizations on a state domain with a boundary, (B1)--(B3) may instead use a boundary-compatible core $D_0\subset D(G_B)\cap H^2_{\loc}$ satisfying the same local elliptic graph estimates; see Remark~\ref{rem:boundaryB}. A pointwise expectation for an arbitrary $h\in B$ need not be meaningful at every starting point; (B2) only requires agreement in the stated function-space sense.
+
+\begin{remark}[The classical Feller choice $B=C_0(\Rd)$]\label{rem:fellerB}
+A fundamental example is $C_0(\Rd)$, the Banach space of continuous functions vanishing at infinity with the supremum norm.  Under the bounded globally Lipschitz assumptions in \eqref{eq:coeffB}, the discounted diffusion operators preserve $C_0(\Rd)$ and form a strongly continuous positive contraction semigroup there.  Thus the pricing expectations have a \emph{Feller--Dynkin realization}; It\^o's formula identifies the infinitesimal generator with $\cA$ on $C_c^\infty(\Rd)$, as in Taylor \cite[Vol.~II, Ch.~11, \S10, Prop.~10.1 and (10.23)--(10.32)]{taylorII}.
+
+This example illustrates the choice of a global topology; it does \emph{not} place every bounded Borel payoff in $C_0$.  In particular, discontinuous digital payoffs and constant payoffs generally lie outside this space.  The Feller property does not by itself prove the graph-core assertion (B3), which must be checked for the chosen generator. It need not be supplemented with analyticity to apply the abstract local-energy theorem below.  The weighted $L^2$ realization below is preferred for our bounded financial payoff class because it contains bounded Borel payoffs as almost-everywhere classes.
+\end{remark}
+
 
 \begin{lemma}[Elliptic graph closure is local]\label{lem:graphB}
 Assume \eqref{eq:coeffB}, \eqref{eq:embeddingB}, and (B1)--(B3). Then, for every $U_0\Subset U_1\Subset\Rd$,
@@ -140,34 +152,73 @@ Such estimates follow by freezing coefficients, localizing, and absorbing the co
 Let $v\in D(G_B)$. By (B3), choose $v_n\in\Cc$ with $v_n\to v$ and $\cA v_n\to G_Bv$ in $B$. Applying \eqref{eq:ellH2B} to $v_n-v_m$ and then \eqref{eq:embeddingB}, we find that $(v_n)$ is Cauchy in $H^2(U_0)$. Its limit must be $v$, since it also converges in $L^2(U_0)$. The estimate passes to the limit, giving \eqref{eq:graphboundB}. On $H^2(U_0)$, the expression \eqref{eq:AB} acts continuously into $L^2(U_0)$; therefore $\cA v_n\to\cA v$ locally in $L^2$. But $\cA v_n\to G_Bv$ locally in $L^2$ by \eqref{eq:embeddingB}; the limits agree.
 \end{proof}
 
-\begin{theorem}[Abstract evolution implies interior $H^2$ regularity]\label{thm:classicalB}
-Assume \eqref{eq:coeffB}, \eqref{eq:embeddingB}, and (B1)--(B4). Given $f\in B$, put $u(t)=S_B(t)f$. Then
+\begin{theorem}[Classical generator-domain orbits without analyticity]\label{thm:classicalB}
+Assume \eqref{eq:coeffB}, \eqref{eq:embeddingB}, and (B1)--(B3). If $f\in D(G_B)$ and $u(t)=S_B(t)f$, then
 \begin{equation}\label{eq:regB}
-\boxed{\ u\in C((0,T];H^2_{\loc}(\Rd))\cap C^1((0,T];L^2_{\loc}(\Rd)),
-\qquad \partial_tu=\cA u\quad\text{in }L^2_{\loc},\ t>0.\ }
+\boxed{\quad u\in C([0,T];H^2_{\loc}(\Rd))\cap C^1([0,T];L^2_{\loc}(\Rd)),
+\qquad \partial_tu=\cA u\quad\text{in }L^2_{\loc}.\quad}
 \end{equation}
-Also,
-\begin{equation}\label{eq:traceB}
- u(t)\to f\quad\text{in }B\text{ and in }L^2_{\loc}(\Rd)\quad(t\downarrow0).
-\end{equation}
-For $U_0\Subset U_1\Subset\Rd$ and $0<t\le T$,
+For $U_0\Subset U_1\Subset\Rd$, with $M_T=\sup_{0\le t\le T}\norm{S_B(t)}_{\mathcal L(B)}<\infty$,
 \begin{equation}\label{eq:tboundB}
-\norm{u(t)}_{H^2(U_0)}
-\le C_{U_0,U_1,B,T}(1+t^{-1})\norm f_B.
+ \sup_{0\le t\le T}\norm{u(t)}_{H^2(U_0)}
+ \le C_{U_0,U_1,B}M_T\bigl(\norm f_B+\norm{G_Bf}_B\bigr).
 \end{equation}
-If $f$ is bounded Borel and belongs to $B$, all conclusions apply to the stochastic price \eqref{eq:PdefB}, viewed as an $L^2_{\loc}$ class.
+For \emph{arbitrary} $f\in B$, the orbit is only asserted to be mild and satisfies the strong initial trace
+\begin{equation}\label{eq:traceB}
+ S_B(t)f\longrightarrow f\quad\text{in }B\text{ and }L^2_{\loc}(\Rd)\quad(t\downarrow0).
+\end{equation}
 \end{theorem}
 \begin{proof}
-Analytic semigroup theory gives $u(t)\in D(G_B)$, $u'(t)=G_Bu(t)$ for $t>0$, and estimates $\norm{S_B(t)}\le M_T$, $\norm{G_BS_B(t)}\le C_Tt^{-1}$ on $(0,T]$; see \cite[Chs.~1--2]{lunardi}. Lemma~\ref{lem:graphB} yields \eqref{eq:tboundB} and $\cA u=G_Bu=u'$ locally. Moreover $t\mapsto u(t)$ is continuous in the graph norm of $G_B$ on every compact positive-time interval; applying \eqref{eq:graphboundB} to $u(t)-u(s)$ gives local $H^2$ continuity. The embedding \eqref{eq:embeddingB} transfers $B$-valued $C^1$ time regularity to local $L^2$. Finally, strong continuity of $S_B$ at zero gives \eqref{eq:traceB}.
+The standard $C_0$-semigroup domain-invariance theorem gives $S_B(t)f\in D(G_B)$ and
+$\frac{\dd}{\dd t}S_B(t)f=S_B(t)G_Bf=G_BS_B(t)f$ in $B$ for $f\in D(G_B)$. In particular the orbit is graph-norm continuous on $[0,T]$. Apply Lemma~\ref{lem:graphB} to each orbit and to differences of two orbit values, then use local embedding to obtain \eqref{eq:regB} and \eqref{eq:tboundB}. For general $f$, strong continuity gives \eqref{eq:traceB}; no claim is made here that $S_B(t)f\in D(G_B)$ at positive time.
 \end{proof}
 
-\begin{remark}[The time-zero energy issue]\label{rem:energygapB}
-Theorem~\ref{thm:classicalB} yields \emph{positive-time} $H^2$ regularity and a strong local $L^2$ trace. It does \emph{not}, by itself, establish
+\begin{theorem}[The expectation-to-energy bridge for $C_0$-semigroups]\label{thm:energyB}
+Assume \eqref{eq:coeffB}, \eqref{eq:embeddingB}, and (B1)--(B3). For every $f\in B$, let $u(t)=S_B(t)f$. Then
 \begin{equation}\label{eq:energytargetB}
- u\in L^2(0,T;H^1_{\loc}),\qquad
- \partial_tu\in L^2(0,T;H^{-1}_{\loc}).
+\boxed{\quad u\in C([0,T];L^2_{\loc}(\Rd))\cap L^2(0,T;H^1_{\loc}(\Rd)),
+\qquad \partial_tu\in L^2(0,T;H^{-1}_{\loc}(\Rd)).\quad}
 \end{equation}
-Indeed, the bound $\norm{G_BS_B(t)}\lesssim t^{-1}$ is too singular to integrate in $L^2$ near zero. A separate energy inequality is needed for the full initial-time energy class. Proposition~\ref{prop:weighted} supplies one for the weighted realization used below. In particular, we do not conceal an assumption of local energy regularity inside the abstract semigroup hypothesis.
+The differential identity $\partial_tu=\cA u$ holds in the localized variational sense, and $u(0)=f$ strongly in $L^2_{\loc}$. Quantitatively, if $U\Subset V\Subset\Rd$ and $\chi\in\Cc(V)$ equals one near $\overline U$, then
+\begin{equation}\label{eq:abstractenergyB}
+\sup_{0\le t\le T}\norm{\chi u(t)}_{L^2}^2
++\int_0^T\!\norm{\chi\nabla u(t)}_{L^2}^2\dd t
++\int_0^T\!\norm{\partial_t(\chi u(t))}_{H^{-1}(V)}^2\dd t
+\le C_{V,\chi,T,B}\norm f_B^2.
+\end{equation}
+Thus neither an analytic semigroup nor global $L^2(\Rd)$ control is needed for the local-energy conclusion.
+\end{theorem}
+\begin{proof}
+Since $D(G_B)$ is dense in $B$, choose $f_n\in D(G_B)$ converging to $f$ in $B$; write $u_n(t)=S_B(t)f_n$. By Theorem~\ref{thm:classicalB}, each $u_n$ is a classical $B$-orbit and a local $H^2$ solution of $\partial_tu_n=\cA u_n$. Strong continuity of the semigroup implies $M_T<\infty$ and
+\begin{equation}\label{eq:convB}
+ \sup_{0\le t\le T}\norm{u_n(t)-u(t)}_B
+ \le M_T\norm{f_n-f}_B\longrightarrow0.
+\end{equation}
+
+Choose nested $U\Subset V\Subset\Rd$, $\chi\in\Cc(V)$ with $\chi=1$ near $\overline U$, and write $\beta^j=b^j-\partial_i a^{ij}$. Multiply the local equation by $\chi^2u_n$, integrate by parts and apply ellipticity and Young's inequality. The locally bounded coefficients yield the Caccioppoli inequality
+\begin{equation}\label{eq:CacciB}
+ \frac{\dd}{\dd t}\norm{\chi u_n(t)}_2^2
+ +c\norm{\chi\nabla u_n(t)}_2^2
+ \le C_{\chi,V}\norm{u_n(t)}_{L^2(V)}^2.
+\end{equation}
+By \eqref{eq:embeddingB} and the semigroup bound, integration in time gives
+\begin{equation}\label{eq:energyapproxB}
+ \sup_{0\le t\le T}\norm{\chi u_n(t)}_2^2
+ +\int_0^T\norm{\chi\nabla u_n(t)}_2^2\dd t
+ \le C_{\chi,V,T,B}\norm{f_n}_B^2.
+\end{equation}
+Choose a slightly larger cutoff $\chi_1\in\Cc(V)$ equal to one on a neighborhood $V_0\Subset V$ of $\supp\chi$. The same estimate \eqref{eq:energyapproxB}, applied to $\chi_1$, controls $\norm{u_n}_{L^2(0,T;H^1(V_0))}$. In the Hilbert triple $H_0^1(V)\subset L^2(V)\subset H^{-1}(V)$, the divergence-form equation and the cutoff commutator therefore give
+\begin{equation}\label{eq:timeapproxB}
+ \norm{\partial_t(\chi u_n)}_{L^2(0,T;H^{-1}(V))}
+ \le C_{\chi,V}\bigl(\norm{u_n}_{L^2(0,T;L^2(V))}
+ +\norm{u_n}_{L^2(0,T;H^1(V_0))}\bigr)
+ \le C_{\chi,V,T,B}\norm{f_n}_B.
+\end{equation}
+Equations \eqref{eq:convB}--\eqref{eq:timeapproxB} imply strong convergence $u_n\to u$ in $C([0,T];L^2(V))$, weak compactness of local spatial gradients, and weak compactness of the cutoff time derivatives in $L^2H^{-1}$. The weak limits are the distributional derivatives of $u$. Passing to the limit in the divergence-form equation yields $\partial_tu=\cA u$ locally. Lower semicontinuity yields \eqref{eq:abstractenergyB}; \eqref{eq:traceB} identifies the strong payoff trace. A finite set of cutoffs on each compact region proves \eqref{eq:energytargetB}.
+\end{proof}
+
+\begin{remark}[What analyticity contributes, but is not required]\label{rem:energygapB}
+If a particular $B$-realization happens to be analytic, then arbitrary $f\in B$ yields a classical $B$-valued orbit for $t>0$, along with $\norm{G_BS_B(t)}\lesssim t^{-1}$. Analyticity therefore gives an additional abstract smoothing statement; it is \emph{not} a premise of Theorem~\ref{thm:energyB}. Its pointwise-in-time derivative estimate is too singular to yield the integrated $H^1$ energy estimate near zero by simple squaring. The latter follows instead from \eqref{eq:CacciB}, and the higher spatial regularity for arbitrary data will follow from Section~\ref{sec:interior6}.
 \end{remark}
 
 \subsection{Localization and a bounded-domain semigroup}
@@ -177,10 +228,10 @@ Let $\Omega\Subset\Rd$ be smooth and bounded, choose $\chi\in\Cc(\Omega)$, and w
  \beta^j=b^j-\partial_i a^{ij}\in L^\infty(\Rd),\qquad
  \cA h=\partial_i(a^{ij}\partial_jh)+\beta^j\partial_jh-rh.
 \end{equation}
-The local Dirichlet realization $\cA_{\Omega,D}$ is the closed realization of \eqref{eq:AB} in $L^2(\Omega)$ with domain $H^2(\Omega)\cap H^1_0(\Omega)$; for bounded Lipschitz coefficients and a smooth domain it generates an analytic semigroup $S_{\Omega,D}(t)$. This is \emph{only a localization device}: no killed boundary model has been imposed on the original whole-space diffusion.
+The local Dirichlet realization $\cA_{\Omega,D}$ is the closed realization of \eqref{eq:AB} in $L^2(\Omega)$ with domain $H^2(\Omega)\cap H^1_0(\Omega)$; for bounded Lipschitz coefficients and a sufficiently regular bounded domain (for instance $C^{1,1}$), it generates an analytic semigroup $S_{\Omega,D}(t)$. This local auxiliary analyticity is \emph{not} a requirement on $S_B$. The Dirichlet operator is only a localization device: no killed boundary model has been imposed on the original whole-space diffusion.
 
 \begin{proposition}[Cutoff evolution and Duhamel formula]\label{prop:duhamelB}
-Under the hypotheses of Theorem~\ref{thm:classicalB}, for $0<s<t\le T$,
+Under the hypotheses of Theorem~\ref{thm:classicalB}, for $f\in D(G_B)$ and $0\le s<t\le T$,
 \begin{equation}\label{eq:duhamelB}
 \boxed{\quad
 \chi u(t)=S_{\Omega,D}(t-s)(\chi u(s))
@@ -199,9 +250,22 @@ $\partial_t v=\chi\cA u=\cA_{\Omega,D}v-[\cA,\chi]u$.
 The forcing term is continuous in $L^2(\Omega)$ by local $H^2$ continuity. The standard variation-of-constants formula gives \eqref{eq:duhamelB}. The commutator, supported where $\chi$ varies, is the correction that prevents the restriction from being mistaken for a homogeneous Dirichlet evolution.
 \end{proof}
 
+
+\begin{remark}[State domains and genuine boundary dynamics]\label{rem:boundaryB}
+The standing pricing model in \eqref{eq:sdeB} is a \emph{whole-space, nonexplosive} diffusion: the state remains in $\Rd$ and the contract is evaluated along paths alive throughout $[0,T]$.  No physical boundary condition is therefore part of that model.  The Dirichlet operator used in Proposition~\ref{prop:duhamelB} is introduced \emph{only after multiplying by an interior cutoff}; it does not change the prescribed diffusion or select a boundary rule.
+
+A different stochastic model could instead evolve in an open state domain $\mathcal O\subset\Rd$ with explicitly prescribed boundary behavior, such as killing, reflection, or boundary payments.  Its global pricing semigroup must then be realized on a suitable space $B(\mathcal O)$ together with a closed generator whose domain encodes that behavior.  For example, if $\mathcal O$ has smooth bounded boundary, a \emph{normally reflected} diffusion (reflection direction $\nu$, the unit normal) has a backward Neumann condition $\partial_\nu v=0$; under the usual elliptic regularity hypotheses, an $L^2(\mathcal O)$ realization can have
+\[
+D(G_{\mathcal O,N})=\{v\in H^2(\mathcal O):\partial_\nu v|_{\partial\mathcal O}=0\}.
+\]
+For \emph{conormal} reflection, the corresponding condition is $(a\nabla v)\cdot\nu=0$; more general reflection fields $\gamma$ lead to $\gamma\cdot\nabla v=0$.  The reflection law must not be inferred from the interior diffusion matrix alone; see \cite{lionssznitman}.  In particular, closing $\cA$ merely on $C_c^\infty(\mathcal O)$ does \emph{not} produce the Neumann realization: its graph core must be chosen from functions compatible with the specified boundary condition.
+
+Once such a model has been constructed, suppose its generator is the closure of the interior differential expression on an appropriate \emph{boundary-compatible} core and $B(\mathcal O)\hookrightarrow L^2_{\loc}(\mathcal O)$. No analytic time regularity is needed: the graph-closure argument applies to generator-domain data, and the approximation and local Caccioppoli proof of Theorem~\ref{thm:energyB} then applies to every orbit. The elliptic graph-closure proof works on every $U_0\Subset U_1\Subset\mathcal O$ with the same local estimates, because it does not meet $\partial\mathcal O$.  The local energy class and strong local payoff trace are consequently established, so the interior results of Section~6 apply under their stated local coefficient hypotheses.  Thus changing the global boundary model need not change the \emph{local regularity mechanism}, although it can change the price, its global generator domain, and the local norms appearing in the estimates.
+\end{remark}
+
 \subsection{A weighted realization for bounded financial payoffs}
 \label{subsec:weightedB}
-The hypotheses (B1)--(B4) are meaningful only if they can be verified for the given diffusion rather than postulated. For bounded Borel payoffs, a convenient choice is a polynomially \emph{decaying} weighted $L^2$ space. This is already sufficient for digital options and other bounded claims; exponentially growing payoffs are outside the scope of the present section.
+The hypotheses (B1)--(B3) are meaningful only if they can be verified for the given diffusion rather than postulated. For bounded Borel payoffs, a convenient choice is a polynomially \emph{decaying} weighted $L^2$ space. This is already sufficient for digital options and other bounded claims; exponentially growing payoffs are outside the scope of the present section.
 
 For $q>d/2$, let
 \begin{equation}\label{eq:weightB}
@@ -224,7 +288,7 @@ Under \eqref{eq:coeffB}, already for $k=0$, and for every $q>d/2$, the following
  D(G_q)=H^2(\Rd,w_q\dd x),\qquad G_qh=\cA h,
 \end{equation}
 with equivalence of the graph and weighted $H^2$ norms.
-\item If $f$ is bounded Borel, $u(t,x)=P_tf(x)$ is the $\HH$-valued orbit $S_q(t)f$ (equality almost everywhere in $x$ for each $t$). In particular, it satisfies the positive-time regularity and strong local trace of Theorem~\ref{thm:classicalB}.
+\item If $f$ is bounded Borel, $u(t,x)=P_tf(x)$ is the $\HH$-valued orbit $S_q(t)f$ (equality almost everywhere in $x$ for each $t$). Theorem~\ref{thm:energyB} therefore supplies its local energy class and strong initial trace. Analyticity is an \emph{additional} property of this particular weighted realization, which also makes the abstract orbit classical at positive times.
 \item The same orbit satisfies, for each $T>0$,
 \begin{equation}\label{eq:weightenergyB}
 \boxed{\quad \sup_{0\le t\le T}\norm{u(t)}_{\HH}^2
@@ -251,18 +315,18 @@ with the identity holding almost everywhere at positive times and in the localiz
 The refinement to higher spatial derivatives, with the finite $C^{k,1}$ regularity carefully tracked, is the subject of Section~6. The conclusion initially identifies the Sobolev representative with $P_tf$ almost everywhere in $x$; a separate pointwise-continuity statement is needed before replacing it by a pointwise representative at every starting state.
 \end{corollary}
 \begin{proof}
-Proposition~\ref{prop:weighted} gives the strong trace and the local energy statement, while Theorem~\ref{thm:classicalB} gives the positive-time differential identity. The localized formulation follows by testing the equation in $\VV^*$ against compactly supported functions and using \eqref{eq:weightenergyB}. The last assertion is the standard interior parabolic $L^2$ estimate for uniformly elliptic Lipschitz principal coefficients; see, e.g., \cite[Ch.~2]{krylov}.
+The weighted realization satisfies (B1)--(B3), so Theorem~\ref{thm:energyB} gives the strong trace and local energy statement without invoking analyticity. Proposition~\ref{prop:weighted} also provides the stronger global weighted estimate \eqref{eq:weightenergyB}. The localized formulation follows from the weak equation in Theorem~\ref{thm:energyB}. The last assertion is the standard interior parabolic $L^2$ estimate for uniformly elliptic Lipschitz principal coefficients; see, e.g., \cite[Ch.~2]{krylov}.
 \end{proof}
 
 \begin{remark}[Division of labor between Sections 5 and 6]
-Section 5 selects the price by the financial stochastic model and verifies the analytic class in which parabolic theory applies. In particular, the initial-time $H^1$ energy bound is obtained independently of positive-time $H^2$ smoothing. Section 6 may now work \emph{locally} with a solution in that class, without choosing a boundary realization for the financial diffusion. Sharp powers of $t$ in short-maturity Greeks require additional estimates and do not follow solely from \eqref{eq:parabB}.
+Section 5 selects the price by the financial stochastic model and verifies a strongly continuous global realization compatible with the differential operator. The abstract energy theorem requires no analyticity: its localized Caccioppoli bound establishes the initial-time $H^1$ energy class independently of positive-time $H^2$ smoothing. Section 6 may now work \emph{locally} with a solution in that class, without choosing a boundary realization for the financial diffusion. Sharp powers of $t$ in short-maturity Greeks require additional estimates and do not follow solely from \eqref{eq:parabB}.
 \end{remark}
 
 \clearpage
 \section{Interior parabolic regularity, initial traces, and financial sensitivities}
 \label{sec:interior6}
 
-Section~\ref{sec:Bsemigroup} selects a discounted price from a \emph{specified} diffusion. For an abstract Banach-space realization satisfying (B1)--(B4), Theorem~\ref{thm:classicalB} yields classical $B$-valued evolution at positive times and the strong $L^2_{\loc}$ trace. For the concrete weighted $L^2$ realization, Proposition~\ref{prop:weighted} additionally proves the \emph{energy estimates at time zero}. These are distinct assertions: analyticity by itself does not yield an integrated $H^1$ bound at the initial face.
+Section~\ref{sec:Bsemigroup} selects a discounted price from a \emph{specified} diffusion. For any Banach-space realization satisfying (B1)--(B3), Theorem~\ref{thm:energyB} turns \emph{every} strongly continuous orbit into a local energy solution with a strong $L^2_{\loc}$ initial trace. This uses generator-domain approximation and local coercive estimates, not global analyticity. Proposition~\ref{prop:weighted} supplies a concrete financial realization and the stronger weighted energy estimate. Analyticity holds in that example, but is not required for the transition to Section~6.
 
 In the present section we set aside the stochastic construction and prove local statements about \emph{any} solution satisfying the same energy and trace hypotheses. This keeps the interior regularity mechanism separate from the choice of pricing measure, payoff space, and behavior at spatial infinity. The financial price is recovered by Corollary~\ref{cor:handoffB}. Unlike the preceding section, the local coefficients need not be globally bounded, and no boundary realization is chosen. We use $\cA$ for the differential operator (\ref{eq:AB}); $P_t$ continues to denote the stochastic pricing maps, not a differential operator.
 
@@ -291,7 +355,7 @@ $u_t=\cA u$ with trace $f$ is a distributional solution such that, for each coor
 The trace uses the continuous $L^2(B)$ representative supplied by the Gelfand triple $H^1_0(B)\hookrightarrow L^2(B)\hookrightarrow H^{-1}(B)$. Equivalently, $u(t)\to f$ strongly in $L^2(U)$ on each $U\Subset\Omega$, together with the localized energy bounds. No boundary trace of $u$ on $\partial\Omega$ is prescribed.
 \end{definition}
 
-For a bounded Borel payoff, Proposition~\ref{prop:weighted} and Corollary~\ref{cor:handoffB} verify Definition~\ref{def:energy6} for $u(t,x)=P_tf(x)$, as an almost-everywhere spatial representative, under the standing whole-space model. In particular, the time-zero trace here is \emph{not} an additional assumption imposed on the selected financial price.
+For a bounded Borel payoff, Theorem~\ref{thm:energyB} applied through Proposition~\ref{prop:weighted} verifies Definition~\ref{def:energy6} for $u(t,x)=P_tf(x)$, as an almost-everywhere spatial representative, under the standing whole-space model. In particular, the time-zero trace here is \emph{not} an additional assumption imposed on the selected financial price; it follows for general $B$-orbits already from Theorem~\ref{thm:energyB}.
 
 \begin{theorem}[Local Sobolev traces, positive-time smoothing, and norm divergence]\label{thm:three6}
 Suppose \eqref{eq:localoperator6} is locally uniformly elliptic and $u$ satisfies Definition~\ref{def:energy6}. Set $R=k+3$.
@@ -480,15 +544,15 @@ For a digital replacement typically $M_\varepsilon=O(1)$; for a kink replacement
 
 \subsection{Scope of the conclusions}
 \label{subsec:scope6}
-The financially specified diffusion fixes a single price $P_tf$ and preserves payoff order. The weighted $B$-realization of Section~\ref{sec:Bsemigroup} gives the abstract generator, the strong local $L^2$ trace, and the local energy bound. Theorem~\ref{thm:three6} then gives positive-time $H^{k+3}$ regularity and, for appropriately regularized payoffs, strong higher-order terminal traces. Theorem~\ref{thm:errors6} gives a quantitative \emph{weighted} stability statement for localized modifications without any kernel assumption. Gaussian refinement is explicitly optional and independent.
+The financially specified diffusion fixes a single price $P_tf$ and preserves payoff order. The general $C_0$-semigroup theorem of Section~\ref{sec:Bsemigroup} gives local energy and the strong trace from generator compatibility; the weighted realization additionally proves these properties for bounded Borel payoffs and yields global weighted estimates. Theorem~\ref{thm:three6} then gives positive-time $H^{k+3}$ regularity and, for appropriately regularized payoffs, strong higher-order terminal traces. Theorem~\ref{thm:errors6} gives a quantitative \emph{weighted} stability statement for localized modifications without any kernel assumption. Gaussian refinement is explicitly optional and independent.
 
-Neither positive-time smoothing nor price order alone supplies a universal inequality between price Greeks. No sharp maturity-dependent pointwise Greek bound, global derivative cap, or differentiable off-diagonal kernel estimate is asserted. Locally elliptic models with physical boundaries require independent choices of boundary dynamics; the interior statements apply once their solutions satisfy Definition~\ref{def:energy6}. Time-dependent coefficients require a separate argument for time differentiation, since $\partial_t(\cA(t)u)$ contains $(\partial_t\cA(t))u$.
+Neither positive-time smoothing nor price order alone supplies a universal inequality between price Greeks. No sharp maturity-dependent pointwise Greek bound, global derivative cap, or differentiable off-diagonal kernel estimate is asserted. As explained in Remark~\ref{rem:boundaryB}, models with physical boundaries require an independently specified reflection, killing, or other boundary rule and its corresponding global generator realization. Their interior statements apply once the local energy and trace hypotheses of Definition~\ref{def:energy6} hold. Time-dependent coefficients require a separate argument for time differentiation, since $\partial_t(\cA(t)u)$ contains $(\partial_t\cA(t))u$.
 
 \clearpage
 \appendix
 \section{Weighted sectorial realization and Feynman--Kac identification}
 \label{app:weightedproof}
-\noindent\textbf{Scope.} We prove Proposition~\ref{prop:weighted} without heat-kernel hypotheses. The proof first constructs an analytic semigroup from a coercive form, then identifies that semigroup with the \emph{given} SDE pricing expectation. This separation avoids using the desired stochastic/PDE identification as a premise.
+\noindent\textbf{Scope.} We prove Proposition~\ref{prop:weighted} without heat-kernel hypotheses. Here analyticity is a \emph{bonus property} of the weighted $L^2$ realization, not a hypothesis of the general $B$-theory. The proof first constructs an analytic semigroup from a coercive form, then identifies that semigroup with the \emph{given} SDE pricing expectation. This separation avoids using the desired stochastic/PDE identification as a premise.
 
 \subsection{The closed weighted form and its analytic semigroup}
 \label{app:form}
@@ -654,7 +718,7 @@ Equations \eqref{eq:domainresult}, \eqref{eq:energyapp}--\eqref{eq:timeapp}, and
 \clearpage
 \section{Proof of the interior regularity mechanism}
 \label{app:interiorproof}
-This appendix proves Theorem~\ref{thm:three6}, including the endpoint $H^{k+3}_{\loc}$ and real-order traces. It supplements, rather than repeats, Appendix~\ref{app:weightedproof}: Appendix~\ref{app:weightedproof} constructs the \emph{financial pricing semigroup} and its energy class; the present appendix starts with an arbitrary local energy solution. A single auxiliary whole-space evolution will be used for the higher-order initial trace. It imposes no boundary condition on the given solution, and no fractional-power identification of a physical boundary operator is assumed.
+This appendix proves Theorem~\ref{thm:three6}, including the endpoint $H^{k+3}_{\loc}$ and real-order traces. It supplements, rather than repeats, Appendix~\ref{app:weightedproof}: Appendix~\ref{app:weightedproof} verifies a particular \emph{financial pricing semigroup} (whose analyticity is optional for the abstract theorem), while Theorem~\ref{thm:energyB} already supplies the local energy bridge for general strongly continuous realizations. The present appendix starts with an arbitrary local energy solution. A single auxiliary whole-space evolution will be used for the higher-order initial trace. It imposes no boundary condition on the given solution, and no fractional-power identification of a physical boundary operator is assumed.
 
 \subsection{Finite-coefficient elliptic regularity}
 \label{subsec:ellipticB}
@@ -800,6 +864,7 @@ This rules out a universal integer improvement from $H^{k+3}$ to $H^{k+4}$ under
 \begin{thebibliography}{99}\setlength{\itemsep}{4pt}
 \bibitem{taylorI} M.~E. Taylor, \emph{Partial Differential Equations I: Basic Theory}, 3rd ed., Springer, 2023, Chapter~5, \S11 and Appendix~A, Chapter~6, \S\S1--2. DOI: \href{https://doi.org/10.1007/978-3-031-33859-5}{10.1007/978-3-031-33859-5}.
 \bibitem{taylorII} M.~E. Taylor, \emph{Partial Differential Equations II: Qualitative Studies of Linear Equations}, 3rd ed., Springer, 2023, Chapter~11, \S10. DOI: \href{https://doi.org/10.1007/978-3-031-33700-0}{10.1007/978-3-031-33700-0}.
+\bibitem{lionssznitman} P.-L. Lions and A.-S. Sznitman, ``Stochastic differential equations with reflecting boundary conditions,'' \emph{Comm. Pure Appl. Math.} \textbf{37} (1984), 511--537. DOI: \href{https://doi.org/10.1002/cpa.3160370408}{10.1002/cpa.3160370408}.
 \bibitem{ouhabaz} E.~M. Ouhabaz, \emph{Analysis of Heat Equations on Domains}, London Mathematical Society Monographs, vol.~31, Princeton University Press, 2005, Chapters~1--2.
 \bibitem{lunardi} A. Lunardi, \emph{Analytic Semigroups and Optimal Regularity in Parabolic Problems}, Birkh\"auser, 1995, Chapters~1--2 (reprint 2013).
 \bibitem{gilbarg} D. Gilbarg and N.~S. Trudinger, \emph{Elliptic Partial Differential Equations of Second Order}, Springer, 2nd ed., 1983, Chapter~9 (strong solutions and $W^{2,p}$ estimates).
